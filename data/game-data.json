@@ -1,0 +1,372 @@
+{
+    "elements": [
+        {
+            "symbol": "H",
+            "name": "Hydrogen",
+            "category": "starter",
+            "description": "Hydrogen is the lightest element and a common building block in water, acids, and many organic compounds."
+        },
+        {
+            "symbol": "O",
+            "name": "Oxygen",
+            "category": "starter",
+            "description": "Oxygen supports combustion and appears in water, oxides, and many molecules found in air and living systems."
+        },
+        {
+            "symbol": "Na",
+            "name": "Sodium",
+            "category": "starter",
+            "description": "Sodium is a soft reactive metal that often forms salts and basic compounds."
+        },
+        {
+            "symbol": "Cl",
+            "name": "Chlorine",
+            "category": "starter",
+            "description": "Chlorine is a reactive halogen used in salts, disinfectants, and many industrial chemicals."
+        },
+        {
+            "symbol": "C",
+            "name": "Carbon",
+            "category": "bonus",
+            "description": "Carbon is the backbone of organic chemistry and can form chains, rings, and many stable compounds."
+        },
+        {
+            "symbol": "N",
+            "name": "Nitrogen",
+            "category": "bonus",
+            "description": "Nitrogen makes up most of Earth's atmosphere and appears in ammonia, proteins, and fertilizers."
+        },
+        {
+            "symbol": "S",
+            "name": "Sulfur",
+            "category": "bonus",
+            "description": "Sulfur is a yellow nonmetal often found in acids, minerals, and volcanic gases."
+        },
+        {
+            "symbol": "K",
+            "name": "Potassium",
+            "category": "bonus",
+            "description": "Potassium is a highly reactive alkali metal important for salts and many biological processes."
+        },
+        {
+            "symbol": "Ca",
+            "name": "Calcium",
+            "category": "bonus",
+            "description": "Calcium is a common metal in minerals and is essential for bones, shells, and cement chemistry."
+        },
+        {
+            "symbol": "Mg",
+            "name": "Magnesium",
+            "category": "bonus",
+            "description": "Magnesium is a light metal used in alloys and forms bright-burning oxides."
+        },
+        {
+            "symbol": "P",
+            "name": "Phosphorus",
+            "category": "bonus",
+            "description": "Phosphorus is used in fertilizers, matches, and energy-carrying molecules in living cells."
+        },
+        {
+            "symbol": "Fe",
+            "name": "Iron",
+            "category": "bonus",
+            "description": "Iron is a strong transition metal used in steel and forms several important oxides."
+        }
+    ],
+    "compounds": [
+        {
+            "id": "hydrogen",
+            "ingredients": ["H", "H"],
+            "name": "Hydrogen",
+            "formula": "H2",
+            "description": "Hydrogen gas is the lightest molecule and an important fuel and industrial reagent."
+        },
+        {
+            "id": "oxygen",
+            "ingredients": ["O", "O"],
+            "name": "Oxygen",
+            "formula": "O2",
+            "description": "Oxygen gas is essential for breathing and helps many reactions burn or release energy."
+        },
+        {
+            "id": "chlorine",
+            "ingredients": ["Cl", "Cl"],
+            "name": "Chlorine",
+            "formula": "Cl2",
+            "description": "Chlorine gas is a reactive halogen used in disinfectants and chemical manufacturing."
+        },
+        {
+            "id": "water",
+            "ingredients": ["H", "H", "O"],
+            "name": "Water",
+            "formula": "H2O",
+            "description": "Water is one of the most important compounds for life and covers most of Earth's surface.",
+            "structure": {
+                "nodes": ["H", "O", "H"],
+                "edges": [[0, 1], [1, 2]]
+            }
+        },
+        {
+            "id": "hydrogen-peroxide",
+            "ingredients": ["H", "H", "O", "O"],
+            "name": "Hydrogen Peroxide",
+            "formula": "H2O2",
+            "description": "Hydrogen peroxide is a reactive liquid often used as a disinfectant and bleaching agent.",
+            "structure": {
+                "nodes": ["H", "O", "O", "H"],
+                "edges": [[0, 1], [1, 2], [2, 3]]
+            }
+        },
+        {
+            "id": "hydrochloric-acid",
+            "ingredients": ["Cl", "H"],
+            "name": "Hydrochloric Acid",
+            "formula": "HCl",
+            "description": "Hydrochloric acid is a strong acid found in stomach acid and used in many industrial processes."
+        },
+        {
+            "id": "salt",
+            "ingredients": ["Cl", "Na"],
+            "name": "Salt",
+            "formula": "NaCl",
+            "description": "Sodium chloride is table salt, a familiar mineral important in food and chemistry."
+        },
+        {
+            "id": "sodium-hydroxide",
+            "ingredients": ["H", "Na", "O"],
+            "name": "Sodium Hydroxide",
+            "formula": "NaOH",
+            "description": "Sodium hydroxide is a strong base widely used in soap making, cleaning, and industry.",
+            "structure": {
+                "nodes": ["Na", "O", "H"],
+                "edges": [[0, 1], [1, 2]]
+            }
+        },
+        {
+            "id": "sodium-oxide",
+            "ingredients": ["Na", "Na", "O"],
+            "name": "Sodium Oxide",
+            "formula": "Na2O",
+            "description": "Sodium oxide is a basic oxide formed from sodium and oxygen.",
+            "structure": {
+                "nodes": ["Na", "O", "Na"],
+                "edges": [[0, 1], [1, 2]]
+            }
+        },
+        {
+            "id": "sodium-peroxide",
+            "ingredients": ["Na", "Na", "O", "O"],
+            "name": "Sodium Peroxide",
+            "formula": "Na2O2",
+            "description": "Sodium peroxide is a reactive oxygen-rich compound that can release oxygen in chemical reactions.",
+            "structure": {
+                "nodes": ["Na", "O", "O", "Na"],
+                "edges": [[0, 1], [1, 2], [2, 3]]
+            }
+        },
+        {
+            "id": "carbon-monoxide",
+            "ingredients": ["C", "O"],
+            "name": "Carbon Monoxide",
+            "formula": "CO",
+            "description": "Carbon monoxide is a toxic gas produced by incomplete combustion."
+        },
+        {
+            "id": "carbon-dioxide",
+            "ingredients": ["C", "O", "O"],
+            "name": "Carbon Dioxide",
+            "formula": "CO2",
+            "description": "Carbon dioxide is a common gas in air and a major product of respiration and combustion.",
+            "structure": {
+                "nodes": ["O", "C", "O"],
+                "edges": [[0, 1], [1, 2]]
+            }
+        },
+        {
+            "id": "methane",
+            "ingredients": ["C", "H", "H", "H", "H"],
+            "name": "Methane",
+            "formula": "CH4",
+            "description": "Methane is the main component of natural gas and a simple fuel molecule."
+        },
+        {
+            "id": "carbonic-acid",
+            "ingredients": ["C", "H", "H", "O", "O", "O"],
+            "name": "Carbonic Acid",
+            "formula": "H2CO3",
+            "description": "Carbonic acid forms when carbon dioxide dissolves in water and helps make drinks fizzy."
+        },
+        {
+            "id": "ammonia",
+            "ingredients": ["H", "H", "H", "N"],
+            "name": "Ammonia",
+            "formula": "NH3",
+            "description": "Ammonia is a pungent gas used in fertilizers, cleaning products, and industrial chemistry.",
+            "structure": {
+                "nodes": ["N", "H", "H", "H"],
+                "edges": [[0, 1], [0, 2], [0, 3]]
+            }
+        },
+        {
+            "id": "nitric-oxide",
+            "ingredients": ["N", "O"],
+            "name": "Nitric Oxide",
+            "formula": "NO",
+            "description": "Nitric oxide is a reactive gas with roles in chemistry and biology."
+        },
+        {
+            "id": "nitrogen-dioxide",
+            "ingredients": ["N", "O", "O"],
+            "name": "Nitrogen Dioxide",
+            "formula": "NO2",
+            "description": "Nitrogen dioxide is a brown reactive gas often linked to air pollution."
+        },
+        {
+            "id": "sulfur-dioxide",
+            "ingredients": ["O", "O", "S"],
+            "name": "Sulfur Dioxide",
+            "formula": "SO2",
+            "description": "Sulfur dioxide is a sharp-smelling gas produced in volcanic activity and fuel burning."
+        },
+        {
+            "id": "sulfur-trioxide",
+            "ingredients": ["O", "O", "O", "S"],
+            "name": "Sulfur Trioxide",
+            "formula": "SO3",
+            "description": "Sulfur trioxide is a highly reactive sulfur oxide important in acid production.",
+            "structure": {
+                "nodes": ["S", "O", "O", "O"],
+                "edges": [[0, 1], [0, 2], [0, 3]]
+            }
+        },
+        {
+            "id": "potassium-chloride",
+            "ingredients": ["Cl", "K"],
+            "name": "Potassium Chloride",
+            "formula": "KCl",
+            "description": "Potassium chloride is a common salt used in fertilizers and chemistry."
+        },
+        {
+            "id": "calcium-oxide",
+            "ingredients": ["Ca", "O"],
+            "name": "Calcium Oxide",
+            "formula": "CaO",
+            "description": "Calcium oxide, also called quicklime, is important in cement and industrial processes."
+        },
+        {
+            "id": "magnesium-oxide",
+            "ingredients": ["Mg", "O"],
+            "name": "Magnesium Oxide",
+            "formula": "MgO",
+            "description": "Magnesium oxide is a stable oxide used in refractory materials and chemistry."
+        },
+        {
+            "id": "phosphine",
+            "ingredients": ["H", "H", "H", "P"],
+            "name": "Phosphine",
+            "formula": "PH3",
+            "description": "Phosphine is a toxic phosphorus-containing gas used in specialized chemistry."
+        },
+        {
+            "id": "iron-oxide",
+            "ingredients": ["Fe", "Fe", "O", "O", "O"],
+            "name": "Iron(III) Oxide",
+            "formula": "Fe2O3",
+            "description": "Iron(III) oxide is a common iron oxide found in rust and mineral pigments."
+        }
+    ],
+    "themes": [
+        {
+            "id": "basic",
+            "name": "Basic",
+            "description": "Start with the most familiar compounds and learn the core drag-to-connect rules."
+        },
+        {
+            "id": "gases",
+            "name": "Gases",
+            "description": "Build simple gases and get comfortable with small two-atom and three-atom molecules."
+        },
+        {
+            "id": "acids-bases",
+            "name": "Acids & Bases",
+            "description": "Focus on reactive compounds that introduce acidic and basic chemistry."
+        },
+        {
+            "id": "oxides",
+            "name": "Oxides",
+            "description": "Practice oxygen-rich compounds where structure starts to matter more."
+        }
+    ],
+    "levels": [
+        {
+            "id": "level-1",
+            "themeId": "basic",
+            "targetCompoundId": "water",
+            "objective": "Build water",
+            "hint": "H2O"
+        },
+        {
+            "id": "level-2",
+            "themeId": "basic",
+            "targetCompoundId": "salt",
+            "objective": "Build salt",
+            "hint": "NaCl"
+        },
+        {
+            "id": "level-3",
+            "themeId": "gases",
+            "targetCompoundId": "hydrogen",
+            "objective": "Build hydrogen gas",
+            "hint": "H2"
+        },
+        {
+            "id": "level-4",
+            "themeId": "gases",
+            "targetCompoundId": "oxygen",
+            "objective": "Build oxygen gas",
+            "hint": "O2"
+        },
+        {
+            "id": "level-5",
+            "themeId": "gases",
+            "targetCompoundId": "chlorine",
+            "objective": "Build chlorine gas",
+            "hint": "Cl2"
+        },
+        {
+            "id": "level-6",
+            "themeId": "acids-bases",
+            "targetCompoundId": "hydrochloric-acid",
+            "objective": "Build hydrochloric acid",
+            "hint": "HCl"
+        },
+        {
+            "id": "level-7",
+            "themeId": "acids-bases",
+            "targetCompoundId": "sodium-hydroxide",
+            "objective": "Build sodium hydroxide",
+            "hint": "NaOH"
+        },
+        {
+            "id": "level-8",
+            "themeId": "oxides",
+            "targetCompoundId": "sodium-oxide",
+            "objective": "Build sodium oxide",
+            "hint": "Na2O"
+        },
+        {
+            "id": "level-9",
+            "themeId": "oxides",
+            "targetCompoundId": "hydrogen-peroxide",
+            "objective": "Build hydrogen peroxide",
+            "hint": "H2O2"
+        },
+        {
+            "id": "level-10",
+            "themeId": "oxides",
+            "targetCompoundId": "sodium-peroxide",
+            "objective": "Build sodium peroxide",
+            "hint": "Na2O2"
+        }
+    ]
+}
