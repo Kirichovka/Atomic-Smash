@@ -2,12 +2,54 @@
     box-sizing: border-box;
 }
 
+:root {
+    --color-bg-app: #f5f7fb;
+    --color-screen-radial: rgba(45, 108, 223, 0.12);
+    --color-screen-start: #f8fbff;
+    --color-screen-end: #eef4ff;
+    --color-surface-primary: rgba(255, 255, 255, 0.92);
+    --color-surface-panel: rgba(255, 255, 255, 0.95);
+    --color-surface-panel-strong: rgba(255, 255, 255, 0.96);
+    --color-surface-solid: #ffffff;
+    --color-surface-soft: #f7faff;
+    --color-surface-visual-start: #f8fbff;
+    --color-surface-visual-end: #edf4ff;
+    --color-border-soft: #d0dceb;
+    --color-border-default: #d0d7e2;
+    --color-border-strong: #c9d4e5;
+    --color-border-grid: #d7deea;
+    --color-border-visual: #d7e1ef;
+    --color-border-visual-soft: #d8e1ef;
+    --color-text-brand: #16325c;
+    --color-text-primary: #334155;
+    --color-text-muted: #4b648b;
+    --color-text-subtle: #64748b;
+    --color-text-dark: #0f172a;
+    --color-accent: #2d6cdf;
+    --color-accent-strong: #1d4ed8;
+    --color-shadow-strong: rgba(15, 23, 42, 0.08);
+    --color-shadow-soft: rgba(15, 23, 42, 0.06);
+    --color-shadow-modal: rgba(15, 23, 42, 0.24);
+    --color-overlay: rgba(15, 23, 42, 0.62);
+    --color-grid-line: rgba(0, 0, 0, 0.03);
+    --palette-surface: #eef4ff;
+    --palette-surface-strong: #eaf2ff;
+    --palette-node-surface: #d9e6ff;
+    --palette-border: #b8c2d1;
+    --palette-node-border: #8ea2c0;
+    --palette-selected-ring: rgba(45, 108, 223, 0.15);
+    --connector-fill: var(--color-accent-strong);
+    --connector-border: #ffffff;
+    --wire-solid: #0f172a;
+    --wire-temp: #1e293b;
+}
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     min-height: 100vh;
     overflow: hidden;
-    background: #f5f7fb;
+    background: var(--color-bg-app);
 }
 
 .hidden {
@@ -25,8 +67,8 @@ body {
     overflow: auto;
     padding: 36px;
     background:
-        radial-gradient(circle at top left, rgba(45, 108, 223, 0.12), transparent 32%),
-        linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+        radial-gradient(circle at top left, var(--color-screen-radial), transparent 32%),
+        linear-gradient(180deg, var(--color-screen-start) 0%, var(--color-screen-end) 100%);
 }
 
 #game-screen {
@@ -58,7 +100,7 @@ body {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .screen-hero h1,
@@ -66,14 +108,14 @@ body {
     margin: 10px 0 8px;
     font-size: 44px;
     line-height: 1.05;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .screen-hero p,
 .theme-hero p {
     margin: 0;
     font-size: 18px;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .screen-actions {
@@ -90,10 +132,10 @@ body {
 
 .menu-card {
     padding: 24px;
-    border: 1px solid #d0dceb;
+    border: 1px solid var(--color-border-soft);
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 16px 42px rgba(15, 23, 42, 0.08);
+    background: var(--color-surface-primary);
+    box-shadow: 0 16px 42px var(--color-shadow-strong);
 }
 
 .menu-card-kicker {
@@ -101,14 +143,14 @@ body {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .menu-card-title {
     margin-top: 10px;
     font-size: 26px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .menu-card-description {
@@ -116,14 +158,14 @@ body {
     min-height: 72px;
     font-size: 15px;
     line-height: 1.55;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .menu-card-meta {
     margin-top: 14px;
     min-height: 20px;
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-subtle);
 }
 
 .menu-card button {
@@ -139,21 +181,21 @@ body {
 
 .theme-card {
     padding: 20px;
-    border: 1px solid #d0dceb;
+    border: 1px solid var(--color-border-soft);
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 12px 34px var(--color-shadow-soft);
 }
 
 .theme-card.active {
-    border-color: #2d6cdf;
+    border-color: var(--color-accent);
     box-shadow: 0 16px 36px rgba(45, 108, 223, 0.16);
 }
 
 .theme-card-name {
     font-size: 24px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .theme-card-description {
@@ -161,20 +203,20 @@ body {
     min-height: 64px;
     font-size: 14px;
     line-height: 1.5;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .theme-card-progress {
     margin-top: 16px;
     font-size: 13px;
     font-weight: 700;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .theme-card-meta {
     margin-top: 6px;
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-subtle);
 }
 
 .theme-card button {
@@ -185,10 +227,10 @@ body {
 .journal-section {
     margin-top: 26px;
     padding: 22px;
-    border: 1px solid #d0dceb;
+    border: 1px solid var(--color-border-soft);
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 16px 42px rgba(15, 23, 42, 0.06);
+    background: var(--color-surface-primary);
+    box-shadow: 0 16px 42px var(--color-shadow-soft);
 }
 
 .journal-section:first-of-type {
@@ -205,7 +247,7 @@ body {
 
 .journal-count {
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-subtle);
 }
 
 .journal-grid {
@@ -217,11 +259,11 @@ body {
 .journal-card {
     width: 100%;
     padding: 16px;
-    border: 1px solid #c9d4e5;
+    border: 1px solid var(--color-border-strong);
     border-radius: 18px;
-    background: #f7faff;
+    background: var(--color-surface-soft);
     text-align: left;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .journal-card.locked {
@@ -237,40 +279,40 @@ body {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .journal-card-title {
     margin-top: 8px;
     font-size: 22px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .journal-card-subtitle {
     margin-top: 6px;
     font-size: 14px;
     font-weight: 700;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .journal-card-description {
     margin-top: 10px;
     font-size: 13px;
     line-height: 1.55;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .journal-card-index {
     margin-top: 12px;
     font-size: 12px;
-    color: #64748b;
+    color: var(--color-text-subtle);
 }
 
 #sidebar {
     width: 260px;
-    border-right: 1px solid #d0d7e2;
-    background: #ffffff;
+    border-right: 1px solid var(--color-border-default);
+    background: var(--color-surface-solid);
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -293,9 +335,9 @@ body {
     user-select: none;
     cursor: grab;
     padding: 12px;
-    border: 1px solid #b8c2d1;
+    border: 1px solid var(--palette-border);
     border-radius: 10px;
-    background: #eef4ff;
+    background: var(--palette-surface);
     text-align: center;
     font-weight: bold;
 }
@@ -305,8 +347,8 @@ body {
 }
 
 .element-template.selected {
-    border-color: #2d6cdf;
-    box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.15);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--palette-selected-ring);
 }
 
 #workspace {
@@ -322,8 +364,8 @@ body {
     left: 12px;
     right: 12px;
     min-height: 88px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #d0d7e2;
+    background: var(--color-surface-panel);
+    border: 1px solid var(--color-border-default);
     border-radius: 14px;
     z-index: 20;
     display: flex;
@@ -341,7 +383,7 @@ body {
 #level-indicator {
     font-size: 13px;
     font-weight: 700;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 #task {
@@ -351,7 +393,7 @@ body {
 
 #hint {
     font-size: 14px;
-    color: #64748b;
+    color: var(--color-text-subtle);
 }
 
 #controls {
@@ -366,7 +408,7 @@ button {
     padding: 10px 16px;
     cursor: pointer;
     font-size: 14px;
-    background: #2d6cdf;
+    background: var(--color-accent);
     color: white;
 }
 
@@ -376,7 +418,7 @@ button:disabled {
 }
 
 button.secondary {
-    background: #64748b;
+    background: var(--color-text-subtle);
 }
 
 #result {
@@ -389,11 +431,11 @@ button.secondary {
     position: absolute;
     inset: 110px 12px 156px 12px;
     background:
-        linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
     background-size: 32px 32px;
     touch-action: none;
-    border: 1px solid #d7deea;
+    border: 1px solid var(--color-border-grid);
     border-radius: 18px;
     overflow: visible;
 }
@@ -412,9 +454,9 @@ button.secondary {
     position: absolute;
     width: 110px;
     height: 64px;
-    border: 1px solid #8ea2c0;
+    border: 1px solid var(--palette-node-border);
     border-radius: 14px;
-    background: #eaf2ff;
+    background: var(--palette-surface-strong);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
@@ -444,8 +486,8 @@ button.secondary {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #1d4ed8;
-    border: 2px solid #ffffff;
+    background: var(--connector-fill);
+    border: 2px solid var(--connector-border);
     cursor: crosshair;
     touch-action: none;
 }
@@ -486,9 +528,9 @@ button.secondary {
     bottom: 12px;
     min-height: 132px;
     padding: 16px;
-    border: 1px solid #d0d7e2;
+    border: 1px solid var(--color-border-default);
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.96);
+    background: var(--color-surface-panel-strong);
     z-index: 15;
 }
 
@@ -507,10 +549,10 @@ button.secondary {
 .compound-card {
     min-width: 140px;
     padding: 12px 14px;
-    border: 1px solid #c9d4e5;
+    border: 1px solid var(--color-border-strong);
     border-radius: 14px;
-    background: #eef4ff;
-    color: #16325c;
+    background: var(--palette-surface);
+    color: var(--color-text-brand);
 }
 
 .compound-card.clickable {
@@ -525,11 +567,11 @@ button.secondary {
 
 .compound-name {
     font-size: 13px;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .empty-state {
-    color: #64748b;
+    color: var(--color-text-subtle);
     font-size: 14px;
 }
 
@@ -540,15 +582,15 @@ button.secondary {
 #element-card {
     min-height: 120px;
     padding: 12px;
-    border: 1px solid #d0d7e2;
+    border: 1px solid var(--color-border-default);
     border-radius: 14px;
-    background: #f8fbff;
+    background: var(--color-surface-visual-start);
 }
 
 .element-card-symbol {
     font-size: 28px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .element-card-name {
@@ -562,14 +604,14 @@ button.secondary {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .element-card-description {
     margin-top: 10px;
     font-size: 13px;
     line-height: 1.45;
-    color: #4b648b;
+    color: var(--color-text-muted);
 }
 
 .modal.hidden {
@@ -585,7 +627,7 @@ button.secondary {
 .modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.62);
+    background: var(--color-overlay);
 }
 
 .modal-dialog {
@@ -594,21 +636,21 @@ button.secondary {
     overflow: auto;
     padding: 28px;
     border-radius: 24px;
-    background: #ffffff;
-    box-shadow: 0 20px 80px rgba(15, 23, 42, 0.24);
+    background: var(--color-surface-solid);
+    box-shadow: 0 20px 80px var(--color-shadow-modal);
 }
 
 .modal-close {
     position: absolute;
     top: 18px;
     right: 18px;
-    background: #16325c;
+    background: var(--color-text-brand);
 }
 
 .element-modal-symbol {
     font-size: 80px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .element-modal-name {
@@ -622,7 +664,7 @@ button.secondary {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .element-modal-description {
@@ -630,28 +672,28 @@ button.secondary {
     max-width: 760px;
     font-size: 18px;
     line-height: 1.6;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .compound-modal-kicker {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .compound-modal-title {
     margin-top: 10px;
     font-size: 34px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .compound-modal-formula {
     margin-top: 10px;
     font-size: 64px;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--color-text-dark);
 }
 
 .compound-modal-description {
@@ -659,21 +701,21 @@ button.secondary {
     max-width: 760px;
     font-size: 18px;
     line-height: 1.6;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .help-modal-kicker {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .help-modal-title {
     margin-top: 10px;
     font-size: 32px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .help-modal-description {
@@ -681,15 +723,15 @@ button.secondary {
     max-width: 760px;
     font-size: 17px;
     line-height: 1.6;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .help-visual {
     margin-top: 24px;
     padding: 20px;
-    border: 1px solid #d8e1ef;
+    border: 1px solid var(--color-border-visual-soft);
     border-radius: 20px;
-    background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+    background: linear-gradient(180deg, var(--color-surface-visual-start) 0%, var(--color-surface-visual-end) 100%);
 }
 
 .help-visual svg {
@@ -702,14 +744,14 @@ button.secondary {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .theme-complete-title {
     margin-top: 10px;
     font-size: 34px;
     font-weight: 700;
-    color: #16325c;
+    color: var(--color-text-brand);
 }
 
 .theme-complete-description {
@@ -717,15 +759,15 @@ button.secondary {
     max-width: 780px;
     font-size: 18px;
     line-height: 1.6;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .theme-complete-panel {
     margin-top: 22px;
     padding: 20px;
-    border: 1px solid #d7e1ef;
+    border: 1px solid var(--color-border-visual);
     border-radius: 20px;
-    background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+    background: linear-gradient(180deg, var(--color-surface-visual-start) 0%, var(--color-surface-visual-end) 100%);
 }
 
 .theme-complete-panel-title {
@@ -733,14 +775,14 @@ button.secondary {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2d6cdf;
+    color: var(--color-accent);
 }
 
 .theme-complete-panel-text {
     margin-top: 10px;
     font-size: 16px;
     line-height: 1.6;
-    color: #334155;
+    color: var(--color-text-primary);
 }
 
 .theme-complete-pill-list {
@@ -752,10 +794,10 @@ button.secondary {
 
 .theme-complete-pill {
     padding: 10px 14px;
-    border: 1px solid #c9d4e5;
+    border: 1px solid var(--color-border-strong);
     border-radius: 999px;
-    background: #ffffff;
-    color: #16325c;
+    background: var(--color-surface-solid);
+    color: var(--color-text-brand);
     font-size: 14px;
     font-weight: 700;
 }
@@ -764,8 +806,8 @@ button.secondary {
     margin-top: 18px;
     padding: 16px 18px;
     border-radius: 16px;
-    background: #16325c;
-    color: #ffffff;
+    background: var(--color-text-brand);
+    color: var(--color-surface-solid);
     font-size: 15px;
     line-height: 1.55;
 }
@@ -780,14 +822,14 @@ button.secondary {
 }
 
 .help-node-circle {
-    fill: #d9e6ff;
-    stroke: #2d6cdf;
+    fill: var(--palette-node-surface);
+    stroke: var(--color-accent);
     stroke-width: 4;
     animation: pulse-help-node 1.2s ease-in-out infinite;
 }
 
 .help-node-label {
-    fill: #16325c;
+    fill: var(--color-text-brand);
     font-size: 28px;
     font-weight: 700;
     text-anchor: middle;

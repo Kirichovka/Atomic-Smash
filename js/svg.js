@@ -10,6 +10,7 @@ export function syncConnectionsLayer(svg, mixZone) {
 export function createSvgLine(stroke, dashed = false) {
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("stroke", stroke);
+    line.style.stroke = stroke;
     line.setAttribute("stroke-width", "3");
     line.setAttribute("stroke-linecap", "round");
 

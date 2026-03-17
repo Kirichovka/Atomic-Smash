@@ -5,6 +5,6 @@ initGame().catch(error => {
 
     const result = document.getElementById("result");
     if (result) {
-        result.textContent = "Ошибка загрузки игры";
+        result.textContent = "Game failed to load.";
     }
 });
