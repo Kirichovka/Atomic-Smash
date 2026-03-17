@@ -43,6 +43,7 @@ export async function initGame() {
         refs,
         state,
         onOpenElementModal: modalController.openElementModal,
+        onQuickAddElement: addElementToBoard,
         onSelectElement: selectElement
     });
 
@@ -104,7 +105,15 @@ export async function initGame() {
             return;
         }
 
-        getActiveMechanic().spawnElement?.(selectedSymbol);
+        addElementToBoard(selectedSymbol);
+    }
+
+    function addElementToBoard(symbol) {
+        if (!symbol) {
+            return;
+        }
+
+        getActiveMechanic().spawnElement?.(symbol);
         persistCurrentState();
     }
 

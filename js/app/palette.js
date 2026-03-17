@@ -1,6 +1,12 @@
 import { getAvailableElements, getSelectedElement } from "./state.js";
 
-export function createPaletteController({ refs, state, onOpenElementModal, onSelectElement }) {
+export function createPaletteController({
+    refs,
+    state,
+    onOpenElementModal,
+    onQuickAddElement,
+    onSelectElement
+}) {
     const prefersCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
 
     function bind() {
@@ -29,13 +35,15 @@ export function createPaletteController({ refs, state, onOpenElementModal, onSel
             }
 
             const symbol = template.dataset.element;
-            const wasSelected = symbol === state.ui.selectedElementSymbol;
             onSelectElement(symbol);
 
             const element = getAvailableElements(state).find(item => item.symbol === symbol) ?? null;
-            if (!prefersCoarsePointer || wasSelected) {
-                onOpenElementModal(element);
+            if (prefersCoarsePointer) {
+                onQuickAddElement?.(symbol);
+                return;
             }
+
+            onOpenElementModal(element);
         });
     }
 
