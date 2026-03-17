@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic Smash Prototype</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="menu">
+    <section id="menu-screen" class="app-screen">
+        <div class="screen-shell">
+            <div class="screen-hero">
+                <div class="theme-kicker">Atomic Smash</div>
+                <h1>Main Menu</h1>
+                <p>Choose where you want to go: themed missions, your discovery journal, or back into the current experiment.</p>
+            </div>
+
+            <div class="menu-grid">
+                <article class="menu-card">
+                    <div class="menu-card-kicker">Play</div>
+                    <div class="menu-card-title">Theme Missions</div>
+                    <div class="menu-card-description">Pick a chemistry topic like Basic or Oxides and solve its task chain.</div>
+                    <div id="menu-theme-progress" class="menu-card-meta"></div>
+                    <button id="menu-themes-btn" type="button">Open Themes</button>
+                </article>
+
+                <article class="menu-card">
+                    <div class="menu-card-kicker">Archive</div>
+                    <div class="menu-card-title">Lab Journal</div>
+                    <div class="menu-card-description">Reopen discovered compounds and read every unlocked element again.</div>
+                    <div id="menu-journal-progress" class="menu-card-meta"></div>
+                    <button id="menu-journal-btn" type="button">Open Journal</button>
+                </article>
+
+                <article class="menu-card">
+                    <div class="menu-card-kicker">Resume</div>
+                    <div class="menu-card-title">Current Theme</div>
+                    <div class="menu-card-description">Jump straight back into the active board and continue your current theme.</div>
+                    <div id="menu-current-theme" class="menu-card-meta"></div>
+                    <button id="menu-continue-btn" type="button">Continue Playing</button>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>
