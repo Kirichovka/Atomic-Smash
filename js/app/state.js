@@ -1,4 +1,5 @@
 export const DEFAULT_MECHANIC_ID = "connection-lab";
+const CONNECTOR_POSITIONS = new Set(["left", "right", "top", "bottom"]);
 
 export function createState(gameData) {
     const compounds = gameData.compounds ?? [];
@@ -25,6 +26,8 @@ export function createState(gameData) {
         },
         board: {
             nodeIdCounter: 0,
+            savedNodes: [],
+            savedConnections: [],
             nodes: new Map(),
             connections: [],
             dragElementType: null,
@@ -35,6 +38,106 @@ export function createState(gameData) {
             currentWire: null,
             startConnector: null,
             connectionPointerId: null
+        }
+    };
+}
+
+export function hydrateState(state, snapshot) {
+    if (!snapshot || typeof snapshot !== "object") {
+        return;
+    }
+
+    const validThemeIds = new Set(state.catalog.themes.map(theme => theme.id));
+    const validCompoundIds = new Set(state.catalog.compoundsById.keys());
+    const validLevelIds = new Set(state.catalog.levels.map(level => level.id));
+    const validElementSymbols = new Set(state.catalog.elements.map(element => element.symbol));
+
+    if (validElementSymbols.has(snapshot.ui?.selectedElementSymbol)) {
+        state.ui.selectedElementSymbol = snapshot.ui.selectedElementSymbol;
+    }
+
+    const discoveredIds = Array.isArray(snapshot.progress?.discoveryHistory)
+        ? snapshot.progress.discoveryHistory.filter(compoundId => validCompoundIds.has(compoundId))
+        : [];
+
+    state.progress.discoveryHistory = [...new Set(discoveredIds)];
+    state.progress.discoveredCompounds = new Set(state.progress.discoveryHistory);
+    state.progress.completedLevelIds = new Set(
+        Array.isArray(snapshot.progress?.completedLevelIds)
+            ? snapshot.progress.completedLevelIds.filter(levelId => validLevelIds.has(levelId))
+            : []
+    );
+    state.progress.currentThemeId = validThemeIds.has(snapshot.progress?.currentThemeId)
+        ? snapshot.progress.currentThemeId
+        : null;
+    state.progress.failedAttempts = Number.isFinite(snapshot.progress?.failedAttempts)
+        ? Math.max(0, Number(snapshot.progress.failedAttempts))
+        : 0;
+    state.progress.bonusUnlockShown = Boolean(snapshot.progress?.bonusUnlockShown);
+
+    const savedNodes = Array.isArray(snapshot.board?.savedNodes)
+        ? snapshot.board.savedNodes.filter(node =>
+            typeof node?.id === "string" &&
+            validElementSymbols.has(node.symbol) &&
+            Number.isFinite(node.x) &&
+            Number.isFinite(node.y)
+        ).map(node => ({
+            id: node.id,
+            symbol: node.symbol,
+            x: Number(node.x),
+            y: Number(node.y)
+        }))
+        : [];
+    const nodeIds = new Set(savedNodes.map(node => node.id));
+    const savedConnections = Array.isArray(snapshot.board?.savedConnections)
+        ? snapshot.board.savedConnections.filter(connection =>
+            typeof connection?.fromNodeId === "string" &&
+            typeof connection?.toNodeId === "string" &&
+            nodeIds.has(connection.fromNodeId) &&
+            nodeIds.has(connection.toNodeId) &&
+            CONNECTOR_POSITIONS.has(connection.fromPosition) &&
+            CONNECTOR_POSITIONS.has(connection.toPosition)
+        ).map(connection => ({
+            fromNodeId: connection.fromNodeId,
+            fromPosition: connection.fromPosition,
+            toNodeId: connection.toNodeId,
+            toPosition: connection.toPosition
+        }))
+        : [];
+
+    state.board.savedNodes = savedNodes;
+    state.board.savedConnections = savedConnections;
+    state.board.nodeIdCounter = Number.isFinite(snapshot.board?.nodeIdCounter)
+        ? Math.max(Number(snapshot.board.nodeIdCounter), getMaxNodeId(savedNodes))
+        : getMaxNodeId(savedNodes);
+}
+
+export function createPersistedStateSnapshot(state) {
+    return {
+        ui: {
+            selectedElementSymbol: state.ui.selectedElementSymbol
+        },
+        progress: {
+            discoveryHistory: [...state.progress.discoveryHistory],
+            completedLevelIds: [...state.progress.completedLevelIds],
+            currentThemeId: state.progress.currentThemeId,
+            failedAttempts: state.progress.failedAttempts,
+            bonusUnlockShown: state.progress.bonusUnlockShown
+        },
+        board: {
+            nodeIdCounter: state.board.nodeIdCounter,
+            savedNodes: state.board.savedNodes.map(node => ({
+                id: node.id,
+                symbol: node.symbol,
+                x: node.x,
+                y: node.y
+            })),
+            savedConnections: state.board.savedConnections.map(connection => ({
+                fromNodeId: connection.fromNodeId,
+                fromPosition: connection.fromPosition,
+                toNodeId: connection.toNodeId,
+                toPosition: connection.toPosition
+            }))
         }
     };
 }
@@ -106,4 +209,15 @@ function buildCompoundsByIngredients(compounds) {
     });
 
     return map;
+}
+
+function getMaxNodeId(nodes) {
+    return nodes.reduce((maxId, node) => {
+        const match = /^node-(\d+)$/.exec(node.id);
+        if (!match) {
+            return maxId;
+        }
+
+        return Math.max(maxId, Number(match[1]));
+    }, 0);
 }

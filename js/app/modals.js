@@ -7,29 +7,29 @@ export function createModalController({
     onThemeCompleteClosed
 }) {
     function bind() {
-        refs.elementModalClose.addEventListener("click", closeElementModal);
-        refs.elementModal.addEventListener("click", event => {
+        bindIfPresent(refs.elementModalClose, "click", closeElementModal);
+        bindIfPresent(refs.elementModal, "click", event => {
             if (event.target.closest("[data-close-modal='true']")) {
                 closeElementModal();
             }
         });
 
-        refs.compoundModalClose.addEventListener("click", closeCompoundModal);
-        refs.compoundModal.addEventListener("click", event => {
+        bindIfPresent(refs.compoundModalClose, "click", closeCompoundModal);
+        bindIfPresent(refs.compoundModal, "click", event => {
             if (event.target.closest("[data-close-compound-modal='true']")) {
                 closeCompoundModal();
             }
         });
 
-        refs.helpModalClose.addEventListener("click", closeHelpModal);
-        refs.helpModal.addEventListener("click", event => {
+        bindIfPresent(refs.helpModalClose, "click", closeHelpModal);
+        bindIfPresent(refs.helpModal, "click", event => {
             if (event.target.closest("[data-close-help-modal='true']")) {
                 closeHelpModal();
             }
         });
 
-        refs.themeCompleteClose.addEventListener("click", closeThemeCompleteModal);
-        refs.themeCompleteModal.addEventListener("click", event => {
+        bindIfPresent(refs.themeCompleteClose, "click", closeThemeCompleteModal);
+        bindIfPresent(refs.themeCompleteModal, "click", event => {
             if (event.target.closest("[data-close-theme-complete-modal='true']")) {
                 closeThemeCompleteModal();
             }
@@ -37,7 +37,7 @@ export function createModalController({
     }
 
     function openElementModal(element) {
-        if (!element) {
+        if (!element || !refs.elementModalContent || !refs.elementModal) {
             return;
         }
 
@@ -69,7 +69,7 @@ export function createModalController({
     }
 
     function openCompoundModal(compound) {
-        if (!compound) {
+        if (!compound || !refs.compoundModalContent || !refs.compoundModal) {
             return;
         }
 
@@ -101,7 +101,7 @@ export function createModalController({
 
     function openHelpModal() {
         const currentLevel = getCurrentLevel(state);
-        if (!currentLevel) {
+        if (!currentLevel || !refs.helpModalContent || !refs.helpModal) {
             return;
         }
 
@@ -138,7 +138,7 @@ export function createModalController({
     }
 
     function openThemeCompleteModal(theme, options = {}) {
-        if (!theme) {
+        if (!theme || !refs.themeCompleteContent || !refs.themeCompleteModal) {
             return;
         }
 
@@ -240,11 +240,25 @@ function createThemeCompletePillList(labels) {
 }
 
 function openModal(modal) {
+    if (!modal) {
+        return;
+    }
+
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
 }
 
 function closeModal(modal) {
+    if (!modal) {
+        return;
+    }
+
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
+}
+
+function bindIfPresent(element, eventName, handler) {
+    if (element) {
+        element.addEventListener(eventName, handler);
+    }
 }

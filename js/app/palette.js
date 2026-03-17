@@ -2,6 +2,10 @@ import { getAvailableElements, getSelectedElement } from "./state.js";
 
 export function createPaletteController({ refs, state, onOpenElementModal, onSelectElement }) {
     function bind() {
+        if (!refs.elementList) {
+            return;
+        }
+
         refs.elementList.addEventListener("dragstart", event => {
             const template = event.target.closest(".element-template");
             if (!template) {
@@ -36,6 +40,10 @@ export function createPaletteController({ refs, state, onOpenElementModal, onSel
     }
 
     function renderAvailableElements() {
+        if (!refs.elementList) {
+            return;
+        }
+
         const availableElements = getAvailableElements(state);
         refs.elementList.replaceChildren();
 
@@ -60,6 +68,10 @@ export function createPaletteController({ refs, state, onOpenElementModal, onSel
     }
 
     function renderSelectedElementCard() {
+        if (!refs.elementCard) {
+            return;
+        }
+
         refs.elementCard.replaceChildren();
 
         const element = getSelectedElement(state);

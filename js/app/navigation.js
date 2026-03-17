@@ -5,9 +5,18 @@ import {
     getLevelsForTheme
 } from "./state.js";
 
+const PAGE_ROUTES = {
+    game: "game.html",
+    journal: "journal.html",
+    menu: "index.html",
+    themes: "themes.html"
+};
+
 export function createNavigationController({
     refs,
     state,
+    currentPage,
+    onBeforeNavigate,
     onStartTheme,
     onSelectElement,
     onOpenCompoundModal,
@@ -17,26 +26,23 @@ export function createNavigationController({
     onOpenJournalScreen,
     onResumeCurrentTheme
 }) {
-    const screens = [
-        refs.menuScreen,
-        refs.themeScreen,
-        refs.journalScreen,
-        refs.gameScreen
-    ];
-
     function bind() {
-        refs.menuThemesButton.addEventListener("click", onOpenThemeSelection);
-        refs.menuJournalButton.addEventListener("click", onOpenJournalScreen);
-        refs.menuContinueButton.addEventListener("click", onResumeCurrentTheme);
-        refs.themeMenuButton.addEventListener("click", onOpenMainMenu);
-        refs.themeJournalButton.addEventListener("click", onOpenJournalScreen);
-        refs.journalMenuButton.addEventListener("click", onOpenMainMenu);
-        refs.journalThemesButton.addEventListener("click", onOpenThemeSelection);
-        refs.menuButton.addEventListener("click", onOpenMainMenu);
-        refs.journalButton.addEventListener("click", onOpenJournalScreen);
+        bindIfPresent(refs.menuThemesButton, "click", onOpenThemeSelection);
+        bindIfPresent(refs.menuJournalButton, "click", onOpenJournalScreen);
+        bindIfPresent(refs.menuContinueButton, "click", onResumeCurrentTheme);
+        bindIfPresent(refs.themeMenuButton, "click", onOpenMainMenu);
+        bindIfPresent(refs.themeJournalButton, "click", onOpenJournalScreen);
+        bindIfPresent(refs.journalMenuButton, "click", onOpenMainMenu);
+        bindIfPresent(refs.journalThemesButton, "click", onOpenThemeSelection);
+        bindIfPresent(refs.menuButton, "click", onOpenMainMenu);
+        bindIfPresent(refs.journalButton, "click", onOpenJournalScreen);
     }
 
     function renderMenu() {
+        if (!refs.menuThemeProgress || !refs.menuJournalProgress || !refs.menuCurrentTheme || !refs.menuContinueButton) {
+            return;
+        }
+
         const completedThemes = state.catalog.themes.filter(theme =>
             getCompletedCountForTheme(state, theme.id) >= getLevelsForTheme(state, theme.id).length
         ).length;
@@ -59,6 +65,10 @@ export function createNavigationController({
     }
 
     function renderJournalCompounds() {
+        if (!refs.journalCompoundList || !refs.journalCompoundCount) {
+            return;
+        }
+
         refs.journalCompoundList.replaceChildren();
         refs.journalCompoundCount.textContent = `${state.progress.discoveryHistory.length} discovered`;
 
@@ -107,6 +117,10 @@ export function createNavigationController({
     }
 
     function renderJournalElements() {
+        if (!refs.journalElementList || !refs.journalElementCount) {
+            return;
+        }
+
         refs.journalElementList.replaceChildren();
 
         const unlockedElements = getAvailableElements(state);
@@ -158,6 +172,10 @@ export function createNavigationController({
     }
 
     function renderThemeList() {
+        if (!refs.themeList) {
+            return;
+        }
+
         refs.themeList.replaceChildren();
 
         if (state.catalog.themes.length === 0) {
@@ -205,27 +223,30 @@ export function createNavigationController({
     }
 
     function showMenuScreen() {
-        setActiveScreen("menu", refs.menuScreen);
+        navigateTo("menu");
     }
 
     function showThemeScreen() {
-        setActiveScreen("themes", refs.themeScreen);
+        navigateTo("themes");
     }
 
     function showJournalScreen() {
-        setActiveScreen("journal", refs.journalScreen);
+        navigateTo("journal");
     }
 
     function showGameScreen() {
-        setActiveScreen("game", refs.gameScreen);
+        navigateTo("game");
     }
 
-    function setActiveScreen(screenName, activeScreen) {
-        state.ui.activeScreen = screenName;
+    function navigateTo(pageName) {
+        state.ui.activeScreen = pageName;
 
-        screens.forEach(screen => {
-            screen.classList.toggle("hidden", screen !== activeScreen);
-        });
+        if (currentPage === pageName) {
+            return;
+        }
+
+        onBeforeNavigate?.();
+        window.location.assign(PAGE_ROUTES[pageName]);
     }
 
     return {
@@ -238,6 +259,12 @@ export function createNavigationController({
         showMenuScreen,
         showThemeScreen
     };
+}
+
+function bindIfPresent(element, eventName, handler) {
+    if (element) {
+        element.addEventListener(eventName, handler);
+    }
 }
 
 function getThemeActionLabel(themeId, completedCount, totalCount, currentThemeId) {

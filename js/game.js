@@ -4,6 +4,7 @@ import { createNavigationController } from "./app/navigation.js";
 import { createPaletteController } from "./app/palette.js";
 import { createRefs } from "./app/refs.js";
 import { createMechanicsRegistry } from "./app/mechanics/index.js";
+import { loadStoredState, persistState } from "./app/storage.js";
 import {
     createState,
     getActiveMechanicId,
@@ -14,13 +15,19 @@ import {
     getCurrentTheme,
     getLevelsForTheme,
     hasUnlockedBonusElements,
+    hydrateState,
     isCurrentLevelTarget
 } from "./app/state.js";
 
 export async function initGame() {
     const gameData = await loadGameData();
     const refs = createRefs();
+    const currentPage = document.body.dataset.page ?? "menu";
     const state = createState(gameData);
+
+    hydrateState(state, loadStoredState());
+    state.ui.activeScreen = currentPage;
+
     const mechanicsRegistry = createMechanicsRegistry({ refs, state });
     const getActiveMechanic = () => mechanicsRegistry.get(getActiveMechanicId(state));
 
@@ -42,6 +49,8 @@ export async function initGame() {
     navigationController = createNavigationController({
         refs,
         state,
+        currentPage,
+        onBeforeNavigate: persistCurrentState,
         onStartTheme: startTheme,
         onSelectElement: selectElement,
         onOpenCompoundModal: modalController.openCompoundModal,
@@ -63,15 +72,26 @@ export async function initGame() {
     }
 
     refreshAllViews();
-    navigationController.showMenuScreen();
+    persistCurrentState();
 
+    window.addEventListener("beforeunload", persistCurrentState);
     window.addEventListener("resize", () => {
         getActiveMechanic().sync();
     });
 
     function bindGameplayControls() {
-        refs.mixButton.addEventListener("click", handleMixAttempt);
-        refs.clearButton.addEventListener("click", clearBoard);
+        if (refs.mixButton) {
+            refs.mixButton.addEventListener("click", handleMixAttempt);
+        }
+
+        if (refs.clearButton) {
+            refs.clearButton.addEventListener("click", clearBoard);
+        }
+    }
+
+    function persistCurrentState() {
+        getActiveMechanic().captureState?.();
+        persistState(state);
     }
 
     function handleMixAttempt() {
@@ -79,15 +99,21 @@ export async function initGame() {
 
         if (evaluation.status === "unknown") {
             registerFailedAttempt();
-            refs.result.textContent = "Unknown compound.";
+            if (refs.result) {
+                refs.result.textContent = "Unknown compound.";
+            }
+            persistCurrentState();
             return;
         }
 
         if (evaluation.status === "structure-mismatch") {
             registerFailedAttempt();
-            refs.result.textContent =
-                `The atoms are correct for ${evaluation.compound.formula}, ` +
-                "but the connection pattern is wrong.";
+            if (refs.result) {
+                refs.result.textContent =
+                    `The atoms are correct for ${evaluation.compound.formula}, ` +
+                    "but the connection pattern is wrong.";
+            }
+            persistCurrentState();
             return;
         }
 
@@ -96,6 +122,7 @@ export async function initGame() {
 
         if (isCurrentLevelTarget(state, compound)) {
             handleLevelComplete(compound);
+            persistCurrentState();
             return;
         }
 
@@ -103,18 +130,25 @@ export async function initGame() {
         if (currentLevel) {
             registerFailedAttempt();
             const targetCompound = getCompoundById(state, currentLevel.targetCompoundId);
-            refs.result.textContent =
-                `You built ${compound.formula} (${compound.name}), ` +
-                `but the current target is ${targetCompound?.formula ?? currentLevel.hint}.`;
+            if (refs.result) {
+                refs.result.textContent =
+                    `You built ${compound.formula} (${compound.name}), ` +
+                    `but the current target is ${targetCompound?.formula ?? currentLevel.hint}.`;
+            }
+            persistCurrentState();
             return;
         }
 
-        refs.result.textContent = `You built ${compound.formula} (${compound.name}).`;
+        if (refs.result) {
+            refs.result.textContent = `You built ${compound.formula} (${compound.name}).`;
+        }
+        persistCurrentState();
     }
 
     function selectElement(symbol) {
         state.ui.selectedElementSymbol = symbol;
         paletteController.render();
+        persistCurrentState();
     }
 
     function refreshAllViews() {
@@ -124,6 +158,7 @@ export async function initGame() {
         paletteController.render();
         renderCurrentLevel();
         renderDiscoveredCompounds();
+        getActiveMechanic().sync();
     }
 
     function refreshMetaViews() {
@@ -133,13 +168,11 @@ export async function initGame() {
     }
 
     function openThemeSelection() {
-        navigationController.renderMenu();
         navigationController.renderThemeList();
         navigationController.showThemeScreen();
     }
 
     function openJournalScreen() {
-        navigationController.renderMenu();
         navigationController.renderJournal();
         navigationController.showJournalScreen();
     }
@@ -157,8 +190,10 @@ export async function initGame() {
 
         renderCurrentLevel();
         paletteController.render();
+        renderDiscoveredCompounds();
         navigationController.showGameScreen();
         getActiveMechanic().sync();
+        persistCurrentState();
     }
 
     function startTheme(themeId) {
@@ -169,19 +204,24 @@ export async function initGame() {
         state.progress.currentThemeId = themeId;
         resetFailedAttempts();
         mechanicsRegistry.resetAll();
-        refs.result.textContent = "";
+        if (refs.result) {
+            refs.result.textContent = "";
+        }
 
         refreshMetaViews();
         paletteController.render();
         renderCurrentLevel();
+        persistCurrentState();
         navigationController.showGameScreen();
-        getActiveMechanic().sync();
     }
 
     function clearBoard() {
         resetFailedAttempts();
         mechanicsRegistry.resetAll();
-        refs.result.textContent = "";
+        if (refs.result) {
+            refs.result.textContent = "";
+        }
+        persistCurrentState();
     }
 
     function registerFailedAttempt() {
@@ -219,6 +259,10 @@ export async function initGame() {
     }
 
     function renderDiscoveredCompounds() {
+        if (!refs.compoundList) {
+            return;
+        }
+
         refs.compoundList.replaceChildren();
 
         if (state.progress.discoveredCompounds.size === 0) {
@@ -256,6 +300,10 @@ export async function initGame() {
     }
 
     function renderCurrentLevel() {
+        if (!refs.levelIndicator || !refs.task || !refs.hint) {
+            return;
+        }
+
         const theme = getCurrentTheme(state);
 
         if (!theme) {
@@ -305,9 +353,11 @@ export async function initGame() {
         if (hadRemainingThemeLevels) {
             refreshMetaViews();
             renderCurrentLevel();
-            refs.result.textContent =
-                `${currentTheme.name} task ${completedLevelNumber} complete! ` +
-                `You built ${compound.formula} (${compound.name}).`;
+            if (refs.result) {
+                refs.result.textContent =
+                    `${currentTheme.name} task ${completedLevelNumber} complete! ` +
+                    `You built ${compound.formula} (${compound.name}).`;
+            }
             return;
         }
 
@@ -328,9 +378,10 @@ export async function initGame() {
         state.progress.currentThemeId = null;
         refreshMetaViews();
         renderCurrentLevel();
-        refs.result.textContent = "";
+        if (refs.result) {
+            refs.result.textContent = "";
+        }
         modalController.closeCompoundModal();
-        navigationController.showThemeScreen();
         modalController.openThemeCompleteModal(currentTheme, { bonusUnlockMessage });
     }
 

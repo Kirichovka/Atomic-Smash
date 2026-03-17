@@ -14,7 +14,13 @@ export function createConnectionLabMechanic({ refs, state }) {
     const board = state.board;
 
     function init() {
+        if (!isMounted()) {
+            return;
+        }
+
         bindWorkspaceInteractions();
+        restore();
+        sync();
     }
 
     function bindWorkspaceInteractions() {
@@ -44,6 +50,10 @@ export function createConnectionLabMechanic({ refs, state }) {
     }
 
     function evaluate() {
+        if (!isMounted()) {
+            return { status: "unknown" };
+        }
+
         const nodeEntries = [...board.nodes.entries()].map(([id, node]) => ({
             id,
             symbol: node.dataset.symbol
@@ -71,7 +81,19 @@ export function createConnectionLabMechanic({ refs, state }) {
         return { status: "unknown" };
     }
 
-    function reset() {
+    function reset(options = {}) {
+        const { preserveSavedState = false } = options;
+
+        clearRuntimeBoard();
+
+        if (!preserveSavedState) {
+            board.savedNodes = [];
+            board.savedConnections = [];
+            board.nodeIdCounter = 0;
+        }
+    }
+
+    function clearRuntimeBoard() {
         [...board.nodes.values()].forEach(node => node.remove());
         board.nodes.clear();
 
@@ -83,8 +105,67 @@ export function createConnectionLabMechanic({ refs, state }) {
     }
 
     function sync() {
+        if (!isMounted()) {
+            return;
+        }
+
         syncConnectionsLayer(refs.svg, refs.mixZone);
         redrawConnections(board.connections, board.nodes, refs.svg);
+    }
+
+    function captureState() {
+        if (!isMounted()) {
+            return {
+                nodeIdCounter: board.nodeIdCounter,
+                savedConnections: board.savedConnections,
+                savedNodes: board.savedNodes
+            };
+        }
+
+        board.savedNodes = [...board.nodes.values()].map(node => ({
+            id: node.dataset.id,
+            symbol: node.dataset.symbol,
+            x: getNodeLeft(node),
+            y: getNodeTop(node)
+        }));
+        board.savedConnections = board.connections.map(connection => ({
+            fromNodeId: connection.fromNodeId,
+            fromPosition: connection.fromPosition,
+            toNodeId: connection.toNodeId,
+            toPosition: connection.toPosition
+        }));
+
+        return {
+            nodeIdCounter: board.nodeIdCounter,
+            savedConnections: board.savedConnections,
+            savedNodes: board.savedNodes
+        };
+    }
+
+    function restore(snapshot = null) {
+        if (!isMounted()) {
+            return;
+        }
+
+        const boardSnapshot = snapshot ?? {
+            nodeIdCounter: board.nodeIdCounter,
+            savedConnections: board.savedConnections,
+            savedNodes: board.savedNodes
+        };
+
+        clearRuntimeBoard();
+        board.nodeIdCounter = Math.max(boardSnapshot.nodeIdCounter ?? 0, getMaxNodeId(boardSnapshot.savedNodes ?? []));
+
+        (boardSnapshot.savedNodes ?? []).forEach(node => {
+            createNode(node.symbol, node.x, node.y, { id: node.id, persist: false });
+        });
+
+        (boardSnapshot.savedConnections ?? []).forEach(connection => {
+            restoreConnection(connection);
+        });
+
+        captureState();
+        sync();
     }
 
     function createHelpVisual(compound) {
@@ -160,11 +241,18 @@ export function createConnectionLabMechanic({ refs, state }) {
         return structureMatchesBoard(compound.structure, nodeEntries, boardGraph);
     }
 
-    function createNode(symbol, x, y) {
+    function createNode(symbol, x, y, options = {}) {
+        if (!isMounted()) {
+            return null;
+        }
+
         const node = document.createElement("div");
         const label = document.createElement("span");
-        const id = `node-${++board.nodeIdCounter}`;
+        const requestedId = options.id ?? `node-${board.nodeIdCounter + 1}`;
+        const id = requestedId;
         const position = clampNodePosition(x, y);
+
+        board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
 
         node.className = "node";
         node.dataset.id = id;
@@ -189,6 +277,43 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         refs.mixZone.appendChild(node);
         board.nodes.set(id, node);
+
+        if (options.persist !== false) {
+            captureState();
+        }
+
+        return node;
+    }
+
+    function restoreConnection(connection) {
+        if (!isMounted()) {
+            return;
+        }
+
+        const fromNode = board.nodes.get(connection.fromNodeId);
+        const toNode = board.nodes.get(connection.toNodeId);
+        if (!fromNode || !toNode) {
+            return;
+        }
+
+        const fromConnector = fromNode.querySelector(`.connector.${connection.fromPosition}`);
+        const toConnector = toNode.querySelector(`.connector.${connection.toPosition}`);
+        if (!fromConnector || !toConnector) {
+            return;
+        }
+
+        const line = createSvgLine("var(--wire-solid)");
+        line.classList.add("connection-hitbox");
+        line.addEventListener("click", () => removeConnectionByLine(line));
+        refs.svg.appendChild(line);
+
+        board.connections.push({
+            fromNodeId: connection.fromNodeId,
+            fromPosition: connection.fromPosition,
+            toNodeId: connection.toNodeId,
+            toPosition: connection.toPosition,
+            line
+        });
     }
 
     function startMoveNode(event) {
@@ -263,7 +388,10 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         if (releasedNode && isNodeOutsideMixZone(getNodeLeft(releasedNode), getNodeTop(releasedNode))) {
             removeNode(releasedNode.dataset.id);
+            return;
         }
+
+        captureState();
     }
 
     function startConnection(event) {
@@ -343,9 +471,14 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         redrawConnections(board.connections, board.nodes, refs.svg);
         removeTemporaryWire();
+        captureState();
     }
 
     function getConnectionTargetAtPoint(clientX, clientY) {
+        if (!isMounted()) {
+            return null;
+        }
+
         const element = document.elementFromPoint(clientX, clientY);
 
         if (!element) {
@@ -396,9 +529,9 @@ export function createConnectionLabMechanic({ refs, state }) {
         );
         const order = structure.nodes
             .map((symbol, index) => ({
+                degree: patternAdjacency.get(index).size,
                 index,
-                symbol,
-                degree: patternAdjacency.get(index).size
+                symbol
             }))
             .sort((left, right) => right.degree - left.degree);
 
@@ -515,6 +648,7 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         board.connections[index].line.remove();
         board.connections.splice(index, 1);
+        captureState();
     }
 
     function removeNode(nodeId) {
@@ -533,6 +667,8 @@ export function createConnectionLabMechanic({ refs, state }) {
                 board.connections.splice(index, 1);
             }
         }
+
+        captureState();
     }
 
     function isNodeOutsideMixZone(x, y) {
@@ -555,12 +691,18 @@ export function createConnectionLabMechanic({ refs, state }) {
         );
     }
 
+    function isMounted() {
+        return Boolean(refs.workspace && refs.mixZone && refs.svg);
+    }
+
     return {
+        captureState,
         createHelpVisual,
         evaluate,
         id: "connection-lab",
         init,
         reset,
+        restore,
         sync
     };
 }
@@ -571,6 +713,15 @@ function getNodeLeft(node) {
 
 function getNodeTop(node) {
     return Number.parseFloat(node.style.top || "0");
+}
+
+function parseNodeIndex(nodeId) {
+    const match = /^node-(\d+)$/.exec(nodeId ?? "");
+    return match ? Number(match[1]) : 0;
+}
+
+function getMaxNodeId(nodes) {
+    return (nodes ?? []).reduce((maxValue, node) => Math.max(maxValue, parseNodeIndex(node.id)), 0);
 }
 
 function getHelpStructure(compound) {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic Smash Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="game">
+    <div id="game-screen" class="app-screen">
+        <aside id="sidebar" class="palette-sidebar">
+            <h2>Element Palette</h2>
+            <div id="element-list"></div>
+            <section id="element-info">
+                <div class="zone-title">Selected Element</div>
+                <div id="element-card">
+                    <div class="empty-state">Select an element to see its description.</div>
+                </div>
+            </section>
+        </aside>
+
+        <main id="workspace">
+            <div id="topbar">
+                <div id="task-panel">
+                    <div id="level-indicator"></div>
+                    <div id="task"></div>
+                    <div id="hint"></div>
+                </div>
+                <div id="controls">
+                    <button id="menu-btn" class="secondary" type="button">Menu</button>
+                    <button id="journal-btn" class="secondary" type="button">Journal</button>
+                    <button id="mix-btn" type="button">Mix</button>
+                    <button id="clear-btn" class="secondary" type="button">Clear Board</button>
+                    <div id="result"></div>
+                </div>
+            </div>
+
+            <div id="mix-zone">
+                <svg id="connections-layer" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+            </div>
+
+            <section id="compound-zone">
+                <div class="zone-title">Discovered Compounds</div>
+                <div id="compound-list">
+                    <div class="empty-state">No compounds discovered yet</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="element-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="element-modal-title">
+            <button id="element-modal-close" class="modal-close" type="button">Close</button>
+            <div id="element-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="compound-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-compound-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="compound-modal-title">
+            <button id="compound-modal-close" class="modal-close" type="button">Close</button>
+            <div id="compound-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-help-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
+            <button id="help-modal-close" class="modal-close" type="button">Close</button>
+            <div id="help-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="theme-complete-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-theme-complete-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="theme-complete-title">
+            <button id="theme-complete-close" class="modal-close" type="button">Back To Themes</button>
+            <div id="theme-complete-content"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>

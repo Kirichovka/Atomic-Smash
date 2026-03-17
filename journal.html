@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic Smash Journal</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body data-page="journal">
+    <section id="journal-screen" class="app-screen">
+        <div class="screen-shell">
+            <div class="screen-header">
+                <div class="screen-hero">
+                    <div class="theme-kicker">Lab Journal</div>
+                    <h1>Discovery History</h1>
+                    <p>Open every unlocked element again and revisit all compounds you have already discovered.</p>
+                </div>
+                <div class="screen-actions">
+                    <button id="journal-menu-btn" class="secondary" type="button">Menu</button>
+                    <button id="journal-themes-btn" type="button">Themes</button>
+                </div>
+            </div>
+
+            <section class="journal-section">
+                <div class="journal-section-header">
+                    <div>
+                        <div class="zone-title">Compound History</div>
+                        <div id="journal-compound-count" class="journal-count"></div>
+                    </div>
+                </div>
+                <div id="journal-compound-list" class="journal-grid">
+                    <div class="empty-state">No compounds discovered yet</div>
+                </div>
+            </section>
+
+            <section class="journal-section">
+                <div class="journal-section-header">
+                    <div>
+                        <div class="zone-title">Element Library</div>
+                        <div id="journal-element-count" class="journal-count"></div>
+                    </div>
+                </div>
+                <div id="journal-element-list" class="journal-grid"></div>
+            </section>
+        </div>
+    </section>
+
+    <div id="element-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="element-modal-title">
+            <button id="element-modal-close" class="modal-close" type="button">Close</button>
+            <div id="element-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="compound-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-compound-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="compound-modal-title">
+            <button id="compound-modal-close" class="modal-close" type="button">Close</button>
+            <div id="compound-modal-content"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>

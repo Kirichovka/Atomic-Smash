@@ -2,9 +2,14 @@
 
 ## Responsibility Split
 
+### Page ownership
+- Files: `index.html`, `themes.html`, `journal.html`, `game.html`
+- Each major screen now has its own HTML file.
+- This lets teammates work on page-level markup independently without editing one shared screen file.
+
 ### Menu and navigation
 - File: `js/app/navigation.js`
-- Owns menu, theme selection, journal rendering, and screen switching.
+- Owns menu, theme selection, journal rendering, and page-to-page navigation.
 - Safe area for a teammate who works on UX flow, menus, buttons, and progression entry points.
 
 ### Palette
@@ -27,6 +32,10 @@
 - Stores app state shape and selectors for themes, levels, elements, compounds, and active mechanic resolution.
 - Use this file to keep cross-module rules consistent.
 
+### Persistence
+- File: `js/app/storage.js`
+- Keeps shared progress and the current board in `localStorage`, so switching pages does not reset the session.
+
 ### Visual palette
 - File: `styles.css`
 - Color tokens now live in `:root`.
@@ -45,8 +54,15 @@
 - Put each mechanic in its own module instead of extending `game.js`.
 - Let `game.js` decide which mechanic a level should use.
 
+### Working by page
+- `index.html`: menu owner
+- `themes.html`: themes/progression owner
+- `journal.html`: journal/archive owner
+- `game.html`: mechanic/gameplay owner
+
 ## Current Benefit
 
 - One teammate can change menus and screen flow without touching board mechanics.
 - One teammate can build new connection logic or a new mini-game without rewriting navigation.
 - Palette styling and selection logic are isolated from both progression and mechanics.
+- Page markup is split, so different people can edit different screens without colliding in one HTML file.

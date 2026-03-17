@@ -6,7 +6,7 @@
     <title>Atomic Smash Prototype</title>
     <link rel="stylesheet" href="./styles.css" />
 </head>
-<body>
+<body data-page="menu">
     <section id="menu-screen" class="app-screen">
         <div class="screen-shell">
             <div class="screen-hero">
@@ -42,134 +42,6 @@
             </div>
         </div>
     </section>
-
-    <section id="theme-screen" class="app-screen hidden">
-        <div class="theme-shell">
-            <div class="screen-header">
-                <div class="screen-hero">
-                    <div class="theme-kicker">Atomic Smash</div>
-                    <h1>Choose A Theme</h1>
-                    <p>Select a chemistry path to get a themed set of tasks.</p>
-                </div>
-                <div class="screen-actions">
-                    <button id="theme-menu-btn" class="secondary" type="button">Menu</button>
-                    <button id="theme-journal-btn" type="button">Journal</button>
-                </div>
-            </div>
-            <div id="theme-list" class="theme-grid"></div>
-        </div>
-    </section>
-
-    <section id="journal-screen" class="app-screen hidden">
-        <div class="screen-shell">
-            <div class="screen-header">
-                <div class="screen-hero">
-                    <div class="theme-kicker">Lab Journal</div>
-                    <h1>Discovery History</h1>
-                    <p>Open every unlocked element again and revisit all compounds you have already discovered.</p>
-                </div>
-                <div class="screen-actions">
-                    <button id="journal-menu-btn" class="secondary" type="button">Menu</button>
-                    <button id="journal-themes-btn" type="button">Themes</button>
-                </div>
-            </div>
-
-            <section class="journal-section">
-                <div class="journal-section-header">
-                    <div>
-                        <div class="zone-title">Compound History</div>
-                        <div id="journal-compound-count" class="journal-count"></div>
-                    </div>
-                </div>
-                <div id="journal-compound-list" class="journal-grid">
-                    <div class="empty-state">No compounds discovered yet</div>
-                </div>
-            </section>
-
-            <section class="journal-section">
-                <div class="journal-section-header">
-                    <div>
-                        <div class="zone-title">Element Library</div>
-                        <div id="journal-element-count" class="journal-count"></div>
-                    </div>
-                </div>
-                <div id="journal-element-list" class="journal-grid"></div>
-            </section>
-        </div>
-    </section>
-
-    <div id="game-screen" class="app-screen hidden">
-        <aside id="sidebar" class="palette-sidebar">
-            <h2>Element Palette</h2>
-            <div id="element-list"></div>
-            <section id="element-info">
-                <div class="zone-title">Selected Element</div>
-                <div id="element-card">
-                    <div class="empty-state">Select an element to see its description.</div>
-                </div>
-            </section>
-        </aside>
-
-        <main id="workspace">
-            <div id="topbar">
-                <div id="task-panel">
-                    <div id="level-indicator"></div>
-                    <div id="task"></div>
-                    <div id="hint"></div>
-                </div>
-                <div id="controls">
-                    <button id="menu-btn" class="secondary">Menu</button>
-                    <button id="journal-btn" class="secondary">Journal</button>
-                    <button id="mix-btn">Mix</button>
-                    <button id="clear-btn" class="secondary">Clear Board</button>
-                    <div id="result"></div>
-                </div>
-            </div>
-
-            <div id="mix-zone">
-                <svg id="connections-layer" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
-            </div>
-
-            <section id="compound-zone">
-                <div class="zone-title">Discovered Compounds</div>
-                <div id="compound-list">
-                    <div class="empty-state">No compounds discovered yet</div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <div id="element-modal" class="modal hidden" aria-hidden="true">
-        <div class="modal-backdrop" data-close-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="element-modal-title">
-            <button id="element-modal-close" class="modal-close" type="button">Close</button>
-            <div id="element-modal-content"></div>
-        </div>
-    </div>
-
-    <div id="compound-modal" class="modal hidden" aria-hidden="true">
-        <div class="modal-backdrop" data-close-compound-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="compound-modal-title">
-            <button id="compound-modal-close" class="modal-close" type="button">Close</button>
-            <div id="compound-modal-content"></div>
-        </div>
-    </div>
-
-    <div id="help-modal" class="modal hidden" aria-hidden="true">
-        <div class="modal-backdrop" data-close-help-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
-            <button id="help-modal-close" class="modal-close" type="button">Close</button>
-            <div id="help-modal-content"></div>
-        </div>
-    </div>
-
-    <div id="theme-complete-modal" class="modal hidden" aria-hidden="true">
-        <div class="modal-backdrop" data-close-theme-complete-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="theme-complete-title">
-            <button id="theme-complete-close" class="modal-close" type="button">Back To Themes</button>
-            <div id="theme-complete-content"></div>
-        </div>
-    </div>
 
     <script type="module" src="./js/main.js"></script>
 </body>
