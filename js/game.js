@@ -80,6 +80,10 @@ export async function initGame() {
     });
 
     function bindGameplayControls() {
+        if (refs.addSelectedButton) {
+            refs.addSelectedButton.addEventListener("click", addSelectedElementToBoard);
+        }
+
         if (refs.mixButton) {
             refs.mixButton.addEventListener("click", handleMixAttempt);
         }
@@ -92,6 +96,16 @@ export async function initGame() {
     function persistCurrentState() {
         getActiveMechanic().captureState?.();
         persistState(state);
+    }
+
+    function addSelectedElementToBoard() {
+        const selectedSymbol = state.ui.selectedElementSymbol;
+        if (!selectedSymbol) {
+            return;
+        }
+
+        getActiveMechanic().spawnElement?.(selectedSymbol);
+        persistCurrentState();
     }
 
     function handleMixAttempt() {

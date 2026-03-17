@@ -22,6 +22,7 @@ export function createRefs() {
         menuButton: document.getElementById("menu-btn"),
         journalButton: document.getElementById("journal-btn"),
         elementList: document.getElementById("element-list"),
+        addSelectedButton: document.getElementById("add-selected-btn"),
         elementCard: document.getElementById("element-card"),
         elementModal: document.getElementById("element-modal"),
         elementModalClose: document.getElementById("element-modal-close"),

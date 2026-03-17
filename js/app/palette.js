@@ -1,6 +1,8 @@
 import { getAvailableElements, getSelectedElement } from "./state.js";
 
 export function createPaletteController({ refs, state, onOpenElementModal, onSelectElement }) {
+    const prefersCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
+
     function bind() {
         if (!refs.elementList) {
             return;
@@ -27,15 +29,19 @@ export function createPaletteController({ refs, state, onOpenElementModal, onSel
             }
 
             const symbol = template.dataset.element;
+            const wasSelected = symbol === state.ui.selectedElementSymbol;
             onSelectElement(symbol);
 
             const element = getAvailableElements(state).find(item => item.symbol === symbol) ?? null;
-            onOpenElementModal(element);
+            if (!prefersCoarsePointer || wasSelected) {
+                onOpenElementModal(element);
+            }
         });
     }
 
     function render() {
         renderAvailableElements();
+        renderAddButton();
         renderSelectedElementCard();
     }
 
@@ -99,6 +105,19 @@ export function createPaletteController({ refs, state, onOpenElementModal, onSel
         description.textContent = element.description;
 
         refs.elementCard.append(symbol, name, meta, description);
+    }
+
+    function renderAddButton() {
+        if (!refs.addSelectedButton) {
+            return;
+        }
+
+        const element = getSelectedElement(state);
+
+        refs.addSelectedButton.disabled = !element;
+        refs.addSelectedButton.textContent = element
+            ? `Add ${element.symbol} To Board`
+            : "Add Selected To Board";
     }
 
     return {

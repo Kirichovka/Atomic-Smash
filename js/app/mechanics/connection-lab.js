@@ -9,6 +9,16 @@ import { createEdgeKey } from "../state.js";
 const NODE_WIDTH = 110;
 const NODE_HEIGHT = 64;
 const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
+const SPAWN_OFFSETS = [
+    { x: 0, y: 0 },
+    { x: 24, y: 18 },
+    { x: -24, y: 18 },
+    { x: 24, y: -18 },
+    { x: -24, y: -18 },
+    { x: 0, y: 36 },
+    { x: 36, y: 0 },
+    { x: -36, y: 0 }
+];
 
 export function createConnectionLabMechanic({ refs, state }) {
     const board = state.board;
@@ -207,6 +217,27 @@ export function createConnectionLabMechanic({ refs, state }) {
         });
 
         return svg;
+    }
+
+    function spawnElement(symbol) {
+        if (!symbol || !isMounted()) {
+            return null;
+        }
+
+        const position = getSuggestedSpawnPosition();
+        const node = createNode(symbol, position.x, position.y);
+        sync();
+        return node;
+    }
+
+    function getSuggestedSpawnPosition() {
+        const rawPosition = getSuggestedSpawnPositionForCount(
+            board.nodes.size,
+            refs.mixZone.clientWidth,
+            refs.mixZone.clientHeight
+        );
+
+        return clampNodePosition(rawPosition.x, rawPosition.y);
     }
 
     function createBoardGraph() {
@@ -703,6 +734,7 @@ export function createConnectionLabMechanic({ refs, state }) {
         init,
         reset,
         restore,
+        spawnElement,
         sync
     };
 }
@@ -718,6 +750,18 @@ function getNodeTop(node) {
 function parseNodeIndex(nodeId) {
     const match = /^node-(\d+)$/.exec(nodeId ?? "");
     return match ? Number(match[1]) : 0;
+}
+
+function getSuggestedSpawnPositionForCount(count, width, height) {
+    const centerX = (width / 2) - (NODE_WIDTH / 2);
+    const centerY = (height / 2) - (NODE_HEIGHT / 2);
+    const offset = SPAWN_OFFSETS[count % SPAWN_OFFSETS.length];
+    const ring = Math.floor(count / SPAWN_OFFSETS.length);
+
+    return {
+        x: centerX + offset.x + (ring * 14),
+        y: centerY + offset.y + (ring * 12)
+    };
 }
 
 function getMaxNodeId(nodes) {
