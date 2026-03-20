@@ -20,7 +20,7 @@ const SPAWN_OFFSETS = [
     { x: -36, y: 0 }
 ];
 
-export function createConnectionLabMechanic({ refs, state }) {
+export function createConnectionLabMechanic({ refs, state, onSelectBoardElement }) {
     const board = state.board;
 
     function init() {
@@ -755,7 +755,9 @@ export function createConnectionLabMechanic({ refs, state }) {
         board.selectedNodeId = nodeId ?? null;
 
         if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
-            board.nodes.get(board.selectedNodeId).classList.add("selected");
+            const selectedNode = board.nodes.get(board.selectedNodeId);
+            selectedNode.classList.add("selected");
+            onSelectBoardElement?.(selectedNode.dataset.symbol);
         }
     }
 

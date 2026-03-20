@@ -1,9 +1,9 @@
 import { DEFAULT_MECHANIC_ID } from "../state.js";
 import { createConnectionLabMechanic } from "./connection-lab.js";
 
-export function createMechanicsRegistry({ refs, state }) {
+export function createMechanicsRegistry({ refs, state, onSelectBoardElement }) {
     const mechanics = new Map([
-        [DEFAULT_MECHANIC_ID, createConnectionLabMechanic({ refs, state })]
+        [DEFAULT_MECHANIC_ID, createConnectionLabMechanic({ refs, state, onSelectBoardElement })]
     ]);
 
     function init() {

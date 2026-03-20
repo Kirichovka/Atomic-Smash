@@ -3,7 +3,6 @@ import { getAvailableElements, getSelectedElement } from "./state.js";
 export function createPaletteController({
     refs,
     state,
-    onOpenElementModal,
     onQuickAddElement,
     onSelectElement
 }) {
@@ -37,13 +36,10 @@ export function createPaletteController({
             const symbol = template.dataset.element;
             onSelectElement(symbol);
 
-            const element = getAvailableElements(state).find(item => item.symbol === symbol) ?? null;
             if (prefersCoarsePointer) {
                 onQuickAddElement?.(symbol);
                 return;
             }
-
-            onOpenElementModal(element);
         });
     }
 

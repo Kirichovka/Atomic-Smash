@@ -28,7 +28,11 @@ export async function initGame() {
     hydrateState(state, loadStoredState());
     state.ui.activeScreen = currentPage;
 
-    const mechanicsRegistry = createMechanicsRegistry({ refs, state });
+    const mechanicsRegistry = createMechanicsRegistry({
+        refs,
+        state,
+        onSelectBoardElement: selectElement
+    });
     const getActiveMechanic = () => mechanicsRegistry.get(getActiveMechanicId(state));
 
     let navigationController;
@@ -42,7 +46,6 @@ export async function initGame() {
     const paletteController = createPaletteController({
         refs,
         state,
-        onOpenElementModal: modalController.openElementModal,
         onQuickAddElement: addElementToBoard,
         onSelectElement: selectElement
     });
