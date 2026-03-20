@@ -36,6 +36,12 @@
 - File: `docs/js/app/storage.js`
 - Keeps shared progress and the current board in `localStorage`, so switching pages does not reset the session.
 
+### Hotkeys
+- Files: `docs/js/app/hotkeys.js`, `docs/data/hotkeys.json`
+- Keyboard shortcuts are data-driven.
+- Add or change key bindings in `hotkeys.json`, then map new actions in `hotkeys.js`.
+- Current `Escape` flow is contextual: it closes the active modal first, and if no modal is open it returns the player to the menu.
+
 ### Visual palette
 - File: `docs/styles.css`
 - Color tokens now live in `:root`.

@@ -198,8 +198,33 @@ export function createModalController({
         onThemeCompleteClosed?.();
     }
 
+    function closeActiveModal() {
+        if (isModalOpen(refs.themeCompleteModal)) {
+            closeThemeCompleteModal();
+            return true;
+        }
+
+        if (isModalOpen(refs.helpModal)) {
+            closeHelpModal();
+            return true;
+        }
+
+        if (isModalOpen(refs.compoundModal)) {
+            closeCompoundModal();
+            return true;
+        }
+
+        if (isModalOpen(refs.elementModal)) {
+            closeElementModal();
+            return true;
+        }
+
+        return false;
+    }
+
     return {
         bind,
+        closeActiveModal,
         closeCompoundModal,
         openCompoundModal,
         openElementModal,
@@ -255,6 +280,10 @@ function closeModal(modal) {
 
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
+}
+
+function isModalOpen(modal) {
+    return Boolean(modal && !modal.classList.contains("hidden"));
 }
 
 function bindIfPresent(element, eventName, handler) {

@@ -1,4 +1,5 @@
-import { loadGameData } from "./data.js";
+import { loadGameData, loadHotkeysConfig } from "./data.js";
+import { createHotkeysController } from "./app/hotkeys.js";
 import { createModalController } from "./app/modals.js";
 import { createNavigationController } from "./app/navigation.js";
 import { createPaletteController } from "./app/palette.js";
@@ -20,7 +21,10 @@ import {
 } from "./app/state.js";
 
 export async function initGame() {
-    const gameData = await loadGameData();
+    const [gameData, hotkeysConfig] = await Promise.all([
+        loadGameData(),
+        loadHotkeysConfig()
+    ]);
     const refs = createRefs();
     const currentPage = document.body.dataset.page ?? "menu";
     const state = createState(gameData);
@@ -64,11 +68,17 @@ export async function initGame() {
         onOpenJournalScreen: openJournalScreen,
         onResumeCurrentTheme: resumeCurrentTheme
     });
+    const hotkeysController = createHotkeysController({
+        config: hotkeysConfig,
+        currentPage,
+        onEscape: handleEscapeShortcut
+    });
 
     mechanicsRegistry.init();
     paletteController.bind();
     navigationController.bind();
     modalController.bind();
+    hotkeysController.bind();
     bindGameplayControls();
 
     if (!state.ui.selectedElementSymbol) {
@@ -248,6 +258,17 @@ export async function initGame() {
             refs.result.textContent = "";
         }
         persistCurrentState();
+    }
+
+    function handleEscapeShortcut() {
+        if (modalController.closeActiveModal()) {
+            persistCurrentState();
+            return;
+        }
+
+        if (currentPage !== "menu") {
+            openMainMenu();
+        }
     }
 
     function registerFailedAttempt() {

@@ -1,0 +1,11 @@
+{
+    "bindings": [
+        {
+            "id": "escape-to-exit",
+            "key": "Escape",
+            "action": "escape",
+            "pages": ["menu", "themes", "journal", "game"],
+            "preventDefault": true
+        }
+    ]
+}
