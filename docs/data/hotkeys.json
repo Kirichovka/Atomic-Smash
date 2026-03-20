@@ -1,7 +1,7 @@
 {
     "bindings": [
         {
-            "id": "escape-to-exit",
+            "id": "escape-close-overlay",
             "key": "Escape",
             "action": "escape",
             "pages": ["menu", "themes", "journal", "game"],

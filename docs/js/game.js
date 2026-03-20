@@ -263,11 +263,6 @@ export async function initGame() {
     function handleEscapeShortcut() {
         if (modalController.closeActiveModal()) {
             persistCurrentState();
-            return;
-        }
-
-        if (currentPage !== "menu") {
-            openMainMenu();
         }
     }
 

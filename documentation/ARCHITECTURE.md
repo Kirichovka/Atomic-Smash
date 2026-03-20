@@ -40,7 +40,7 @@
 - Files: `docs/js/app/hotkeys.js`, `docs/data/hotkeys.json`
 - Keyboard shortcuts are data-driven.
 - Add or change key bindings in `hotkeys.json`, then map new actions in `hotkeys.js`.
-- Current `Escape` flow is contextual: it closes the active modal first, and if no modal is open it returns the player to the menu.
+- Current `Escape` flow is overlay-only: it closes the active modal/card layer and does not navigate between full pages.
 
 ### Visual palette
 - File: `docs/styles.css`
