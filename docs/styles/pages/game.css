@@ -102,6 +102,18 @@
     touch-action: none;
 }
 
+.node.selected {
+    border-color: var(--color-accent);
+    background: linear-gradient(180deg, #f6f9ff 0%, #deebff 100%);
+    box-shadow:
+        0 0 0 3px rgba(45, 108, 223, 0.18),
+        0 10px 24px rgba(45, 108, 223, 0.18);
+}
+
+.node.selected .connector {
+    box-shadow: 0 0 0 4px rgba(45, 108, 223, 0.16);
+}
+
 .node.dragging {
     opacity: 0.85;
     z-index: 25;

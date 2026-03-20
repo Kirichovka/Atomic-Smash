@@ -38,6 +38,14 @@ export function createConnectionLabMechanic({ refs, state }) {
             event.preventDefault();
         });
 
+        refs.mixZone.addEventListener("pointerdown", event => {
+            if (event.target.closest(".node")) {
+                return;
+            }
+
+            setSelectedNode(null);
+        });
+
         refs.workspace.addEventListener("drop", event => {
             event.preventDefault();
             if (!board.dragElementType) {
@@ -106,6 +114,7 @@ export function createConnectionLabMechanic({ refs, state }) {
     function clearRuntimeBoard() {
         [...board.nodes.values()].forEach(node => node.remove());
         board.nodes.clear();
+        board.selectedNodeId = null;
 
         board.connections.forEach(connection => connection.line.remove());
         board.connections.length = 0;
@@ -335,7 +344,10 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         const line = createSvgLine("var(--wire-solid)");
         line.classList.add("connection-hitbox");
-        line.addEventListener("click", () => removeConnectionByLine(line));
+        line.addEventListener("click", () => {
+            setSelectedNode(null);
+            removeConnectionByLine(line);
+        });
         refs.svg.appendChild(line);
 
         board.connections.push({
@@ -361,6 +373,7 @@ export function createConnectionLabMechanic({ refs, state }) {
         }
 
         event.preventDefault();
+        setSelectedNode(event.currentTarget.dataset.id);
 
         board.movingNode = event.currentTarget;
         board.movingPointerId = event.pointerId;
@@ -436,6 +449,7 @@ export function createConnectionLabMechanic({ refs, state }) {
         removeTemporaryWire();
 
         board.startConnector = event.currentTarget;
+        setSelectedNode(board.startConnector.dataset.nodeId);
         board.connectionPointerId = event.pointerId;
         board.startConnector.setPointerCapture(event.pointerId);
 
@@ -489,7 +503,10 @@ export function createConnectionLabMechanic({ refs, state }) {
 
         const line = createSvgLine("var(--wire-solid)");
         line.classList.add("connection-hitbox");
-        line.addEventListener("click", () => removeConnectionByLine(line));
+        line.addEventListener("click", () => {
+            setSelectedNode(null);
+            removeConnectionByLine(line);
+        });
         refs.svg.appendChild(line);
 
         board.connections.push({
@@ -688,6 +705,10 @@ export function createConnectionLabMechanic({ refs, state }) {
             return;
         }
 
+        if (board.selectedNodeId === nodeId) {
+            setSelectedNode(null);
+        }
+
         node.remove();
         board.nodes.delete(nodeId);
 
@@ -724,6 +745,18 @@ export function createConnectionLabMechanic({ refs, state }) {
 
     function isMounted() {
         return Boolean(refs.workspace && refs.mixZone && refs.svg);
+    }
+
+    function setSelectedNode(nodeId) {
+        if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
+            board.nodes.get(board.selectedNodeId).classList.remove("selected");
+        }
+
+        board.selectedNodeId = nodeId ?? null;
+
+        if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
+            board.nodes.get(board.selectedNodeId).classList.add("selected");
+        }
     }
 
     return {

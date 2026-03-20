@@ -30,6 +30,7 @@ export function createState(gameData) {
             savedConnections: [],
             nodes: new Map(),
             connections: [],
+            selectedNodeId: null,
             dragElementType: null,
             movingNode: null,
             movingPointerId: null,
