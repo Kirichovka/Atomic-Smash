@@ -1,0 +1,199 @@
+#game-screen {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+}
+
+#workspace {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    touch-action: auto;
+}
+
+#topbar {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    min-height: 88px;
+    background: var(--color-surface-panel);
+    border: 1px solid var(--color-border-default);
+    border-radius: 14px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+}
+
+#task-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#level-indicator {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+#task {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#hint {
+    font-size: 14px;
+    color: var(--color-text-subtle);
+}
+
+#controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#result {
+    font-weight: bold;
+    min-width: 320px;
+    text-align: right;
+}
+
+#mix-zone {
+    position: absolute;
+    inset: 110px 12px 156px 12px;
+    background:
+        linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    touch-action: none;
+    border: 1px solid var(--color-border-grid);
+    border-radius: 18px;
+    overflow: visible;
+}
+
+#connections-layer {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 5;
+}
+
+.node {
+    position: absolute;
+    width: 110px;
+    height: 64px;
+    border: 1px solid var(--palette-node-border);
+    border-radius: 14px;
+    background: var(--palette-surface-strong);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    user-select: none;
+    z-index: 10;
+    touch-action: none;
+}
+
+.node.dragging {
+    opacity: 0.85;
+    z-index: 25;
+}
+
+.node.outside-zone {
+    opacity: 0.35;
+}
+
+.node-label {
+    pointer-events: none;
+}
+
+.connector {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--connector-fill);
+    border: 2px solid var(--connector-border);
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.connector.left {
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.connector.right {
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.connector.top {
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.connector.bottom {
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.connection-hitbox {
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+#compound-zone {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-height: 132px;
+    padding: 16px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 18px;
+    background: var(--color-surface-panel-strong);
+    z-index: 15;
+}
+
+#compound-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.compound-card {
+    min-width: 140px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 14px;
+    background: var(--palette-surface);
+    color: var(--color-text-brand);
+}
+
+.compound-card.clickable {
+    cursor: pointer;
+    text-align: left;
+}
+
+.compound-formula {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.compound-name {
+    font-size: 13px;
+    color: var(--color-text-muted);
+}

@@ -41,6 +41,14 @@
 - Color tokens now live in `:root`.
 - Change theme colors there instead of editing component styles one by one.
 
+### CSS architecture
+- Entry file: `docs/styles.css`
+- Foundation: `docs/styles/foundation/`
+- Shared components: `docs/styles/components/`
+- Page styles: `docs/styles/pages/`
+- Responsive rules: `docs/styles/responsive.css`
+- This keeps visual work split the same way as the JavaScript architecture: shared design tokens at the base, reusable UI pieces in components, and page ownership isolated in dedicated files.
+
 ## Growth Path
 
 ### Adding a new mechanic

@@ -1,0 +1,59 @@
+#menu-screen,
+#theme-screen,
+#journal-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: auto;
+    padding: 36px;
+    background:
+        radial-gradient(circle at top left, var(--color-screen-radial), transparent 32%),
+        linear-gradient(180deg, var(--color-screen-start) 0%, var(--color-screen-end) 100%);
+}
+
+.screen-shell,
+.theme-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.screen-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.screen-hero,
+.theme-hero {
+    margin-bottom: 0;
+}
+
+.theme-kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.screen-hero h1,
+.theme-hero h1 {
+    margin: 10px 0 8px;
+    font-size: 44px;
+    line-height: 1.05;
+    color: var(--color-text-brand);
+}
+
+.screen-hero p,
+.theme-hero p {
+    margin: 0;
+    font-size: 18px;
+    color: var(--color-text-muted);
+}
+
+.screen-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
