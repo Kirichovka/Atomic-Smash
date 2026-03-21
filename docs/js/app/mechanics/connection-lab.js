@@ -6,8 +6,8 @@ import {
 } from "../../svg.js";
 import { createEdgeKey } from "../state.js";
 
-const NODE_WIDTH = 110;
-const NODE_HEIGHT = 64;
+const DEFAULT_NODE_WIDTH = 110;
+const DEFAULT_NODE_HEIGHT = 64;
 const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
 const SPAWN_OFFSETS = [
     { x: 0, y: 0 },
@@ -22,6 +22,8 @@ const SPAWN_OFFSETS = [
 
 export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
+    let resizeObserver = null;
+    let resizeSyncFrame = null;
 
     function init() {
         if (!isMounted()) {
@@ -29,8 +31,28 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         bindWorkspaceInteractions();
+        bindResizeObserver();
         restore();
         sync();
+    }
+
+    function bindResizeObserver() {
+        if (resizeObserver || typeof ResizeObserver !== "function") {
+            return;
+        }
+
+        resizeObserver = new ResizeObserver(() => {
+            if (resizeSyncFrame !== null) {
+                cancelAnimationFrame(resizeSyncFrame);
+            }
+
+            resizeSyncFrame = requestAnimationFrame(() => {
+                resizeSyncFrame = null;
+                sync();
+            });
+        });
+
+        resizeObserver.observe(refs.mixZone);
     }
 
     function bindWorkspaceInteractions() {
@@ -43,7 +65,14 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
                 return;
             }
 
-            setSelectedNode(null);
+            setSelectedNode(null, { notify: false });
+            bus.publish("interaction:context-changed", {
+                source: "mix-zone-background",
+                zone: "mix-zone",
+                clearPaletteSelection: true,
+                inspectedSymbol: null,
+                persist: false
+            });
         });
 
         refs.workspace.addEventListener("drop", event => {
@@ -58,12 +87,24 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             }
 
             const zoneRect = refs.mixZone.getBoundingClientRect();
-            createNode(
-                board.dragElementType,
-                event.clientX - zoneRect.left - (NODE_WIDTH / 2),
-                event.clientY - zoneRect.top - (NODE_HEIGHT / 2)
+            const droppedSymbol = board.dragElementType;
+            const nodeMetrics = getNodeMetrics(refs.mixZone);
+            const node = createNode(
+                droppedSymbol,
+                event.clientX - zoneRect.left - (nodeMetrics.width / 2),
+                event.clientY - zoneRect.top - (nodeMetrics.height / 2)
             );
             board.dragElementType = null;
+
+            if (node) {
+                bus.publish("interaction:context-changed", {
+                    source: "mix-zone-drop",
+                    zone: "mix-zone",
+                    clearPaletteSelection: true,
+                    inspectedSymbol: droppedSymbol,
+                    persist: true
+                });
+            }
         });
     }
 
@@ -128,6 +169,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
+        syncNodeLayoutToCurrentMixZone();
         syncConnectionsLayer(refs.svg, refs.mixZone);
         redrawConnections(board.connections, board.nodes, refs.svg);
     }
@@ -143,6 +185,8 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         board.savedNodes = [...board.nodes.values()].map(node => ({
             id: node.dataset.id,
+            localX: getNodeLocalX(node),
+            localY: getNodeLocalY(node),
             symbol: node.dataset.symbol,
             x: getNodeLeft(node),
             y: getNodeTop(node)
@@ -176,7 +220,17 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         board.nodeIdCounter = Math.max(boardSnapshot.nodeIdCounter ?? 0, getMaxNodeId(boardSnapshot.savedNodes ?? []));
 
         (boardSnapshot.savedNodes ?? []).forEach(node => {
-            createNode(node.symbol, node.x, node.y, { id: node.id, persist: false });
+            const hasLocalPosition = Number.isFinite(node.localX) && Number.isFinite(node.localY);
+            createNode(
+                node.symbol,
+                hasLocalPosition ? node.localX : node.x,
+                hasLocalPosition ? node.localY : node.y,
+                {
+                    id: node.id,
+                    persist: false,
+                    positionSpace: hasLocalPosition ? "local" : "pixel"
+                }
+            );
         });
 
         (boardSnapshot.savedConnections ?? []).forEach(connection => {
@@ -240,10 +294,13 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function getSuggestedSpawnPosition() {
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
         const rawPosition = getSuggestedSpawnPositionForCount(
             board.nodes.size,
             refs.mixZone.clientWidth,
-            refs.mixZone.clientHeight
+            refs.mixZone.clientHeight,
+            nodeMetrics.width,
+            nodeMetrics.height
         );
 
         return clampNodePosition(rawPosition.x, rawPosition.y);
@@ -290,15 +347,16 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const label = document.createElement("span");
         const requestedId = options.id ?? `node-${board.nodeIdCounter + 1}`;
         const id = requestedId;
-        const position = clampNodePosition(x, y);
+        const position = options.positionSpace === "local"
+            ? localToPixelPosition(x, y)
+            : clampNodePosition(x, y);
 
         board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
 
         node.className = "node";
         node.dataset.id = id;
         node.dataset.symbol = symbol;
-        node.style.left = `${position.x}px`;
-        node.style.top = `${position.y}px`;
+        setNodePosition(node, position.x, position.y);
 
         label.className = "node-label";
         label.textContent = symbol;
@@ -373,7 +431,14 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         event.preventDefault();
-        setSelectedNode(event.currentTarget.dataset.id);
+        setSelectedNode(event.currentTarget.dataset.id, { notify: false });
+        bus.publish("interaction:context-changed", {
+            source: "mix-zone-node",
+            zone: "mix-zone",
+            clearPaletteSelection: true,
+            inspectedSymbol: event.currentTarget.dataset.symbol,
+            persist: false
+        });
 
         board.movingNode = event.currentTarget;
         board.movingPointerId = event.pointerId;
@@ -400,9 +465,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             y: event.clientY - zoneRect.top - board.moveOffsetY
         };
 
-        board.movingNode.style.left = `${position.x}px`;
-        board.movingNode.style.top = `${position.y}px`;
-        board.movingNode.classList.toggle("outside-zone", isNodeOutsideMixZone(position.x, position.y));
+        setNodePosition(board.movingNode, position.x, position.y, { clamp: false });
+        board.movingNode.classList.toggle(
+            "outside-zone",
+            isNodeOutsideMixZone(getNodeLeft(board.movingNode), getNodeTop(board.movingNode))
+        );
 
         redrawConnections(board.connections, board.nodes, refs.svg);
     }
@@ -449,7 +516,15 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         removeTemporaryWire();
 
         board.startConnector = event.currentTarget;
-        setSelectedNode(board.startConnector.dataset.nodeId);
+        const startNode = board.nodes.get(board.startConnector.dataset.nodeId) ?? null;
+        setSelectedNode(board.startConnector.dataset.nodeId, { notify: false });
+        bus.publish("interaction:context-changed", {
+            source: "mix-zone-connector",
+            zone: "mix-zone",
+            clearPaletteSelection: true,
+            inspectedSymbol: startNode?.dataset.symbol ?? null,
+            persist: false
+        });
         board.connectionPointerId = event.pointerId;
         board.startConnector.setPointerCapture(event.pointerId);
 
@@ -679,13 +754,60 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function clampNodePosition(x, y) {
-        const maxX = Math.max(refs.mixZone.clientWidth - NODE_WIDTH, 0);
-        const maxY = Math.max(refs.mixZone.clientHeight - NODE_HEIGHT, 0);
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
+        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
+        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
 
         return {
             x: Math.min(Math.max(x, 0), maxX),
             y: Math.min(Math.max(y, 0), maxY)
         };
+    }
+
+    function syncNodeLayoutToCurrentMixZone() {
+        board.nodes.forEach(node => {
+            if (node === board.movingNode) {
+                return;
+            }
+
+            const position = localToPixelPosition(getNodeLocalX(node), getNodeLocalY(node));
+            node.style.left = `${position.x}px`;
+            node.style.top = `${position.y}px`;
+        });
+    }
+
+    function setNodePosition(node, x, y, options = {}) {
+        const { clamp = true } = options;
+        const renderedPosition = clamp ? clampNodePosition(x, y) : { x, y };
+        const localAnchor = clampNodePosition(x, y);
+        const localPosition = pixelToLocalPosition(localAnchor.x, localAnchor.y);
+
+        node.style.left = `${renderedPosition.x}px`;
+        node.style.top = `${renderedPosition.y}px`;
+        node.dataset.localX = String(localPosition.localX);
+        node.dataset.localY = String(localPosition.localY);
+    }
+
+    function pixelToLocalPosition(x, y) {
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
+        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
+        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
+
+        return {
+            localX: maxX > 0 ? x / maxX : 0,
+            localY: maxY > 0 ? y / maxY : 0
+        };
+    }
+
+    function localToPixelPosition(localX, localY) {
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
+        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
+        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
+
+        return clampNodePosition(
+            maxX * clampLocalCoordinate(localX),
+            maxY * clampLocalCoordinate(localY)
+        );
     }
 
     function removeConnectionByLine(line) {
@@ -724,11 +846,12 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function isNodeOutsideMixZone(x, y) {
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
         return (
             x < 0 ||
             y < 0 ||
-            x + NODE_WIDTH > refs.mixZone.clientWidth ||
-            y + NODE_HEIGHT > refs.mixZone.clientHeight
+            x + nodeMetrics.width > refs.mixZone.clientWidth ||
+            y + nodeMetrics.height > refs.mixZone.clientHeight
         );
     }
 
@@ -747,7 +870,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         return Boolean(refs.workspace && refs.mixZone && refs.svg);
     }
 
-    function setSelectedNode(nodeId) {
+    function setSelectedNode(nodeId, options = {}) {
+        const { notify = true } = options;
+
         if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
             board.nodes.get(board.selectedNodeId).classList.remove("selected");
         }
@@ -757,22 +882,37 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
             const selectedNode = board.nodes.get(board.selectedNodeId);
             selectedNode.classList.add("selected");
-            bus.publish("board:selection-changed", {
-                nodeId: selectedNode.dataset.id,
-                symbol: selectedNode.dataset.symbol
-            });
+            if (notify) {
+                bus.publish("interaction:context-changed", {
+                    source: "mix-zone-selection",
+                    zone: "mix-zone",
+                    clearPaletteSelection: true,
+                    inspectedSymbol: selectedNode.dataset.symbol,
+                    persist: false
+                });
+            }
             return;
         }
 
-        bus.publish("board:selection-cleared");
+        if (notify) {
+            bus.publish("interaction:context-changed", {
+                source: "mix-zone-selection-cleared",
+                zone: "mix-zone",
+                clearPaletteSelection: true,
+                inspectedSymbol: null,
+                persist: false
+            });
+        }
     }
 
     return {
         captureState,
+        clearSelection: (options = {}) => setSelectedNode(null, { notify: !options.silent }),
         createHelpVisual,
         evaluate,
         id: "connection-lab",
         init,
+        removeNodeById: removeNode,
         reset,
         restore,
         spawnElement,
@@ -788,20 +928,54 @@ function getNodeTop(node) {
     return Number.parseFloat(node.style.top || "0");
 }
 
+function getNodeLocalX(node) {
+    return clampLocalCoordinate(Number.parseFloat(node.dataset.localX || "0"));
+}
+
+function getNodeLocalY(node) {
+    return clampLocalCoordinate(Number.parseFloat(node.dataset.localY || "0"));
+}
+
 function parseNodeIndex(nodeId) {
     const match = /^node-(\d+)$/.exec(nodeId ?? "");
     return match ? Number(match[1]) : 0;
 }
 
-function getSuggestedSpawnPositionForCount(count, width, height) {
-    const centerX = (width / 2) - (NODE_WIDTH / 2);
-    const centerY = (height / 2) - (NODE_HEIGHT / 2);
+function clampLocalCoordinate(value) {
+    if (!Number.isFinite(value)) {
+        return 0;
+    }
+
+    return Math.min(Math.max(value, 0), 1);
+}
+
+function getSuggestedSpawnPositionForCount(count, width, height, nodeWidth, nodeHeight) {
+    const centerX = (width / 2) - (nodeWidth / 2);
+    const centerY = (height / 2) - (nodeHeight / 2);
     const offset = SPAWN_OFFSETS[count % SPAWN_OFFSETS.length];
     const ring = Math.floor(count / SPAWN_OFFSETS.length);
 
     return {
         x: centerX + offset.x + (ring * 14),
         y: centerY + offset.y + (ring * 12)
+    };
+}
+
+function getNodeMetrics(mixZone) {
+    if (!(mixZone instanceof Element)) {
+        return {
+            height: DEFAULT_NODE_HEIGHT,
+            width: DEFAULT_NODE_WIDTH
+        };
+    }
+
+    const styles = window.getComputedStyle(mixZone);
+    const width = Number.parseFloat(styles.getPropertyValue("--mix-node-width"));
+    const height = Number.parseFloat(styles.getPropertyValue("--mix-node-height"));
+
+    return {
+        height: Number.isFinite(height) ? height : DEFAULT_NODE_HEIGHT,
+        width: Number.isFinite(width) ? width : DEFAULT_NODE_WIDTH
     };
 }
 

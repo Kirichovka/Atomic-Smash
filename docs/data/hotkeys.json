@@ -6,6 +6,37 @@
             "action": "escape",
             "pages": ["menu", "themes", "journal", "game"],
             "preventDefault": true
+        },
+        {
+            "id": "open-add-menu",
+            "key": "A",
+            "action": "open-add-menu",
+            "pages": ["game"],
+            "shiftKey": true,
+            "preventDefault": true
+        },
+        {
+            "id": "refresh-board",
+            "key": "R",
+            "action": "refresh-board",
+            "pages": ["game"],
+            "shiftKey": true,
+            "preventDefault": true
+        },
+        {
+            "id": "mix-board",
+            "key": "M",
+            "action": "mix-board",
+            "pages": ["game"],
+            "shiftKey": true,
+            "preventDefault": true
+        },
+        {
+            "id": "delete-selected-node",
+            "key": "Delete",
+            "action": "delete-selected-node",
+            "pages": ["game"],
+            "preventDefault": true
         }
     ]
 }

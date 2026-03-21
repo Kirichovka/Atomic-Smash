@@ -62,6 +62,11 @@
 }
 
 #mix-zone {
+    --mix-node-width: 110px;
+    --mix-node-height: 64px;
+    --mix-node-font-size: 22px;
+    --mix-connector-size: 16px;
+    --mix-connector-offset: 8px;
     position: absolute;
     inset: 110px 12px 156px 12px;
     background:
@@ -69,9 +74,122 @@
         linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
     background-size: 32px 32px;
     touch-action: none;
+    -webkit-touch-callout: none;
     border: 1px solid var(--color-border-grid);
     border-radius: 18px;
     overflow: visible;
+}
+
+.mix-zone-context {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+}
+
+.mix-zone-context-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: transparent;
+    cursor: default;
+    pointer-events: auto;
+}
+
+.mix-zone-context-menu,
+.mix-zone-picker {
+    position: absolute;
+    min-width: 190px;
+    border: 1px solid #c9d1df;
+    border-radius: 8px;
+    background: #f7f7f7;
+    box-shadow:
+        0 12px 24px rgba(14, 24, 43, 0.18),
+        0 0 0 1px rgba(255, 255, 255, 0.85) inset;
+    pointer-events: auto;
+}
+
+.mix-zone-context-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px;
+}
+
+.mix-zone-context-action {
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text-default);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.mix-zone-context-action:hover,
+.mix-zone-context-action:focus-visible,
+.mix-zone-context-action.active {
+    background: #dbe9ff;
+    color: #173866;
+    outline: none;
+}
+
+.mix-zone-picker {
+    width: min(220px, calc(100% - 24px));
+    padding: 4px;
+}
+
+.mix-zone-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mix-zone-picker-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-text-default);
+    text-align: left;
+}
+
+.mix-zone-picker-option:hover,
+.mix-zone-picker-option:focus-visible,
+.mix-zone-picker-option.active {
+    background: #dbe9ff;
+    color: #173866;
+    outline: none;
+    box-shadow: none;
+}
+
+.mix-zone-picker-symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    min-width: 26px;
+    height: 26px;
+    border: 1px solid #9fb0ca;
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--color-text-brand);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mix-zone-picker-name {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
 }
 
 #connections-layer {
@@ -86,8 +204,8 @@
 
 .node {
     position: absolute;
-    width: 110px;
-    height: 64px;
+    width: var(--mix-node-width);
+    height: var(--mix-node-height);
     border: 1px solid var(--palette-node-border);
     border-radius: 14px;
     background: var(--palette-surface-strong);
@@ -95,7 +213,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: var(--mix-node-font-size);
     font-weight: bold;
     user-select: none;
     z-index: 10;
@@ -129,8 +247,8 @@
 
 .connector {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: var(--mix-connector-size);
+    height: var(--mix-connector-size);
     border-radius: 50%;
     background: var(--connector-fill);
     border: 2px solid var(--connector-border);
@@ -139,25 +257,25 @@
 }
 
 .connector.left {
-    left: -8px;
+    left: calc(-1 * var(--mix-connector-offset));
     top: 50%;
     transform: translateY(-50%);
 }
 
 .connector.right {
-    right: -8px;
+    right: calc(-1 * var(--mix-connector-offset));
     top: 50%;
     transform: translateY(-50%);
 }
 
 .connector.top {
-    top: -8px;
+    top: calc(-1 * var(--mix-connector-offset));
     left: 50%;
     transform: translateX(-50%);
 }
 
 .connector.bottom {
-    bottom: -8px;
+    bottom: calc(-1 * var(--mix-connector-offset));
     left: 50%;
     transform: translateX(-50%);
 }

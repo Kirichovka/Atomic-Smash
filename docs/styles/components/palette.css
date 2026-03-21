@@ -1,16 +1,99 @@
 #sidebar {
-    width: 260px;
+    width: var(--sidebar-width, 260px);
+    flex: 0 0 auto;
+    position: relative;
     border-right: 1px solid var(--color-border-default);
     background: var(--color-surface-solid);
     padding: 16px;
+    overflow: hidden;
+    transition: width 0.22s ease, padding 0.22s ease, border-color 0.22s ease;
+}
+
+#sidebar.collapsed {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right-color: transparent;
+}
+
+#sidebar-content {
+    height: 100%;
+    min-width: 228px;
     display: flex;
     flex-direction: column;
     gap: 14px;
 }
 
+#sidebar.collapsed #sidebar-content {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
 #sidebar h2 {
     margin-top: 0;
+    margin-bottom: 0;
     font-size: 20px;
+}
+
+.sidebar-toggle {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border-default);
+    border-radius: 999px;
+    background: var(--color-surface-panel);
+    color: var(--color-text-default);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-text-brand);
+    outline: none;
+}
+
+.sidebar-resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: ew-resize;
+}
+
+.sidebar-resize-handle::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 58px;
+    border-radius: 999px;
+    background: rgba(93, 122, 170, 0.28);
+    transition: background 0.18s ease;
+}
+
+.sidebar-resize-handle:hover::before,
+.sidebar-resize-handle:focus-visible::before,
+#sidebar.resizing .sidebar-resize-handle::before {
+    background: rgba(45, 108, 223, 0.46);
+}
+
+#sidebar.collapsed .sidebar-resize-handle {
+    opacity: 0;
+    pointer-events: none;
 }
 
 #element-list {

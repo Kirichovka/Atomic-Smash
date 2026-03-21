@@ -23,9 +23,13 @@ export function createPaletteController({
                 return;
             }
 
-            bus.publish("palette:selection-changed", {
+            bus.publish("interaction:context-changed", {
                 source: "palette-drag",
-                symbol: state.board.dragElementType
+                zone: "palette",
+                clearBoardSelection: true,
+                inspectedSymbol: state.board.dragElementType,
+                paletteSymbol: state.board.dragElementType,
+                persist: false
             });
             event.dataTransfer?.setData("text/plain", state.board.dragElementType);
         });
@@ -41,9 +45,13 @@ export function createPaletteController({
             }
 
             const symbol = template.dataset.element || null;
-            bus.publish("palette:selection-changed", {
+            bus.publish("interaction:context-changed", {
                 source: "palette-click",
-                symbol
+                zone: "palette",
+                clearBoardSelection: true,
+                inspectedSymbol: symbol,
+                paletteSymbol: symbol,
+                persist: true
             });
 
             if (prefersCoarsePointer && symbol) {

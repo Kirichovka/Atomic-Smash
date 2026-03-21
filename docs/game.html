@@ -9,18 +9,26 @@
 <body data-page="game">
     <div id="game-screen" class="app-screen">
         <aside id="sidebar" class="palette-sidebar">
-            <h2>Element Palette</h2>
-            <div id="element-list"></div>
-            <div class="palette-actions">
-                <button id="add-selected-btn" type="button">Add Selected To Board</button>
-                <p class="palette-tip">On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom.</p>
-            </div>
-            <section id="element-info">
-                <div class="zone-title">Selected Element</div>
-                <div id="element-card">
-                    <div class="empty-state">Select an element to see its description.</div>
+            <div id="sidebar-content">
+                <div class="sidebar-header">
+                    <h2>Element Palette</h2>
+                    <button id="sidebar-collapse-btn" class="sidebar-toggle" type="button" aria-expanded="true">
+                        Hide
+                    </button>
                 </div>
-            </section>
+                <div id="element-list"></div>
+                <div class="palette-actions">
+                    <button id="add-selected-btn" type="button">Add Selected To Board</button>
+                    <p class="palette-tip">On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom.</p>
+                </div>
+                <section id="element-info">
+                    <div class="zone-title">Selected Element</div>
+                    <div id="element-card">
+                        <div class="empty-state">Select an element to see its description.</div>
+                    </div>
+                </section>
+            </div>
+            <button id="sidebar-resize-handle" class="sidebar-resize-handle" type="button" tabindex="-1" aria-label="Resize palette"></button>
         </aside>
 
         <main id="workspace">
@@ -31,6 +39,7 @@
                     <div id="hint"></div>
                 </div>
                 <div id="controls">
+                    <button id="palette-toggle-btn" class="secondary" type="button">Hide Palette</button>
                     <button id="menu-btn" class="secondary" type="button">Menu</button>
                     <button id="journal-btn" class="secondary" type="button">Journal</button>
                     <button id="mix-btn" type="button">Mix</button>
@@ -41,6 +50,22 @@
 
             <div id="mix-zone">
                 <svg id="connections-layer" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+            </div>
+
+            <div id="mix-zone-context-root" class="mix-zone-context hidden" aria-hidden="true">
+                <button
+                    id="mix-zone-context-backdrop"
+                    class="mix-zone-context-backdrop"
+                    type="button"
+                    tabindex="-1"
+                    aria-label="Close mix zone menu"
+                ></button>
+
+                <div id="mix-zone-context-menu" class="mix-zone-context-menu" role="menu" aria-label="Mix zone actions"></div>
+
+                <section id="mix-zone-picker" class="mix-zone-picker hidden" aria-label="Choose element">
+                    <div id="mix-zone-picker-list" class="mix-zone-picker-list" role="menu" aria-label="Elements"></div>
+                </section>
             </div>
 
             <section id="compound-zone">

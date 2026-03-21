@@ -3,11 +3,19 @@ const EDITABLE_SELECTORS = "input, textarea, select, [contenteditable='true']";
 export function createHotkeysController({
     config,
     currentPage,
-    onEscape
+    onDeleteSelectedNode,
+    onEscape,
+    onMixBoard,
+    onOpenAddMenu,
+    onRefreshBoard
 }) {
     const bindings = normalizeBindings(config?.bindings ?? []);
     const actionHandlers = {
-        escape: onEscape
+        "delete-selected-node": onDeleteSelectedNode,
+        escape: onEscape,
+        "mix-board": onMixBoard,
+        "open-add-menu": onOpenAddMenu,
+        "refresh-board": onRefreshBoard
     };
 
     function bind() {

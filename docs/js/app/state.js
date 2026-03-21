@@ -15,7 +15,9 @@ export function createState(gameData) {
         ui: {
             activeScreen: "menu",
             inspectedElementSymbol: null,
-            paletteSelectedElementSymbol: null
+            paletteSelectedElementSymbol: null,
+            sidebarCollapsed: false,
+            sidebarWidth: 260
         },
         progress: {
             discoveredCompounds: new Set(),
@@ -65,6 +67,10 @@ export function hydrateState(state, snapshot) {
 
     state.ui.paletteSelectedElementSymbol = paletteSelectedElementSymbol;
     state.ui.inspectedElementSymbol = inspectedElementSymbol;
+    state.ui.sidebarCollapsed = Boolean(snapshot.ui?.sidebarCollapsed);
+    state.ui.sidebarWidth = Number.isFinite(snapshot.ui?.sidebarWidth)
+        ? clampSidebarWidth(Number(snapshot.ui.sidebarWidth))
+        : 260;
 
     const discoveredIds = Array.isArray(snapshot.progress?.discoveryHistory)
         ? snapshot.progress.discoveryHistory.filter(compoundId => validCompoundIds.has(compoundId))
@@ -89,13 +95,17 @@ export function hydrateState(state, snapshot) {
         ? snapshot.board.savedNodes.filter(node =>
             typeof node?.id === "string" &&
             validElementSymbols.has(node.symbol) &&
-            Number.isFinite(node.x) &&
-            Number.isFinite(node.y)
+            (
+                (Number.isFinite(node.localX) && Number.isFinite(node.localY))
+                || (Number.isFinite(node.x) && Number.isFinite(node.y))
+            )
         ).map(node => ({
             id: node.id,
+            localX: Number.isFinite(node.localX) ? Number(node.localX) : null,
+            localY: Number.isFinite(node.localY) ? Number(node.localY) : null,
             symbol: node.symbol,
-            x: Number(node.x),
-            y: Number(node.y)
+            x: Number.isFinite(node.x) ? Number(node.x) : null,
+            y: Number.isFinite(node.y) ? Number(node.y) : null
         }))
         : [];
     const nodeIds = new Set(savedNodes.map(node => node.id));
@@ -126,7 +136,9 @@ export function createPersistedStateSnapshot(state) {
     return {
         ui: {
             inspectedElementSymbol: state.ui.inspectedElementSymbol,
-            paletteSelectedElementSymbol: state.ui.paletteSelectedElementSymbol
+            paletteSelectedElementSymbol: state.ui.paletteSelectedElementSymbol,
+            sidebarCollapsed: state.ui.sidebarCollapsed,
+            sidebarWidth: clampSidebarWidth(state.ui.sidebarWidth)
         },
         progress: {
             discoveryHistory: [...state.progress.discoveryHistory],
@@ -139,9 +151,11 @@ export function createPersistedStateSnapshot(state) {
             nodeIdCounter: state.board.nodeIdCounter,
             savedNodes: state.board.savedNodes.map(node => ({
                 id: node.id,
+                localX: Number.isFinite(node.localX) ? node.localX : null,
+                localY: Number.isFinite(node.localY) ? node.localY : null,
                 symbol: node.symbol,
-                x: node.x,
-                y: node.y
+                x: Number.isFinite(node.x) ? node.x : null,
+                y: Number.isFinite(node.y) ? node.y : null
             })),
             savedConnections: state.board.savedConnections.map(connection => ({
                 fromNodeId: connection.fromNodeId,
@@ -239,4 +253,8 @@ function getMaxNodeId(nodes) {
 
         return Math.max(maxId, Number(match[1]));
     }, 0);
+}
+
+function clampSidebarWidth(width) {
+    return Math.min(Math.max(width, 220), 420);
 }

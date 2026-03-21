@@ -56,8 +56,20 @@
         border-right: none;
         border-bottom: 1px solid var(--color-border-default);
         padding: 14px;
-        gap: 12px;
         background: rgba(255, 255, 255, 0.94);
+    }
+
+    #sidebar.collapsed {
+        display: none;
+    }
+
+    #sidebar-content {
+        min-width: 0;
+        gap: 12px;
+    }
+
+    .sidebar-resize-handle {
+        display: none;
     }
 
     #sidebar h2 {
@@ -220,6 +232,15 @@
         height: clamp(320px, 46dvh, 420px);
     }
 
+    .mix-zone-context-menu,
+    .mix-zone-picker {
+        max-width: calc(100% - 24px);
+    }
+
+    .mix-zone-picker {
+        width: min(220px, calc(100% - 24px));
+    }
+
     .compound-card {
         min-width: 0;
         width: 100%;
@@ -259,5 +280,25 @@
     .help-modal-description,
     .theme-complete-description {
         font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #mix-zone {
+        --mix-node-width: 94px;
+        --mix-node-height: 56px;
+        --mix-node-font-size: 20px;
+        --mix-connector-size: 14px;
+        --mix-connector-offset: 7px;
+    }
+}
+
+@media (max-width: 380px) {
+    #mix-zone {
+        --mix-node-width: 84px;
+        --mix-node-height: 52px;
+        --mix-node-font-size: 18px;
+        --mix-connector-size: 12px;
+        --mix-connector-offset: 6px;
     }
 }
