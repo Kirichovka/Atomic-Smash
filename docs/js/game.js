@@ -16,7 +16,6 @@ import {
     getCurrentLevel,
     getCurrentTheme,
     getLevelsForTheme,
-    hasUnlockedBonusElements,
     hydrateState,
     isCurrentLevelTarget
 } from "./app/state.js";
@@ -1314,9 +1313,7 @@ export async function initGame() {
             refs.levelIndicator.textContent =
                 `${theme.name} | ${getCompletedCountForTheme(state, theme.id)}/${themeLevels.length} complete`;
             refs.task.textContent = `${theme.name} theme complete`;
-            refs.hint.textContent = hasUnlockedBonusElements(state)
-                ? "All themes cleared. Bonus elements are unlocked for free play."
-                : "Open Themes to choose another theme or keep experimenting here.";
+            refs.hint.textContent = "Open Themes to choose another theme or keep experimenting with the elements you have already unlocked.";
             return;
         }
 
@@ -1355,20 +1352,6 @@ export async function initGame() {
             return;
         }
 
-        let bonusUnlockMessage = "";
-
-        if (!state.progress.bonusUnlockShown && hasUnlockedBonusElements(state)) {
-            state.progress.bonusUnlockShown = true;
-            unlockBonusElements({ openModal: false });
-
-            const unlockedBonusNames = state.catalog.elements
-                .filter(element => element.category === "bonus")
-                .map(element => element.name)
-                .join(", ");
-
-            bonusUnlockMessage = `All themes are now complete. Bonus elements unlocked: ${unlockedBonusNames}.`;
-        }
-
         state.progress.currentThemeId = null;
         refreshMetaViews();
         renderCurrentLevel();
@@ -1376,25 +1359,7 @@ export async function initGame() {
             refs.result.textContent = "";
         }
         modalController.closeCompoundModal();
-        modalController.openThemeCompleteModal(currentTheme, { bonusUnlockMessage });
-    }
-
-    function unlockBonusElements(options = {}) {
-        const { openModal = true } = options;
-        const firstBonusElement = state.catalog.elements.find(element => element.category === "bonus") ?? null;
-
-        if (firstBonusElement) {
-            state.ui.paletteSelectedElementSymbol = firstBonusElement.symbol;
-            state.ui.inspectedElementSymbol = firstBonusElement.symbol;
-        }
-
-        navigationController.renderMenu();
-        paletteController.render();
-        navigationController.renderJournal();
-
-        if (openModal && firstBonusElement) {
-            modalController.openElementModal(firstBonusElement);
-        }
+        modalController.openThemeCompleteModal(currentTheme);
     }
 }
 

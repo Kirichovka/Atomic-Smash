@@ -5,7 +5,33 @@ export async function loadGameData() {
         throw new Error(`Failed to load game data: ${response.status}`);
     }
 
-    return response.json();
+    const rawData = await response.json();
+    return normalizeGameData(rawData);
+}
+
+function normalizeGameData(rawData) {
+    const chemicalElements = rawData.chemicalElements ?? rawData.elements ?? [];
+    const compoundRecipes =
+        rawData.compoundFormation?.recipes
+        ?? rawData.compoundFormation?.compounds
+        ?? rawData.compounds
+        ?? [];
+    const taskThemes =
+        rawData.tasks?.themes
+        ?? rawData.themes
+        ?? [];
+    const taskLevels =
+        rawData.tasks?.levels
+        ?? rawData.tasks?.items
+        ?? rawData.levels
+        ?? [];
+
+    return {
+        elements: chemicalElements,
+        compounds: compoundRecipes,
+        themes: taskThemes,
+        levels: taskLevels
+    };
 }
 
 export async function loadHotkeysConfig() {

@@ -140,7 +140,7 @@ export function createPaletteController({
 
         symbol.textContent = element.symbol;
         name.textContent = element.name;
-        meta.textContent = element.category === "starter" ? "Starter Element" : "Bonus Element";
+        meta.textContent = "Available element in the current task progression";
         description.textContent = element.description;
 
         refs.elementCard.append(symbol, name, meta, description);

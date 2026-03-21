@@ -168,9 +168,8 @@ export function createPersistedStateSnapshot(state) {
 }
 
 export function getAvailableElements(state) {
-    return state.catalog.elements.filter(element =>
-        element.category === "starter" || hasUnlockedBonusElements(state)
-    );
+    const availableSymbols = getAvailableElementSymbols(state);
+    return state.catalog.elements.filter(element => availableSymbols.has(element.symbol));
 }
 
 export function getPaletteSelectedElement(state) {
@@ -224,7 +223,7 @@ export function isCurrentLevelTarget(state, compound) {
 }
 
 export function hasUnlockedBonusElements(state) {
-    return state.catalog.levels.length > 0 && state.progress.completedLevelIds.size >= state.catalog.levels.length;
+    return getAvailableElements(state).length >= state.catalog.elements.length;
 }
 
 export function createEdgeKey(leftId, rightId) {
@@ -257,4 +256,42 @@ function getMaxNodeId(nodes) {
 
 function clampSidebarWidth(width) {
     return Math.min(Math.max(width, 220), 420);
+}
+
+function getAvailableElementSymbols(state) {
+    const validSymbols = new Set(state.catalog.elements.map(element => element.symbol));
+    const availableSymbols = new Set();
+    const currentLevel = getCurrentLevel(state);
+
+    const addSymbols = symbols => {
+        if (!Array.isArray(symbols)) {
+            return;
+        }
+
+        symbols.forEach(symbol => {
+            if (validSymbols.has(symbol)) {
+                availableSymbols.add(symbol);
+            }
+        });
+    };
+
+    state.catalog.levels.forEach(level => {
+        if (state.progress.completedLevelIds.has(level.id)) {
+            addSymbols(level.availableElementSymbols);
+        }
+    });
+
+    addSymbols(currentLevel?.availableElementSymbols);
+
+    if (availableSymbols.size === 0) {
+        addSymbols(state.catalog.levels[0]?.availableElementSymbols);
+    }
+
+    if (availableSymbols.size === 0) {
+        state.catalog.elements
+            .filter(element => element.category === "starter")
+            .forEach(element => availableSymbols.add(element.symbol));
+    }
+
+    return availableSymbols;
 }

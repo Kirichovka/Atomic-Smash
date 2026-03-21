@@ -56,8 +56,7 @@ export function createModalController({
         symbol.id = "element-modal-title";
         symbol.textContent = element.symbol;
         name.textContent = element.name;
-        meta.textContent =
-            `${element.category === "starter" ? "Starter element" : "Bonus element"} | Drag into the mix zone to use`;
+        meta.textContent = "Available element | Drag into the mix zone to use";
         description.textContent = element.description;
 
         refs.elementModalContent.append(symbol, name, meta, description);

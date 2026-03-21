@@ -1,5 +1,5 @@
 {
-    "elements": [
+    "chemicalElements": [
         {
             "symbol": "H",
             "name": "Hydrogen",
@@ -27,346 +27,1639 @@
         {
             "symbol": "C",
             "name": "Carbon",
-            "category": "bonus",
+            "category": "starter",
             "description": "Carbon is the backbone of organic chemistry and can form chains, rings, and many stable compounds."
         },
         {
             "symbol": "N",
             "name": "Nitrogen",
-            "category": "bonus",
+            "category": "starter",
             "description": "Nitrogen makes up most of Earth's atmosphere and appears in ammonia, proteins, and fertilizers."
         },
         {
             "symbol": "S",
             "name": "Sulfur",
-            "category": "bonus",
+            "category": "starter",
             "description": "Sulfur is a yellow nonmetal often found in acids, minerals, and volcanic gases."
         },
         {
             "symbol": "K",
             "name": "Potassium",
-            "category": "bonus",
+            "category": "starter",
             "description": "Potassium is a highly reactive alkali metal important for salts and many biological processes."
         },
         {
             "symbol": "Ca",
             "name": "Calcium",
-            "category": "bonus",
+            "category": "starter",
             "description": "Calcium is a common metal in minerals and is essential for bones, shells, and cement chemistry."
         },
         {
             "symbol": "Mg",
             "name": "Magnesium",
-            "category": "bonus",
+            "category": "starter",
             "description": "Magnesium is a light metal used in alloys and forms bright-burning oxides."
         },
         {
             "symbol": "P",
             "name": "Phosphorus",
-            "category": "bonus",
+            "category": "starter",
             "description": "Phosphorus is used in fertilizers, matches, and energy-carrying molecules in living cells."
         },
         {
             "symbol": "Fe",
             "name": "Iron",
-            "category": "bonus",
+            "category": "starter",
             "description": "Iron is a strong transition metal used in steel and forms several important oxides."
+        },
+        {
+            "symbol": "He",
+            "name": "Helium",
+            "category": "starter",
+            "description": "Helium is a very light noble gas used in balloons, cryogenic systems, and scientific equipment."
+        },
+        {
+            "symbol": "Li",
+            "name": "Lithium",
+            "category": "starter",
+            "description": "Lithium is a soft alkali metal best known for its role in rechargeable batteries and lightweight alloys."
+        },
+        {
+            "symbol": "Be",
+            "name": "Beryllium",
+            "category": "starter",
+            "description": "Beryllium is a light, stiff metal used in aerospace parts, X-ray windows, and specialized materials."
+        },
+        {
+            "symbol": "B",
+            "name": "Boron",
+            "category": "starter",
+            "description": "Boron is a metalloid used in glass, detergents, heat-resistant materials, and semiconductor applications."
+        },
+        {
+            "symbol": "F",
+            "name": "Fluorine",
+            "category": "starter",
+            "description": "Fluorine is the most reactive halogen and is used in advanced materials, chemical processing, and fluorides."
+        },
+        {
+            "symbol": "Ne",
+            "name": "Neon",
+            "category": "starter",
+            "description": "Neon is a noble gas famous for its bright glow in signs, lamps, and discharge tubes."
+        },
+        {
+            "symbol": "Al",
+            "name": "Aluminium",
+            "category": "starter",
+            "description": "Aluminium is a lightweight, corrosion-resistant metal used in transport, packaging, and construction."
+        },
+        {
+            "symbol": "Si",
+            "name": "Silicon",
+            "category": "starter",
+            "description": "Silicon is a metalloid essential to semiconductors, solar cells, glass, and many minerals."
+        },
+        {
+            "symbol": "Ar",
+            "name": "Argon",
+            "category": "starter",
+            "description": "Argon is an inert noble gas often used to shield welding, lighting systems, and laboratory setups."
+        },
+        {
+            "symbol": "Sc",
+            "name": "Scandium",
+            "category": "starter",
+            "description": "Scandium is a rare transition metal used in specialty alloys, lamps, and high-performance materials."
+        },
+        {
+            "symbol": "Ti",
+            "name": "Titanium",
+            "category": "starter",
+            "description": "Titanium is a strong, corrosion-resistant metal used in aircraft, implants, and advanced engineering."
+        },
+        {
+            "symbol": "V",
+            "name": "Vanadium",
+            "category": "starter",
+            "description": "Vanadium is a transition metal used to strengthen steels and in some energy-storage technologies."
+        },
+        {
+            "symbol": "Cr",
+            "name": "Chromium",
+            "category": "starter",
+            "description": "Chromium is a shiny metal used in stainless steel, protective coatings, and pigments."
+        },
+        {
+            "symbol": "Mn",
+            "name": "Manganese",
+            "category": "starter",
+            "description": "Manganese is an important alloying metal used in steelmaking, batteries, and chemical processes."
+        },
+        {
+            "symbol": "Co",
+            "name": "Cobalt",
+            "category": "starter",
+            "description": "Cobalt is used in magnets, pigments, and rechargeable batteries for electronics and vehicles."
+        },
+        {
+            "symbol": "Ni",
+            "name": "Nickel",
+            "category": "starter",
+            "description": "Nickel is a corrosion-resistant metal used in alloys, coins, batteries, and plating."
+        },
+        {
+            "symbol": "Cu",
+            "name": "Copper",
+            "category": "starter",
+            "description": "Copper is an excellent electrical conductor widely used in wiring, plumbing, and alloys."
+        },
+        {
+            "symbol": "Zn",
+            "name": "Zinc",
+            "category": "starter",
+            "description": "Zinc is used to protect steel from rust, in brass alloys, and in biological systems."
+        },
+        {
+            "symbol": "Ga",
+            "name": "Gallium",
+            "category": "starter",
+            "description": "Gallium is a soft metal used in electronics, semiconductors, and specialized temperature devices."
+        },
+        {
+            "symbol": "Ge",
+            "name": "Germanium",
+            "category": "starter",
+            "description": "Germanium is a metalloid used in semiconductors, infrared optics, and electronic components."
+        },
+        {
+            "symbol": "As",
+            "name": "Arsenic",
+            "category": "starter",
+            "description": "Arsenic is a toxic metalloid used in some semiconductors, alloys, and specialized materials."
+        },
+        {
+            "symbol": "Se",
+            "name": "Selenium",
+            "category": "starter",
+            "description": "Selenium is a nonmetal used in glassmaking, electronics, solar devices, and trace biology."
+        },
+        {
+            "symbol": "Br",
+            "name": "Bromine",
+            "category": "starter",
+            "description": "Bromine is a reactive liquid halogen used in chemical synthesis, flame retardants, and photography."
+        },
+        {
+            "symbol": "Kr",
+            "name": "Krypton",
+            "category": "starter",
+            "description": "Krypton is a noble gas used in specialty lighting, lasers, and scientific instruments."
+        },
+        {
+            "symbol": "Rb",
+            "name": "Rubidium",
+            "category": "starter",
+            "description": "Rubidium is a very reactive alkali metal used in research, electronics, and atomic clocks."
+        },
+        {
+            "symbol": "Sr",
+            "name": "Strontium",
+            "category": "starter",
+            "description": "Strontium is used in fireworks, ceramics, magnets, and some medical imaging materials."
+        },
+        {
+            "symbol": "Y",
+            "name": "Yttrium",
+            "category": "starter",
+            "description": "Yttrium is used in phosphors, lasers, superconductors, and high-tech ceramic materials."
+        },
+        {
+            "symbol": "Zr",
+            "name": "Zirconium",
+            "category": "starter",
+            "description": "Zirconium is a corrosion-resistant metal used in reactors, ceramics, and durable alloys."
+        },
+        {
+            "symbol": "Nb",
+            "name": "Niobium",
+            "category": "starter",
+            "description": "Niobium is used in superconducting magnets, strong steels, and heat-resistant superalloys."
+        },
+        {
+            "symbol": "Mo",
+            "name": "Molybdenum",
+            "category": "starter",
+            "description": "Molybdenum strengthens steels and helps materials resist heat, pressure, and corrosion."
+        },
+        {
+            "symbol": "Tc",
+            "name": "Technetium",
+            "category": "starter",
+            "description": "Technetium is a radioactive transition metal widely known for use in medical imaging."
+        },
+        {
+            "symbol": "Ru",
+            "name": "Ruthenium",
+            "category": "starter",
+            "description": "Ruthenium is used in electronics, catalysts, and wear-resistant contacts and coatings."
+        },
+        {
+            "symbol": "Rh",
+            "name": "Rhodium",
+            "category": "starter",
+            "description": "Rhodium is a reflective precious metal used in catalysts, plating, and high-temperature systems."
+        },
+        {
+            "symbol": "Pd",
+            "name": "Palladium",
+            "category": "starter",
+            "description": "Palladium is a precious metal used in catalysts, electronics, hydrogen storage, and jewelry."
+        },
+        {
+            "symbol": "Ag",
+            "name": "Silver",
+            "category": "starter",
+            "description": "Silver is a highly conductive precious metal used in electronics, mirrors, and jewelry."
+        },
+        {
+            "symbol": "Cd",
+            "name": "Cadmium",
+            "category": "starter",
+            "description": "Cadmium is a soft metal used in batteries, pigments, and specialized coatings, though it is toxic."
+        },
+        {
+            "symbol": "In",
+            "name": "Indium",
+            "category": "starter",
+            "description": "Indium is used in touchscreens, semiconductors, solders, and transparent conductive films."
+        },
+        {
+            "symbol": "Sn",
+            "name": "Tin",
+            "category": "starter",
+            "description": "Tin is used in solders, coatings, and alloys, and it helps protect other metals from corrosion."
+        },
+        {
+            "symbol": "Sb",
+            "name": "Antimony",
+            "category": "starter",
+            "description": "Antimony is a metalloid used in flame retardants, alloys, semiconductors, and battery materials."
+        },
+        {
+            "symbol": "Te",
+            "name": "Tellurium",
+            "category": "starter",
+            "description": "Tellurium is a rare metalloid used in solar cells, alloys, and thermoelectric materials."
+        },
+        {
+            "symbol": "I",
+            "name": "Iodine",
+            "category": "starter",
+            "description": "Iodine is a halogen used in antiseptics, nutrition, imaging chemistry, and laboratory reactions."
+        },
+        {
+            "symbol": "Xe",
+            "name": "Xenon",
+            "category": "starter",
+            "description": "Xenon is a heavy noble gas used in lamps, ion propulsion, anesthesia research, and detectors."
+        },
+        {
+            "symbol": "Cs",
+            "name": "Cesium",
+            "category": "starter",
+            "description": "Cesium is a very reactive alkali metal used in atomic clocks, detectors, and vacuum devices."
+        },
+        {
+            "symbol": "Ba",
+            "name": "Barium",
+            "category": "starter",
+            "description": "Barium is used in drilling fluids, imaging compounds, ceramics, and fireworks."
+        },
+        {
+            "symbol": "La",
+            "name": "Lanthanum",
+            "category": "starter",
+            "description": "Lanthanum is a rare earth metal used in optics, catalysts, batteries, and specialty glass."
+        },
+        {
+            "symbol": "Ce",
+            "name": "Cerium",
+            "category": "starter",
+            "description": "Cerium is used in catalysts, polishing powders, lighter flints, and rare earth alloys."
+        },
+        {
+            "symbol": "Pr",
+            "name": "Praseodymium",
+            "category": "starter",
+            "description": "Praseodymium is a rare earth element used in magnets, glasses, and specialty alloys."
+        },
+        {
+            "symbol": "Nd",
+            "name": "Neodymium",
+            "category": "starter",
+            "description": "Neodymium is best known for powerful permanent magnets used in motors, speakers, and electronics."
+        },
+        {
+            "symbol": "Pm",
+            "name": "Promethium",
+            "category": "starter",
+            "description": "Promethium is a radioactive rare earth element used mainly in research and specialized devices."
+        },
+        {
+            "symbol": "Sm",
+            "name": "Samarium",
+            "category": "starter",
+            "description": "Samarium is used in magnets, control rods, lasers, and some medical applications."
+        },
+        {
+            "symbol": "Eu",
+            "name": "Europium",
+            "category": "starter",
+            "description": "Europium is used in phosphors for screens, lighting, security printing, and luminescent materials."
+        },
+        {
+            "symbol": "Gd",
+            "name": "Gadolinium",
+            "category": "starter",
+            "description": "Gadolinium is used in MRI contrast agents, magnets, and neutron-absorbing systems."
+        },
+        {
+            "symbol": "Tb",
+            "name": "Terbium",
+            "category": "starter",
+            "description": "Terbium is used in phosphors, sensors, magnets, and high-tech optical materials."
+        },
+        {
+            "symbol": "Dy",
+            "name": "Dysprosium",
+            "category": "starter",
+            "description": "Dysprosium is used to improve high-temperature magnets and in data storage technologies."
+        },
+        {
+            "symbol": "Ho",
+            "name": "Holmium",
+            "category": "starter",
+            "description": "Holmium is used in lasers, magnetic materials, and scientific calibration equipment."
+        },
+        {
+            "symbol": "Er",
+            "name": "Erbium",
+            "category": "starter",
+            "description": "Erbium is used in fiber optics, lasers, specialty glass, and communication systems."
+        },
+        {
+            "symbol": "Tm",
+            "name": "Thulium",
+            "category": "starter",
+            "description": "Thulium is a rare earth element used in portable X-ray devices and specialized lasers."
+        },
+        {
+            "symbol": "Yb",
+            "name": "Ytterbium",
+            "category": "starter",
+            "description": "Ytterbium is used in lasers, atomic clocks, stress gauges, and advanced alloys."
+        },
+        {
+            "symbol": "Lu",
+            "name": "Lutetium",
+            "category": "starter",
+            "description": "Lutetium is used in detectors, catalysts, medical imaging, and high-density materials."
+        },
+        {
+            "symbol": "Hf",
+            "name": "Hafnium",
+            "category": "starter",
+            "description": "Hafnium is used in control rods, superalloys, semiconductors, and heat-resistant systems."
+        },
+        {
+            "symbol": "Ta",
+            "name": "Tantalum",
+            "category": "starter",
+            "description": "Tantalum is a corrosion-resistant metal used in capacitors, implants, and strong alloys."
+        },
+        {
+            "symbol": "W",
+            "name": "Tungsten",
+            "category": "starter",
+            "description": "Tungsten has an extremely high melting point and is used in tools, filaments, and dense alloys."
+        },
+        {
+            "symbol": "Re",
+            "name": "Rhenium",
+            "category": "starter",
+            "description": "Rhenium is a rare metal used in jet engines, catalysts, and very high-temperature alloys."
+        },
+        {
+            "symbol": "Os",
+            "name": "Osmium",
+            "category": "starter",
+            "description": "Osmium is a dense precious metal used in hard alloys, electrical contacts, and scientific work."
+        },
+        {
+            "symbol": "Ir",
+            "name": "Iridium",
+            "category": "starter",
+            "description": "Iridium is a corrosion-resistant metal used in crucibles, spark plugs, and durable electronics."
+        },
+        {
+            "symbol": "Pt",
+            "name": "Platinum",
+            "category": "starter",
+            "description": "Platinum is a precious metal used in catalysts, jewelry, laboratory tools, and fuel cells."
+        },
+        {
+            "symbol": "Au",
+            "name": "Gold",
+            "category": "starter",
+            "description": "Gold is a valuable noble metal used in electronics, jewelry, dentistry, and coatings."
+        },
+        {
+            "symbol": "Hg",
+            "name": "Mercury",
+            "category": "starter",
+            "description": "Mercury is a liquid metal once used in thermometers, switches, and scientific instruments."
+        },
+        {
+            "symbol": "Tl",
+            "name": "Thallium",
+            "category": "starter",
+            "description": "Thallium is a soft metal used in electronics, optics, and research, though it is very toxic."
+        },
+        {
+            "symbol": "Pb",
+            "name": "Lead",
+            "category": "starter",
+            "description": "Lead is a dense metal used in batteries, radiation shielding, and industrial materials."
+        },
+        {
+            "symbol": "Bi",
+            "name": "Bismuth",
+            "category": "starter",
+            "description": "Bismuth is a heavy metal used in medicines, low-melting alloys, and colorful crystal forms."
+        },
+        {
+            "symbol": "Po",
+            "name": "Polonium",
+            "category": "starter",
+            "description": "Polonium is a rare radioactive element used mainly in research and specialized devices."
+        },
+        {
+            "symbol": "At",
+            "name": "Astatine",
+            "category": "starter",
+            "description": "Astatine is a very rare radioactive halogen studied mostly for research and medicine."
+        },
+        {
+            "symbol": "Rn",
+            "name": "Radon",
+            "category": "starter",
+            "description": "Radon is a radioactive noble gas formed naturally in rocks and soil."
+        },
+        {
+            "symbol": "Fr",
+            "name": "Francium",
+            "category": "starter",
+            "description": "Francium is an extremely rare radioactive alkali metal known mostly from research."
+        },
+        {
+            "symbol": "Ra",
+            "name": "Radium",
+            "category": "starter",
+            "description": "Radium is a radioactive alkaline earth metal historically used in luminous materials."
+        },
+        {
+            "symbol": "Ac",
+            "name": "Actinium",
+            "category": "starter",
+            "description": "Actinium is a radioactive element used in research and as an actinide reference point."
+        },
+        {
+            "symbol": "Th",
+            "name": "Thorium",
+            "category": "starter",
+            "description": "Thorium is a radioactive metal studied for fuel cycles, alloys, and high-temperature materials."
+        },
+        {
+            "symbol": "Pa",
+            "name": "Protactinium",
+            "category": "starter",
+            "description": "Protactinium is a rare radioactive actinide used mainly in research."
+        },
+        {
+            "symbol": "U",
+            "name": "Uranium",
+            "category": "starter",
+            "description": "Uranium is a heavy radioactive metal used in nuclear fuel, science, and some dense materials."
+        },
+        {
+            "symbol": "Np",
+            "name": "Neptunium",
+            "category": "starter",
+            "description": "Neptunium is a radioactive actinide produced in reactors and studied in nuclear chemistry."
+        },
+        {
+            "symbol": "Pu",
+            "name": "Plutonium",
+            "category": "starter",
+            "description": "Plutonium is a radioactive actinide important in reactors, research, and energy systems."
+        },
+        {
+            "symbol": "Am",
+            "name": "Americium",
+            "category": "starter",
+            "description": "Americium is a radioactive element known for use in smoke detectors and laboratory work."
+        },
+        {
+            "symbol": "Cm",
+            "name": "Curium",
+            "category": "starter",
+            "description": "Curium is a radioactive actinide used in research and some specialized power sources."
+        },
+        {
+            "symbol": "Bk",
+            "name": "Berkelium",
+            "category": "starter",
+            "description": "Berkelium is a synthetic radioactive element used almost entirely for scientific research."
+        },
+        {
+            "symbol": "Cf",
+            "name": "Californium",
+            "category": "starter",
+            "description": "Californium is a strong neutron emitter used in research, industry, and reactor applications."
+        },
+        {
+            "symbol": "Es",
+            "name": "Einsteinium",
+            "category": "starter",
+            "description": "Einsteinium is a synthetic radioactive element produced in very small amounts for research."
+        },
+        {
+            "symbol": "Fm",
+            "name": "Fermium",
+            "category": "starter",
+            "description": "Fermium is a synthetic radioactive actinide known from laboratory production and study."
+        },
+        {
+            "symbol": "Md",
+            "name": "Mendelevium",
+            "category": "starter",
+            "description": "Mendelevium is a synthetic radioactive element created for nuclear research."
+        },
+        {
+            "symbol": "No",
+            "name": "Nobelium",
+            "category": "starter",
+            "description": "Nobelium is a synthetic actinide produced in laboratories for heavy-element research."
+        },
+        {
+            "symbol": "Lr",
+            "name": "Lawrencium",
+            "category": "starter",
+            "description": "Lawrencium is a synthetic radioactive element at the end of the actinide series."
+        },
+        {
+            "symbol": "Rf",
+            "name": "Rutherfordium",
+            "category": "starter",
+            "description": "Rutherfordium is a synthetic transition metal known only from laboratory production."
+        },
+        {
+            "symbol": "Db",
+            "name": "Dubnium",
+            "category": "starter",
+            "description": "Dubnium is a synthetic element studied in heavy-ion experiments and nuclear chemistry."
+        },
+        {
+            "symbol": "Sg",
+            "name": "Seaborgium",
+            "category": "starter",
+            "description": "Seaborgium is a synthetic transition metal observed only in particle accelerator research."
+        },
+        {
+            "symbol": "Bh",
+            "name": "Bohrium",
+            "category": "starter",
+            "description": "Bohrium is a short-lived synthetic element produced for nuclear science experiments."
+        },
+        {
+            "symbol": "Hs",
+            "name": "Hassium",
+            "category": "starter",
+            "description": "Hassium is a synthetic heavy element known from a small number of laboratory-created atoms."
+        },
+        {
+            "symbol": "Mt",
+            "name": "Meitnerium",
+            "category": "starter",
+            "description": "Meitnerium is a synthetic element produced in research facilities and studied briefly after creation."
+        },
+        {
+            "symbol": "Ds",
+            "name": "Darmstadtium",
+            "category": "starter",
+            "description": "Darmstadtium is a synthetic heavy element made in particle accelerators for fundamental research."
+        },
+        {
+            "symbol": "Rg",
+            "name": "Roentgenium",
+            "category": "starter",
+            "description": "Roentgenium is a synthetic element known from laboratory experiments on superheavy atoms."
+        },
+        {
+            "symbol": "Cn",
+            "name": "Copernicium",
+            "category": "starter",
+            "description": "Copernicium is a synthetic heavy metal created in laboratories and studied for nuclear properties."
+        },
+        {
+            "symbol": "Nh",
+            "name": "Nihonium",
+            "category": "starter",
+            "description": "Nihonium is a synthetic superheavy element observed only in a few research experiments."
+        },
+        {
+            "symbol": "Fl",
+            "name": "Flerovium",
+            "category": "starter",
+            "description": "Flerovium is a synthetic superheavy element produced for studies of atomic stability."
+        },
+        {
+            "symbol": "Mc",
+            "name": "Moscovium",
+            "category": "starter",
+            "description": "Moscovium is a synthetic element created in particle accelerators and studied for short moments."
+        },
+        {
+            "symbol": "Lv",
+            "name": "Livermorium",
+            "category": "starter",
+            "description": "Livermorium is a synthetic superheavy element known from specialized nuclear research."
+        },
+        {
+            "symbol": "Ts",
+            "name": "Tennessine",
+            "category": "starter",
+            "description": "Tennessine is a synthetic heavy halogen-like element produced in only a few experiments."
+        },
+        {
+            "symbol": "Og",
+            "name": "Oganesson",
+            "category": "starter",
+            "description": "Oganesson is the heaviest named element and is known only from a handful of synthetic atoms."
         }
     ],
-    "compounds": [
-        {
-            "id": "hydrogen",
-            "ingredients": ["H", "H"],
-            "name": "Hydrogen",
-            "formula": "H2",
-            "description": "Hydrogen gas is the lightest molecule and an important fuel and industrial reagent."
-        },
-        {
-            "id": "oxygen",
-            "ingredients": ["O", "O"],
-            "name": "Oxygen",
-            "formula": "O2",
-            "description": "Oxygen gas is essential for breathing and helps many reactions burn or release energy."
-        },
-        {
-            "id": "chlorine",
-            "ingredients": ["Cl", "Cl"],
-            "name": "Chlorine",
-            "formula": "Cl2",
-            "description": "Chlorine gas is a reactive halogen used in disinfectants and chemical manufacturing."
-        },
-        {
-            "id": "water",
-            "ingredients": ["H", "H", "O"],
-            "name": "Water",
-            "formula": "H2O",
-            "description": "Water is one of the most important compounds for life and covers most of Earth's surface.",
-            "structure": {
-                "nodes": ["H", "O", "H"],
-                "edges": [[0, 1], [1, 2]]
+    "compoundFormation": {
+        "recipes": [
+            {
+                "id": "hydrogen",
+                "ingredients": [
+                    "H",
+                    "H"
+                ],
+                "name": "Hydrogen",
+                "formula": "H2",
+                "description": "Hydrogen gas is the lightest molecule and an important fuel and industrial reagent."
+            },
+            {
+                "id": "oxygen",
+                "ingredients": [
+                    "O",
+                    "O"
+                ],
+                "name": "Oxygen",
+                "formula": "O2",
+                "description": "Oxygen gas is essential for breathing and helps many reactions burn or release energy."
+            },
+            {
+                "id": "chlorine",
+                "ingredients": [
+                    "Cl",
+                    "Cl"
+                ],
+                "name": "Chlorine",
+                "formula": "Cl2",
+                "description": "Chlorine gas is a reactive halogen used in disinfectants and chemical manufacturing."
+            },
+            {
+                "id": "water",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "O"
+                ],
+                "name": "Water",
+                "formula": "H2O",
+                "description": "Water is one of the most important compounds for life and covers most of Earth's surface.",
+                "structure": {
+                    "nodes": [
+                        "H",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "hydrogen-peroxide",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "O",
+                    "O"
+                ],
+                "name": "Hydrogen Peroxide",
+                "formula": "H2O2",
+                "description": "Hydrogen peroxide is a reactive liquid often used as a disinfectant and bleaching agent.",
+                "structure": {
+                    "nodes": [
+                        "H",
+                        "O",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "hydrochloric-acid",
+                "ingredients": [
+                    "Cl",
+                    "H"
+                ],
+                "name": "Hydrochloric Acid",
+                "formula": "HCl",
+                "description": "Hydrochloric acid is a strong acid found in stomach acid and used in many industrial processes."
+            },
+            {
+                "id": "salt",
+                "ingredients": [
+                    "Cl",
+                    "Na"
+                ],
+                "name": "Salt",
+                "formula": "NaCl",
+                "description": "Sodium chloride is table salt, a familiar mineral important in food and chemistry."
+            },
+            {
+                "id": "sodium-hydroxide",
+                "ingredients": [
+                    "H",
+                    "Na",
+                    "O"
+                ],
+                "name": "Sodium Hydroxide",
+                "formula": "NaOH",
+                "description": "Sodium hydroxide is a strong base widely used in soap making, cleaning, and industry.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sodium-oxide",
+                "ingredients": [
+                    "Na",
+                    "Na",
+                    "O"
+                ],
+                "name": "Sodium Oxide",
+                "formula": "Na2O",
+                "description": "Sodium oxide is a basic oxide formed from sodium and oxygen.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "Na"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sodium-peroxide",
+                "ingredients": [
+                    "Na",
+                    "Na",
+                    "O",
+                    "O"
+                ],
+                "name": "Sodium Peroxide",
+                "formula": "Na2O2",
+                "description": "Sodium peroxide is a reactive oxygen-rich compound that can release oxygen in chemical reactions.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "O",
+                        "Na"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "carbon-monoxide",
+                "ingredients": [
+                    "C",
+                    "O"
+                ],
+                "name": "Carbon Monoxide",
+                "formula": "CO",
+                "description": "Carbon monoxide is a toxic gas produced by incomplete combustion."
+            },
+            {
+                "id": "carbon-dioxide",
+                "ingredients": [
+                    "C",
+                    "O",
+                    "O"
+                ],
+                "name": "Carbon Dioxide",
+                "formula": "CO2",
+                "description": "Carbon dioxide is a common gas in air and a major product of respiration and combustion.",
+                "structure": {
+                    "nodes": [
+                        "O",
+                        "C",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "methane",
+                "ingredients": [
+                    "C",
+                    "H",
+                    "H",
+                    "H",
+                    "H"
+                ],
+                "name": "Methane",
+                "formula": "CH4",
+                "description": "Methane is the main component of natural gas and a simple fuel molecule."
+            },
+            {
+                "id": "carbonic-acid",
+                "ingredients": [
+                    "C",
+                    "H",
+                    "H",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Carbonic Acid",
+                "formula": "H2CO3",
+                "description": "Carbonic acid forms when carbon dioxide dissolves in water and helps make drinks fizzy."
+            },
+            {
+                "id": "ammonia",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "H",
+                    "N"
+                ],
+                "name": "Ammonia",
+                "formula": "NH3",
+                "description": "Ammonia is a pungent gas used in fertilizers, cleaning products, and industrial chemistry.",
+                "structure": {
+                    "nodes": [
+                        "N",
+                        "H",
+                        "H",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "nitric-oxide",
+                "ingredients": [
+                    "N",
+                    "O"
+                ],
+                "name": "Nitric Oxide",
+                "formula": "NO",
+                "description": "Nitric oxide is a reactive gas with roles in chemistry and biology."
+            },
+            {
+                "id": "nitrogen-dioxide",
+                "ingredients": [
+                    "N",
+                    "O",
+                    "O"
+                ],
+                "name": "Nitrogen Dioxide",
+                "formula": "NO2",
+                "description": "Nitrogen dioxide is a brown reactive gas often linked to air pollution."
+            },
+            {
+                "id": "sulfur-dioxide",
+                "ingredients": [
+                    "O",
+                    "O",
+                    "S"
+                ],
+                "name": "Sulfur Dioxide",
+                "formula": "SO2",
+                "description": "Sulfur dioxide is a sharp-smelling gas produced in volcanic activity and fuel burning."
+            },
+            {
+                "id": "sulfur-trioxide",
+                "ingredients": [
+                    "O",
+                    "O",
+                    "O",
+                    "S"
+                ],
+                "name": "Sulfur Trioxide",
+                "formula": "SO3",
+                "description": "Sulfur trioxide is a highly reactive sulfur oxide important in acid production.",
+                "structure": {
+                    "nodes": [
+                        "S",
+                        "O",
+                        "O",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "potassium-chloride",
+                "ingredients": [
+                    "Cl",
+                    "K"
+                ],
+                "name": "Potassium Chloride",
+                "formula": "KCl",
+                "description": "Potassium chloride is a common salt used in fertilizers and chemistry."
+            },
+            {
+                "id": "calcium-oxide",
+                "ingredients": [
+                    "Ca",
+                    "O"
+                ],
+                "name": "Calcium Oxide",
+                "formula": "CaO",
+                "description": "Calcium oxide, also called quicklime, is important in cement and industrial processes."
+            },
+            {
+                "id": "magnesium-oxide",
+                "ingredients": [
+                    "Mg",
+                    "O"
+                ],
+                "name": "Magnesium Oxide",
+                "formula": "MgO",
+                "description": "Magnesium oxide is a stable oxide used in refractory materials and chemistry."
+            },
+            {
+                "id": "phosphine",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "H",
+                    "P"
+                ],
+                "name": "Phosphine",
+                "formula": "PH3",
+                "description": "Phosphine is a toxic phosphorus-containing gas used in specialized chemistry."
+            },
+            {
+                "id": "iron-oxide",
+                "ingredients": [
+                    "Fe",
+                    "Fe",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Iron(III) Oxide",
+                "formula": "Fe2O3",
+                "description": "Iron(III) oxide is a common iron oxide found in rust and mineral pigments."
             }
-        },
-        {
-            "id": "hydrogen-peroxide",
-            "ingredients": ["H", "H", "O", "O"],
-            "name": "Hydrogen Peroxide",
-            "formula": "H2O2",
-            "description": "Hydrogen peroxide is a reactive liquid often used as a disinfectant and bleaching agent.",
-            "structure": {
-                "nodes": ["H", "O", "O", "H"],
-                "edges": [[0, 1], [1, 2], [2, 3]]
+        ]
+    },
+    "tasks": {
+        "themes": [
+            {
+                "id": "basic",
+                "name": "Basic",
+                "description": "Start with the most familiar compounds and learn the core drag-to-connect rules."
+            },
+            {
+                "id": "gases",
+                "name": "Gases",
+                "description": "Build simple gases and get comfortable with small two-atom and three-atom molecules."
+            },
+            {
+                "id": "acids-bases",
+                "name": "Acids & Bases",
+                "description": "Focus on reactive compounds that introduce acidic and basic chemistry."
+            },
+            {
+                "id": "oxides",
+                "name": "Oxides",
+                "description": "Practice oxygen-rich compounds where structure starts to matter more."
             }
-        },
-        {
-            "id": "hydrochloric-acid",
-            "ingredients": ["Cl", "H"],
-            "name": "Hydrochloric Acid",
-            "formula": "HCl",
-            "description": "Hydrochloric acid is a strong acid found in stomach acid and used in many industrial processes."
-        },
-        {
-            "id": "salt",
-            "ingredients": ["Cl", "Na"],
-            "name": "Salt",
-            "formula": "NaCl",
-            "description": "Sodium chloride is table salt, a familiar mineral important in food and chemistry."
-        },
-        {
-            "id": "sodium-hydroxide",
-            "ingredients": ["H", "Na", "O"],
-            "name": "Sodium Hydroxide",
-            "formula": "NaOH",
-            "description": "Sodium hydroxide is a strong base widely used in soap making, cleaning, and industry.",
-            "structure": {
-                "nodes": ["Na", "O", "H"],
-                "edges": [[0, 1], [1, 2]]
+        ],
+        "levels": [
+            {
+                "id": "level-1",
+                "themeId": "basic",
+                "targetCompoundId": "water",
+                "objective": "Build water",
+                "hint": "H2O",
+                "availableElementSymbols": [
+                    "H",
+                    "O"
+                ]
+            },
+            {
+                "id": "level-2",
+                "themeId": "basic",
+                "targetCompoundId": "salt",
+                "objective": "Build salt",
+                "hint": "NaCl",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl"
+                ]
+            },
+            {
+                "id": "level-3",
+                "themeId": "gases",
+                "targetCompoundId": "hydrogen",
+                "objective": "Build hydrogen gas",
+                "hint": "H2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S"
+                ]
+            },
+            {
+                "id": "level-4",
+                "themeId": "gases",
+                "targetCompoundId": "oxygen",
+                "objective": "Build oxygen gas",
+                "hint": "O2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe"
+                ]
+            },
+            {
+                "id": "level-5",
+                "themeId": "gases",
+                "targetCompoundId": "chlorine",
+                "objective": "Build chlorine gas",
+                "hint": "Cl2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar"
+                ]
+            },
+            {
+                "id": "level-6",
+                "themeId": "acids-bases",
+                "targetCompoundId": "hydrochloric-acid",
+                "objective": "Build hydrochloric acid",
+                "hint": "HCl",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar",
+                    "Sc",
+                    "Ti",
+                    "V",
+                    "Cr",
+                    "Mn",
+                    "Co",
+                    "Ni",
+                    "Cu",
+                    "Zn",
+                    "Ga",
+                    "Ge",
+                    "As",
+                    "Se",
+                    "Br",
+                    "Kr"
+                ]
+            },
+            {
+                "id": "level-7",
+                "themeId": "acids-bases",
+                "targetCompoundId": "sodium-hydroxide",
+                "objective": "Build sodium hydroxide",
+                "hint": "NaOH",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar",
+                    "Sc",
+                    "Ti",
+                    "V",
+                    "Cr",
+                    "Mn",
+                    "Co",
+                    "Ni",
+                    "Cu",
+                    "Zn",
+                    "Ga",
+                    "Ge",
+                    "As",
+                    "Se",
+                    "Br",
+                    "Kr",
+                    "Rb",
+                    "Sr",
+                    "Y",
+                    "Zr",
+                    "Nb",
+                    "Mo",
+                    "Tc",
+                    "Ru",
+                    "Rh",
+                    "Pd",
+                    "Ag",
+                    "Cd",
+                    "In",
+                    "Sn",
+                    "Sb",
+                    "Te",
+                    "I",
+                    "Xe"
+                ]
+            },
+            {
+                "id": "level-8",
+                "themeId": "oxides",
+                "targetCompoundId": "sodium-oxide",
+                "objective": "Build sodium oxide",
+                "hint": "Na2O",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar",
+                    "Sc",
+                    "Ti",
+                    "V",
+                    "Cr",
+                    "Mn",
+                    "Co",
+                    "Ni",
+                    "Cu",
+                    "Zn",
+                    "Ga",
+                    "Ge",
+                    "As",
+                    "Se",
+                    "Br",
+                    "Kr",
+                    "Rb",
+                    "Sr",
+                    "Y",
+                    "Zr",
+                    "Nb",
+                    "Mo",
+                    "Tc",
+                    "Ru",
+                    "Rh",
+                    "Pd",
+                    "Ag",
+                    "Cd",
+                    "In",
+                    "Sn",
+                    "Sb",
+                    "Te",
+                    "I",
+                    "Xe",
+                    "Cs",
+                    "Ba",
+                    "La",
+                    "Ce",
+                    "Pr",
+                    "Nd",
+                    "Pm",
+                    "Sm",
+                    "Eu",
+                    "Gd",
+                    "Tb",
+                    "Dy",
+                    "Ho",
+                    "Er",
+                    "Tm",
+                    "Yb",
+                    "Lu"
+                ]
+            },
+            {
+                "id": "level-9",
+                "themeId": "oxides",
+                "targetCompoundId": "hydrogen-peroxide",
+                "objective": "Build hydrogen peroxide",
+                "hint": "H2O2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar",
+                    "Sc",
+                    "Ti",
+                    "V",
+                    "Cr",
+                    "Mn",
+                    "Co",
+                    "Ni",
+                    "Cu",
+                    "Zn",
+                    "Ga",
+                    "Ge",
+                    "As",
+                    "Se",
+                    "Br",
+                    "Kr",
+                    "Rb",
+                    "Sr",
+                    "Y",
+                    "Zr",
+                    "Nb",
+                    "Mo",
+                    "Tc",
+                    "Ru",
+                    "Rh",
+                    "Pd",
+                    "Ag",
+                    "Cd",
+                    "In",
+                    "Sn",
+                    "Sb",
+                    "Te",
+                    "I",
+                    "Xe",
+                    "Cs",
+                    "Ba",
+                    "La",
+                    "Ce",
+                    "Pr",
+                    "Nd",
+                    "Pm",
+                    "Sm",
+                    "Eu",
+                    "Gd",
+                    "Tb",
+                    "Dy",
+                    "Ho",
+                    "Er",
+                    "Tm",
+                    "Yb",
+                    "Lu",
+                    "Hf",
+                    "Ta",
+                    "W",
+                    "Re",
+                    "Os",
+                    "Ir",
+                    "Pt",
+                    "Au",
+                    "Hg",
+                    "Tl",
+                    "Pb",
+                    "Bi",
+                    "Po",
+                    "At",
+                    "Rn"
+                ]
+            },
+            {
+                "id": "level-10",
+                "themeId": "oxides",
+                "targetCompoundId": "sodium-peroxide",
+                "objective": "Build sodium peroxide",
+                "hint": "Na2O2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Na",
+                    "Cl",
+                    "C",
+                    "N",
+                    "S",
+                    "K",
+                    "Ca",
+                    "Mg",
+                    "P",
+                    "Fe",
+                    "He",
+                    "Li",
+                    "Be",
+                    "B",
+                    "F",
+                    "Ne",
+                    "Al",
+                    "Si",
+                    "Ar",
+                    "Sc",
+                    "Ti",
+                    "V",
+                    "Cr",
+                    "Mn",
+                    "Co",
+                    "Ni",
+                    "Cu",
+                    "Zn",
+                    "Ga",
+                    "Ge",
+                    "As",
+                    "Se",
+                    "Br",
+                    "Kr",
+                    "Rb",
+                    "Sr",
+                    "Y",
+                    "Zr",
+                    "Nb",
+                    "Mo",
+                    "Tc",
+                    "Ru",
+                    "Rh",
+                    "Pd",
+                    "Ag",
+                    "Cd",
+                    "In",
+                    "Sn",
+                    "Sb",
+                    "Te",
+                    "I",
+                    "Xe",
+                    "Cs",
+                    "Ba",
+                    "La",
+                    "Ce",
+                    "Pr",
+                    "Nd",
+                    "Pm",
+                    "Sm",
+                    "Eu",
+                    "Gd",
+                    "Tb",
+                    "Dy",
+                    "Ho",
+                    "Er",
+                    "Tm",
+                    "Yb",
+                    "Lu",
+                    "Hf",
+                    "Ta",
+                    "W",
+                    "Re",
+                    "Os",
+                    "Ir",
+                    "Pt",
+                    "Au",
+                    "Hg",
+                    "Tl",
+                    "Pb",
+                    "Bi",
+                    "Po",
+                    "At",
+                    "Rn",
+                    "Fr",
+                    "Ra",
+                    "Ac",
+                    "Th",
+                    "Pa",
+                    "U",
+                    "Np",
+                    "Pu",
+                    "Am",
+                    "Cm",
+                    "Bk",
+                    "Cf",
+                    "Es",
+                    "Fm",
+                    "Md",
+                    "No",
+                    "Lr",
+                    "Rf",
+                    "Db",
+                    "Sg",
+                    "Bh",
+                    "Hs",
+                    "Mt",
+                    "Ds",
+                    "Rg",
+                    "Cn",
+                    "Nh",
+                    "Fl",
+                    "Mc",
+                    "Lv",
+                    "Ts",
+                    "Og"
+                ]
             }
-        },
-        {
-            "id": "sodium-oxide",
-            "ingredients": ["Na", "Na", "O"],
-            "name": "Sodium Oxide",
-            "formula": "Na2O",
-            "description": "Sodium oxide is a basic oxide formed from sodium and oxygen.",
-            "structure": {
-                "nodes": ["Na", "O", "Na"],
-                "edges": [[0, 1], [1, 2]]
-            }
-        },
-        {
-            "id": "sodium-peroxide",
-            "ingredients": ["Na", "Na", "O", "O"],
-            "name": "Sodium Peroxide",
-            "formula": "Na2O2",
-            "description": "Sodium peroxide is a reactive oxygen-rich compound that can release oxygen in chemical reactions.",
-            "structure": {
-                "nodes": ["Na", "O", "O", "Na"],
-                "edges": [[0, 1], [1, 2], [2, 3]]
-            }
-        },
-        {
-            "id": "carbon-monoxide",
-            "ingredients": ["C", "O"],
-            "name": "Carbon Monoxide",
-            "formula": "CO",
-            "description": "Carbon monoxide is a toxic gas produced by incomplete combustion."
-        },
-        {
-            "id": "carbon-dioxide",
-            "ingredients": ["C", "O", "O"],
-            "name": "Carbon Dioxide",
-            "formula": "CO2",
-            "description": "Carbon dioxide is a common gas in air and a major product of respiration and combustion.",
-            "structure": {
-                "nodes": ["O", "C", "O"],
-                "edges": [[0, 1], [1, 2]]
-            }
-        },
-        {
-            "id": "methane",
-            "ingredients": ["C", "H", "H", "H", "H"],
-            "name": "Methane",
-            "formula": "CH4",
-            "description": "Methane is the main component of natural gas and a simple fuel molecule."
-        },
-        {
-            "id": "carbonic-acid",
-            "ingredients": ["C", "H", "H", "O", "O", "O"],
-            "name": "Carbonic Acid",
-            "formula": "H2CO3",
-            "description": "Carbonic acid forms when carbon dioxide dissolves in water and helps make drinks fizzy."
-        },
-        {
-            "id": "ammonia",
-            "ingredients": ["H", "H", "H", "N"],
-            "name": "Ammonia",
-            "formula": "NH3",
-            "description": "Ammonia is a pungent gas used in fertilizers, cleaning products, and industrial chemistry.",
-            "structure": {
-                "nodes": ["N", "H", "H", "H"],
-                "edges": [[0, 1], [0, 2], [0, 3]]
-            }
-        },
-        {
-            "id": "nitric-oxide",
-            "ingredients": ["N", "O"],
-            "name": "Nitric Oxide",
-            "formula": "NO",
-            "description": "Nitric oxide is a reactive gas with roles in chemistry and biology."
-        },
-        {
-            "id": "nitrogen-dioxide",
-            "ingredients": ["N", "O", "O"],
-            "name": "Nitrogen Dioxide",
-            "formula": "NO2",
-            "description": "Nitrogen dioxide is a brown reactive gas often linked to air pollution."
-        },
-        {
-            "id": "sulfur-dioxide",
-            "ingredients": ["O", "O", "S"],
-            "name": "Sulfur Dioxide",
-            "formula": "SO2",
-            "description": "Sulfur dioxide is a sharp-smelling gas produced in volcanic activity and fuel burning."
-        },
-        {
-            "id": "sulfur-trioxide",
-            "ingredients": ["O", "O", "O", "S"],
-            "name": "Sulfur Trioxide",
-            "formula": "SO3",
-            "description": "Sulfur trioxide is a highly reactive sulfur oxide important in acid production.",
-            "structure": {
-                "nodes": ["S", "O", "O", "O"],
-                "edges": [[0, 1], [0, 2], [0, 3]]
-            }
-        },
-        {
-            "id": "potassium-chloride",
-            "ingredients": ["Cl", "K"],
-            "name": "Potassium Chloride",
-            "formula": "KCl",
-            "description": "Potassium chloride is a common salt used in fertilizers and chemistry."
-        },
-        {
-            "id": "calcium-oxide",
-            "ingredients": ["Ca", "O"],
-            "name": "Calcium Oxide",
-            "formula": "CaO",
-            "description": "Calcium oxide, also called quicklime, is important in cement and industrial processes."
-        },
-        {
-            "id": "magnesium-oxide",
-            "ingredients": ["Mg", "O"],
-            "name": "Magnesium Oxide",
-            "formula": "MgO",
-            "description": "Magnesium oxide is a stable oxide used in refractory materials and chemistry."
-        },
-        {
-            "id": "phosphine",
-            "ingredients": ["H", "H", "H", "P"],
-            "name": "Phosphine",
-            "formula": "PH3",
-            "description": "Phosphine is a toxic phosphorus-containing gas used in specialized chemistry."
-        },
-        {
-            "id": "iron-oxide",
-            "ingredients": ["Fe", "Fe", "O", "O", "O"],
-            "name": "Iron(III) Oxide",
-            "formula": "Fe2O3",
-            "description": "Iron(III) oxide is a common iron oxide found in rust and mineral pigments."
-        }
-    ],
-    "themes": [
-        {
-            "id": "basic",
-            "name": "Basic",
-            "description": "Start with the most familiar compounds and learn the core drag-to-connect rules."
-        },
-        {
-            "id": "gases",
-            "name": "Gases",
-            "description": "Build simple gases and get comfortable with small two-atom and three-atom molecules."
-        },
-        {
-            "id": "acids-bases",
-            "name": "Acids & Bases",
-            "description": "Focus on reactive compounds that introduce acidic and basic chemistry."
-        },
-        {
-            "id": "oxides",
-            "name": "Oxides",
-            "description": "Practice oxygen-rich compounds where structure starts to matter more."
-        }
-    ],
-    "levels": [
-        {
-            "id": "level-1",
-            "themeId": "basic",
-            "targetCompoundId": "water",
-            "objective": "Build water",
-            "hint": "H2O"
-        },
-        {
-            "id": "level-2",
-            "themeId": "basic",
-            "targetCompoundId": "salt",
-            "objective": "Build salt",
-            "hint": "NaCl"
-        },
-        {
-            "id": "level-3",
-            "themeId": "gases",
-            "targetCompoundId": "hydrogen",
-            "objective": "Build hydrogen gas",
-            "hint": "H2"
-        },
-        {
-            "id": "level-4",
-            "themeId": "gases",
-            "targetCompoundId": "oxygen",
-            "objective": "Build oxygen gas",
-            "hint": "O2"
-        },
-        {
-            "id": "level-5",
-            "themeId": "gases",
-            "targetCompoundId": "chlorine",
-            "objective": "Build chlorine gas",
-            "hint": "Cl2"
-        },
-        {
-            "id": "level-6",
-            "themeId": "acids-bases",
-            "targetCompoundId": "hydrochloric-acid",
-            "objective": "Build hydrochloric acid",
-            "hint": "HCl"
-        },
-        {
-            "id": "level-7",
-            "themeId": "acids-bases",
-            "targetCompoundId": "sodium-hydroxide",
-            "objective": "Build sodium hydroxide",
-            "hint": "NaOH"
-        },
-        {
-            "id": "level-8",
-            "themeId": "oxides",
-            "targetCompoundId": "sodium-oxide",
-            "objective": "Build sodium oxide",
-            "hint": "Na2O"
-        },
-        {
-            "id": "level-9",
-            "themeId": "oxides",
-            "targetCompoundId": "hydrogen-peroxide",
-            "objective": "Build hydrogen peroxide",
-            "hint": "H2O2"
-        },
-        {
-            "id": "level-10",
-            "themeId": "oxides",
-            "targetCompoundId": "sodium-peroxide",
-            "objective": "Build sodium peroxide",
-            "hint": "Na2O2"
-        }
-    ]
+        ]
+    }
 }

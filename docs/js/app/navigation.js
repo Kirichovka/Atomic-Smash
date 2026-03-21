@@ -154,9 +154,9 @@ export function createNavigationController({
             subtitle.textContent = element.name;
             description.textContent = isUnlocked
                 ? element.description
-                : "Complete all themes to unlock this bonus element in the lab.";
+                : "Complete more tasks to unlock this element in the lab.";
             status.textContent = isUnlocked
-                ? (element.category === "starter" ? "Starter element" : "Bonus element")
+                ? "Unlocked for your current progress"
                 : "Locked";
 
             if (isUnlocked) {
