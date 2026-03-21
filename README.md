@@ -79,6 +79,57 @@ The mobile UX is optimized separately from desktop:
 - on larger screens, the desktop interaction model remains intact;
 - layouts are adapted for narrower viewports, with the palette and controls reflowed for small screens.
 
+## Interaction Model
+
+The current `Game` screen supports multiple interaction layers depending on device and context.
+
+### Palette interactions
+
+- desktop: drag an element from the palette into the `mix-zone`;
+- mobile: tap an element to add it immediately;
+- palette selection updates the element card without opening a modal;
+- the `Add To Board` button uses the current palette selection and repeats placement quickly.
+
+### Board interactions
+
+- tap or click a node to select it and inspect its element data;
+- drag nodes to reposition them;
+- drag from connectors to create links;
+- remove a node by dragging it outside the `mix-zone`;
+- remove a connection by clicking its line.
+
+### Context menu interactions
+
+The `mix-zone` now supports context-aware menus:
+
+- on empty board space:
+  - `Add Element`
+  - `Refresh`
+  - `Mix`
+- on a selected node:
+  - `Delete`
+
+Desktop trigger:
+- right click
+
+Touch trigger:
+- double tap on empty space or on a node;
+- long press on empty space or on a node.
+
+The `Add Element` action opens a compact element picker next to the context menu. It supports both mouse selection and keyboard navigation.
+
+### Keyboard shortcuts
+
+The project now uses data-driven keyboard shortcuts from:
+- `docs/data/hotkeys.json`
+
+Current shortcuts:
+- `Escape`: close the active overlay or context layer;
+- `Shift + A`: open the add-element menu at the current cursor position;
+- `Shift + R`: refresh the board;
+- `Shift + M`: run mix;
+- `Delete`: remove the currently selected node.
+
 ## Current Content
 
 The content package currently includes:
@@ -229,6 +280,12 @@ Good ownership for:
 - chemistry interaction rules;
 - future mini-game modules.
 
+This area also now owns:
+- local coordinate handling inside the `mix-zone`;
+- dynamic node sizing support on very small screens;
+- SVG connection redraw logic when the board area changes size;
+- context-menu-aware node actions such as delete.
+
 ### State and persistence
 
 Files:
@@ -307,6 +364,52 @@ It currently contains:
 - structural definitions for compounds that need explicit graph validation.
 
 This data-first approach makes balancing and expansion easier because content can grow without rewriting the whole runtime.
+
+## Mix Zone Technical Model
+
+The `connection-lab` mechanic is no longer just a pixel-based freeform board.
+
+### Spatial model
+
+Nodes are stored with local normalized coordinates inside the available `mix-zone` space instead of relying only on absolute pixels. This makes the board more stable when:
+- the sidebar width changes;
+- the palette is collapsed or expanded;
+- the viewport changes size;
+- the game is restored on another screen size.
+
+### Rendering model
+
+The mechanic converts local board coordinates into current pixel positions only at render time. This means:
+- node placement stays proportional to the current board size;
+- connection lines are recalculated from the current connector centers;
+- resizing the play area no longer leaves wires in stale positions.
+
+### Resize handling
+
+The board listens for real `mix-zone` size changes through a resize observer. When the zone changes:
+- nodes are re-laid out from local coordinates;
+- the SVG layer is resized;
+- all connection lines are redrawn.
+
+### Adaptive node sizing
+
+Desktop keeps the original node size.
+
+On very small screens, node dimensions and connector dimensions shrink through CSS variables so the board remains usable without changing the desktop look. The gameplay mechanic reads those same dimensions when calculating:
+- spawn positions;
+- drag bounds;
+- out-of-bounds deletion;
+- local-to-pixel conversion;
+- pixel-to-local conversion.
+
+## Sidebar Controls
+
+The palette sidebar is now adjustable:
+- it can be collapsed and restored;
+- on desktop it can be resized by dragging its right edge;
+- its width and collapsed state are persisted in application state.
+
+This makes the play area more flexible and gives room for future mechanics that may need more horizontal workspace.
 
 ## Running Locally
 
