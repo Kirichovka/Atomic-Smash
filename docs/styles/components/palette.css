@@ -101,14 +101,16 @@
     flex: 1 1 auto;
     min-height: 0;
     margin-top: 6px;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
     gap: 14px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     align-content: start;
     align-items: start;
-    padding-right: 10px;
-    scrollbar-gutter: stable;
+    padding-right: 16px;
+    scrollbar-gutter: stable both-edges;
 }
 
 .palette-actions {
