@@ -25,6 +25,9 @@ const MIX_ZONE_LONG_PRESS_MS = 420;
 const MIX_ZONE_TOUCH_MOVE_THRESHOLD = 14;
 const SIDEBAR_MIN_WIDTH = 287;
 const SIDEBAR_MAX_WIDTH = 420;
+const BASIC_TUTORIAL_THEME_ID = "basic";
+const BASIC_TUTORIAL_FIRST_LEVEL_ID = "level-1";
+const BASIC_TUTORIAL_BUBBLE_GAP = 16;
 const MIX_ZONE_MENU_ACTIONS = {
     node: [
         { id: "delete", label: "Delete" }
@@ -87,6 +90,10 @@ export async function initGame() {
         clientX: null,
         clientY: null
     };
+    const basicTutorial = {
+        postMixShown: false,
+        syncFrame: null
+    };
 
     let navigationController;
 
@@ -94,6 +101,7 @@ export async function initGame() {
         refs,
         state,
         createHelpVisual: compound => getActiveMechanic().createHelpVisual(compound),
+        onModalStateChanged: scheduleBasicTutorialSync,
         onThemeCompleteClosed: () => navigationController.showThemeScreen()
     });
     const paletteController = createPaletteController({
@@ -134,9 +142,11 @@ export async function initGame() {
     bindGameplayControls();
     bindObservers();
     bindActiveZoneTracking();
+    bindBasicTutorialObservers();
 
     refreshAllViews();
     applySidebarLayout();
+    scheduleBasicTutorialSync();
     persistCurrentState();
 
     window.addEventListener("beforeunload", persistCurrentState);
@@ -149,6 +159,7 @@ export async function initGame() {
         }
 
         getActiveMechanic().sync();
+        scheduleBasicTutorialSync();
     });
 
     function bindGameplayControls() {
@@ -178,6 +189,12 @@ export async function initGame() {
         bus.subscribe("element:drop-at-point", ({ clientX, clientY, symbol }) => {
             addElementToBoardAtPoint(symbol, clientX, clientY);
         });
+    }
+
+    function bindBasicTutorialObservers() {
+        document.addEventListener("click", scheduleBasicTutorialSync, true);
+        document.addEventListener("pointerup", scheduleBasicTutorialSync, true);
+        document.addEventListener("pointercancel", scheduleBasicTutorialSync, true);
     }
 
     function bindActiveZoneTracking() {
@@ -1011,6 +1028,353 @@ export async function initGame() {
         };
     }
 
+    function scheduleBasicTutorialSync() {
+        if (basicTutorial.syncFrame !== null) {
+            cancelAnimationFrame(basicTutorial.syncFrame);
+        }
+
+        basicTutorial.syncFrame = requestAnimationFrame(() => {
+            basicTutorial.syncFrame = null;
+            syncBasicTutorial();
+        });
+    }
+
+    function syncBasicTutorial() {
+        if (!refs.tutorialOverlay || !refs.tutorialBubble || !refs.tutorialBubbleText || !refs.tutorialHighlight) {
+            return;
+        }
+
+        const stageId = getBasicTutorialStage();
+        if (!stageId || isTutorialBlocked()) {
+            hideBasicTutorial();
+            return;
+        }
+
+        const stage = getBasicTutorialStageConfig(stageId);
+        if (!stage?.targetRect) {
+            hideBasicTutorial();
+            return;
+        }
+
+        renderBasicTutorial(stage);
+    }
+
+    function getBasicTutorialStage() {
+        if (currentPage !== "game" || state.progress.basicTutorialCompleted) {
+            return null;
+        }
+
+        const currentTheme = getCurrentTheme(state);
+        if (currentTheme?.id !== BASIC_TUTORIAL_THEME_ID) {
+            return null;
+        }
+
+        if (state.progress.completedLevelIds.has(BASIC_TUTORIAL_FIRST_LEVEL_ID)) {
+            return basicTutorial.postMixShown ? "hotkeys" : "after-mix";
+        }
+
+        const currentLevel = getCurrentLevel(state);
+        if (!currentLevel || currentLevel.id !== BASIC_TUTORIAL_FIRST_LEVEL_ID) {
+            return null;
+        }
+
+        const targetCompound = getCompoundById(state, currentLevel.targetCompoundId);
+        const requiredNodeCount = targetCompound?.ingredients?.length ?? 0;
+        const requiredConnectionCount = targetCompound?.structure?.edges?.length ?? Math.max(requiredNodeCount - 1, 0);
+        const nodeCount = state.board.savedNodes.length;
+        const connectionCount = state.board.savedConnections.length;
+
+        if (state.board.dragElementType) {
+            return "drop-on-board";
+        }
+
+        if (nodeCount === 0) {
+            return "place-element";
+        }
+
+        if (nodeCount < requiredNodeCount) {
+            return "drop-on-board";
+        }
+
+        if (connectionCount < requiredConnectionCount) {
+            return "connect-atoms";
+        }
+
+        return "mix-compound";
+    }
+
+    function getBasicTutorialStageConfig(stageId) {
+        switch (stageId) {
+            case "place-element": {
+                const target = getTutorialPaletteTarget();
+                return target
+                    ? {
+                        actionLabel: null,
+                        arrow: false,
+                        onAction: null,
+                        placement: "right",
+                        targetRect: target.getBoundingClientRect(),
+                        text: "Перетащите нужный элемент на поле, чтобы начать собирать молекулу."
+                    }
+                    : null;
+            }
+            case "drop-on-board":
+                return refs.mixZone
+                    ? {
+                        actionLabel: null,
+                        arrow: true,
+                        onAction: null,
+                        placement: "top-left",
+                        targetRect: refs.mixZone.getBoundingClientRect(),
+                        text: "Отпустите элемент в зоне поля. Для H2O сначала разместите два H и один O."
+                    }
+                    : null;
+            case "connect-atoms": {
+                const target = getTutorialConnectionTarget();
+                return target
+                    ? {
+                        actionLabel: null,
+                        arrow: false,
+                        onAction: null,
+                        placement: "top",
+                        targetRect: target.getBoundingClientRect(),
+                        text: "Теперь соедините атомы: потяните от этой точки к другому атому, чтобы собрать нужную структуру."
+                    }
+                    : null;
+            }
+            case "mix-compound":
+                return refs.mixButton
+                    ? {
+                        actionLabel: null,
+                        arrow: false,
+                        onAction: null,
+                        placement: "bottom-left",
+                        targetRect: refs.mixButton.getBoundingClientRect(),
+                        text: "Когда все атомы и связи готовы, нажмите Mix и игра проверит вашу молекулу."
+                    }
+                    : null;
+            case "after-mix": {
+                const target = getTutorialPostMixTarget();
+                return target
+                    ? {
+                        actionLabel: "Дальше",
+                        arrow: false,
+                        onAction: () => {
+                            basicTutorial.postMixShown = true;
+                            scheduleBasicTutorialSync();
+                        },
+                        placement: "bottom-left",
+                        targetRect: target.getBoundingClientRect(),
+                        text: "После Mix игра проверяет состав, связи и показывает результат прямо в верхней панели."
+                    }
+                    : null;
+            }
+            case "hotkeys":
+                return refs.controls
+                    ? {
+                        actionLabel: "Понятно",
+                        arrow: false,
+                        onAction: () => {
+                            state.progress.basicTutorialCompleted = true;
+                            persistCurrentState();
+                            hideBasicTutorial();
+                        },
+                        placement: "bottom-left",
+                        targetRect: refs.controls.getBoundingClientRect(),
+                        text: "Горячие клавиши: Shift + A открывает меню добавления, Shift + M запускает Mix, Shift + R очищает поле, Delete удаляет выделение, Esc закрывает окна."
+                    }
+                    : null;
+            default:
+                return null;
+        }
+    }
+
+    function renderBasicTutorial(stage) {
+        refs.tutorialOverlay.classList.remove("hidden");
+        refs.tutorialOverlay.setAttribute("aria-hidden", "false");
+
+        refs.tutorialBubbleText.textContent = stage.text;
+
+        if (refs.tutorialBubbleAction) {
+            refs.tutorialBubbleAction.onclick = null;
+            if (stage.actionLabel && typeof stage.onAction === "function") {
+                refs.tutorialBubbleAction.textContent = stage.actionLabel;
+                refs.tutorialBubbleAction.classList.remove("hidden");
+                refs.tutorialBubbleAction.onclick = stage.onAction;
+            } else {
+                refs.tutorialBubbleAction.classList.add("hidden");
+                refs.tutorialBubbleAction.textContent = "";
+            }
+        }
+
+        positionTutorialHighlight(stage.targetRect);
+
+        refs.tutorialBubble.style.left = "-9999px";
+        refs.tutorialBubble.style.top = "-9999px";
+        refs.tutorialBubble.style.maxWidth = "300px";
+
+        const bubbleRect = refs.tutorialBubble.getBoundingClientRect();
+        const bubblePosition = getTutorialBubblePosition(stage.targetRect, bubbleRect, stage.placement);
+
+        refs.tutorialBubble.style.left = `${bubblePosition.left}px`;
+        refs.tutorialBubble.style.top = `${bubblePosition.top}px`;
+
+        positionTutorialArrow(stage.targetRect, refs.tutorialBubble.getBoundingClientRect(), stage.arrow);
+    }
+
+    function hideBasicTutorial() {
+        refs.tutorialOverlay?.classList.add("hidden");
+        refs.tutorialOverlay?.setAttribute("aria-hidden", "true");
+        refs.tutorialArrow?.classList.add("hidden");
+
+        if (refs.tutorialBubbleAction) {
+            refs.tutorialBubbleAction.onclick = null;
+        }
+    }
+
+    function positionTutorialHighlight(targetRect) {
+        if (!refs.tutorialHighlight) {
+            return;
+        }
+
+        const padding = 10;
+        refs.tutorialHighlight.style.left = `${Math.max(targetRect.left - padding, 8)}px`;
+        refs.tutorialHighlight.style.top = `${Math.max(targetRect.top - padding, 8)}px`;
+        refs.tutorialHighlight.style.width = `${Math.max(targetRect.width + (padding * 2), 24)}px`;
+        refs.tutorialHighlight.style.height = `${Math.max(targetRect.height + (padding * 2), 24)}px`;
+    }
+
+    function positionTutorialArrow(targetRect, bubbleRect, shouldShowArrow) {
+        if (!refs.tutorialArrow) {
+            return;
+        }
+
+        if (!shouldShowArrow) {
+            refs.tutorialArrow.classList.add("hidden");
+            return;
+        }
+
+        const startX = bubbleRect.left + (bubbleRect.width / 2);
+        const startY = bubbleRect.top + (bubbleRect.height / 2);
+        const endX = targetRect.left + (targetRect.width / 2);
+        const endY = targetRect.top + Math.min(targetRect.height * 0.35, 72);
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        const length = Math.max(Math.hypot(deltaX, deltaY) - 22, 48);
+        const angle = Math.atan2(deltaY, deltaX);
+
+        refs.tutorialArrow.classList.remove("hidden");
+        refs.tutorialArrow.style.left = `${startX}px`;
+        refs.tutorialArrow.style.top = `${startY}px`;
+        refs.tutorialArrow.style.width = `${length}px`;
+        refs.tutorialArrow.style.transform = `rotate(${angle}rad)`;
+    }
+
+    function getTutorialBubblePosition(targetRect, bubbleRect, placement = "bottom-left") {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const maxLeft = Math.max(viewportWidth - bubbleRect.width - 12, 12);
+        const maxTop = Math.max(viewportHeight - bubbleRect.height - 12, 12);
+
+        const preferredPositions = {
+            "bottom-left": {
+                left: targetRect.left,
+                top: targetRect.bottom + BASIC_TUTORIAL_BUBBLE_GAP
+            },
+            right: {
+                left: targetRect.right + BASIC_TUTORIAL_BUBBLE_GAP,
+                top: targetRect.top + ((targetRect.height - bubbleRect.height) / 2)
+            },
+            top: {
+                left: targetRect.left + ((targetRect.width - bubbleRect.width) / 2),
+                top: targetRect.top - bubbleRect.height - BASIC_TUTORIAL_BUBBLE_GAP
+            },
+            "top-left": {
+                left: targetRect.left + 12,
+                top: targetRect.top + 12
+            }
+        };
+
+        const preferred = preferredPositions[placement] ?? preferredPositions["bottom-left"];
+
+        return {
+            left: Math.min(Math.max(preferred.left, 12), maxLeft),
+            top: Math.min(Math.max(preferred.top, 12), maxTop)
+        };
+    }
+
+    function getTutorialPaletteTarget() {
+        if (!refs.elementList) {
+            return null;
+        }
+
+        const currentLevel = getCurrentLevel(state);
+        const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
+        const preferredSymbol = targetCompound?.ingredients?.[0] ?? null;
+        const preferredTile = preferredSymbol
+            ? refs.elementList.querySelector(`.element-template[data-element="${preferredSymbol}"]`)
+            : null;
+
+        return preferredTile ?? refs.elementList.querySelector(".element-template");
+    }
+
+    function getTutorialConnectionTarget() {
+        const preferredSymbol = getPreferredConnectorSymbol();
+        const preferredNode = preferredSymbol
+            ? refs.mixZone?.querySelector(`.node[data-symbol="${preferredSymbol}"]`)
+            : null;
+        const fallbackNode = preferredNode ?? refs.mixZone?.querySelector(".node");
+
+        return fallbackNode?.querySelector(".connector.right")
+            ?? fallbackNode?.querySelector(".connector")
+            ?? null;
+    }
+
+    function getPreferredConnectorSymbol() {
+        const currentLevel = getCurrentLevel(state);
+        const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
+        const structureNodes = targetCompound?.structure?.nodes;
+        const structureEdges = targetCompound?.structure?.edges;
+
+        if (!Array.isArray(structureNodes) || !Array.isArray(structureEdges)) {
+            return targetCompound?.ingredients?.[0] ?? null;
+        }
+
+        const degreeByIndex = new Map(structureNodes.map((_, index) => [index, 0]));
+        structureEdges.forEach(([fromIndex, toIndex]) => {
+            degreeByIndex.set(fromIndex, (degreeByIndex.get(fromIndex) ?? 0) + 1);
+            degreeByIndex.set(toIndex, (degreeByIndex.get(toIndex) ?? 0) + 1);
+        });
+
+        const preferredIndex = [...degreeByIndex.entries()]
+            .sort((left, right) => right[1] - left[1])[0]?.[0];
+
+        return Number.isInteger(preferredIndex) ? structureNodes[preferredIndex] : targetCompound?.ingredients?.[0] ?? null;
+    }
+
+    function getTutorialPostMixTarget() {
+        if (refs.result && refs.result.textContent?.trim()) {
+            return refs.result;
+        }
+
+        return refs.mixButton ?? null;
+    }
+
+    function isTutorialBlocked() {
+        return Boolean(
+            mixZoneContext.isOpen
+            || isModalVisible(refs.compoundModal)
+            || isModalVisible(refs.elementModal)
+            || isModalVisible(refs.helpModal)
+            || isModalVisible(refs.themeCompleteModal)
+            || isModalVisible(refs.valencyModal)
+        );
+    }
+
+    function isModalVisible(modal) {
+        return Boolean(modal && !modal.classList.contains("hidden"));
+    }
+
     function persistCurrentState() {
         getActiveMechanic().captureState?.();
         persistState(state);
@@ -1032,6 +1396,7 @@ export async function initGame() {
 
         getActiveMechanic().spawnElement?.(symbol);
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function addElementToBoardAtPoint(symbol, clientX, clientY) {
@@ -1045,6 +1410,7 @@ export async function initGame() {
         }
 
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function handleMixAttempt() {
@@ -1056,6 +1422,7 @@ export async function initGame() {
             }
             modalController.openValencyModal(valencyValidation);
             persistCurrentState();
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1067,6 +1434,7 @@ export async function initGame() {
                 refs.result.textContent = "Unknown compound.";
             }
             persistCurrentState();
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1078,6 +1446,7 @@ export async function initGame() {
                     "but the connection pattern is wrong.";
             }
             persistCurrentState();
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1087,6 +1456,7 @@ export async function initGame() {
         if (isCurrentLevelTarget(state, compound)) {
             handleLevelComplete(compound);
             persistCurrentState();
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1100,6 +1470,7 @@ export async function initGame() {
                     `but the current target is ${targetCompound?.formula ?? currentLevel.hint}.`;
             }
             persistCurrentState();
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1107,6 +1478,7 @@ export async function initGame() {
             refs.result.textContent = `You built ${compound.formula} (${compound.name}).`;
         }
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function selectElement(symbol, options = {}) {
@@ -1145,6 +1517,7 @@ export async function initGame() {
         }
 
         paletteController.renderSelectionUi();
+        scheduleBasicTutorialSync();
 
         if (persist) {
             persistCurrentState();
@@ -1163,6 +1536,7 @@ export async function initGame() {
         renderCurrentLevel();
         renderDiscoveredCompounds();
         getActiveMechanic().sync();
+        scheduleBasicTutorialSync();
     }
 
     function refreshMetaViews() {
@@ -1198,6 +1572,7 @@ export async function initGame() {
         navigationController.showGameScreen();
         getActiveMechanic().sync();
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function startTheme(themeId) {
@@ -1217,6 +1592,8 @@ export async function initGame() {
         renderCurrentLevel();
         persistCurrentState();
         navigationController.showGameScreen();
+        basicTutorial.postMixShown = false;
+        scheduleBasicTutorialSync();
     }
 
     function clearBoard() {
@@ -1227,6 +1604,7 @@ export async function initGame() {
             refs.result.textContent = "";
         }
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function handleEscapeShortcut() {
@@ -1242,6 +1620,7 @@ export async function initGame() {
 
         if (modalController.closeActiveModal()) {
             persistCurrentState();
+            scheduleBasicTutorialSync();
         }
     }
 
@@ -1286,6 +1665,7 @@ export async function initGame() {
 
         getActiveMechanic().removeNodeById?.(nodeId);
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function removeSelectedBoardNodes() {
@@ -1296,6 +1676,7 @@ export async function initGame() {
 
         getActiveMechanic().removeNodesByIds?.(selectedNodeIds);
         persistCurrentState();
+        scheduleBasicTutorialSync();
     }
 
     function addDiscoveredCompound(compound) {
@@ -1405,6 +1786,10 @@ export async function initGame() {
         state.progress.completedLevelIds.add(currentLevel.id);
         mechanicsRegistry.resetAll();
 
+        if (currentTheme.id === BASIC_TUTORIAL_THEME_ID && currentLevel.id === BASIC_TUTORIAL_FIRST_LEVEL_ID) {
+            basicTutorial.postMixShown = false;
+        }
+
         if (hadRemainingThemeLevels) {
             refreshMetaViews();
             paletteController.render();
@@ -1414,6 +1799,7 @@ export async function initGame() {
                     `${currentTheme.name} task ${completedLevelNumber} complete! ` +
                     `You built ${compound.formula} (${compound.name}).`;
             }
+            scheduleBasicTutorialSync();
             return;
         }
 
@@ -1426,6 +1812,7 @@ export async function initGame() {
         }
         modalController.closeCompoundModal();
         modalController.openThemeCompleteModal(currentTheme);
+        scheduleBasicTutorialSync();
     }
 }
 

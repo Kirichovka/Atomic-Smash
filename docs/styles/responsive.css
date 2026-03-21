@@ -304,3 +304,15 @@
         --mix-connector-offset: 6px;
     }
 }
+
+@media (max-width: 640px) {
+    .tutorial-bubble {
+        min-width: 0;
+        max-width: min(260px, calc(100vw - 24px));
+        padding: 12px 14px;
+    }
+
+    .tutorial-bubble-text {
+        font-size: 13px;
+    }
+}

@@ -20,6 +20,7 @@ export function createState(gameData) {
             sidebarWidth: 287
         },
         progress: {
+            basicTutorialCompleted: false,
             discoveredCompounds: new Set(),
             discoveryHistory: [],
             completedLevelIds: new Set(),
@@ -79,6 +80,7 @@ export function hydrateState(state, snapshot) {
 
     state.progress.discoveryHistory = [...new Set(discoveredIds)];
     state.progress.discoveredCompounds = new Set(state.progress.discoveryHistory);
+    state.progress.basicTutorialCompleted = Boolean(snapshot.progress?.basicTutorialCompleted);
     state.progress.completedLevelIds = new Set(
         Array.isArray(snapshot.progress?.completedLevelIds)
             ? snapshot.progress.completedLevelIds.filter(levelId => validLevelIds.has(levelId))
@@ -142,6 +144,7 @@ export function createPersistedStateSnapshot(state) {
             sidebarWidth: clampSidebarWidth(state.ui.sidebarWidth)
         },
         progress: {
+            basicTutorialCompleted: state.progress.basicTutorialCompleted,
             discoveryHistory: [...state.progress.discoveryHistory],
             completedLevelIds: [...state.progress.completedLevelIds],
             currentThemeId: state.progress.currentThemeId,

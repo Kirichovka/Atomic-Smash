@@ -38,6 +38,12 @@ The game loop is intentionally short:
 3. Validate it through the active mechanic.
 4. Unlock progress and continue to the next challenge.
 
+The `Basic` theme now also includes a lightweight guided onboarding on the first task:
+- a small hint appears over the required palette element;
+- after drag starts, the hint switches to the board and points at the `mix-zone`;
+- once enough atoms are placed, the tutorial explains how to connect them;
+- after the first successful `Mix`, it explains the result area and the main hotkeys.
+
 ## Current Mechanics
 
 ### Main mechanic: `connection-lab`
@@ -67,6 +73,12 @@ That means the project can already distinguish between:
 ### Hint and failure flow
 
 The current game tracks failed attempts. After 3 unsuccessful mixes, the player is shown a help modal with a visual structure hint for the target compound. This makes the experience more educational and less punishing.
+
+Separate from failure help, the `Basic` opening task includes an explicit onboarding overlay so a new player learns:
+- how to place atoms;
+- how to create connections;
+- when to press `Mix`;
+- which keyboard shortcuts speed up the workflow.
 
 ### Discovery and progression flow
 
@@ -150,52 +162,43 @@ The mix flow now checks simplified valency rules before trying to recognize a co
 
 The content package currently includes:
 
-- 12 elements;
+- 118 element definitions in the full catalog;
 - 24 compounds;
-- 4 themes;
-- 10 levels.
+- 1 active learning theme;
+- 12 progression levels in the current `Basic` path.
 
-### Element groups
+### Current progression elements
 
-Starter elements:
+The `Basic` theme intentionally exposes only a small subset of the full catalog and unlocks them step by step:
 - `H`
 - `O`
-- `Na`
-- `Cl`
-
-Bonus elements:
 - `C`
 - `N`
-- `S`
-- `K`
+- `Na`
+- `Cl`
 - `Ca`
-- `Mg`
-- `P`
 - `Fe`
+- `S`
 
 ### Themes
 
 - `Basic`
-  Focus: first familiar compounds and core construction rules.
-- `Gases`
-  Focus: simple gas molecules and small combinations.
-- `Acids & Bases`
-  Focus: reactive compounds and basic acid/base intuition.
-- `Oxides`
-  Focus: oxygen-rich compounds where structure matters more.
+  Focus: the first guided chemistry path with progressive element unlocks, onboarding hints, and increasingly complex molecules.
 
 ### Levels
 
 - `level-1`: build water (`H2O`)
-- `level-2`: build salt (`NaCl`)
-- `level-3`: build hydrogen gas (`H2`)
-- `level-4`: build oxygen gas (`O2`)
-- `level-5`: build chlorine gas (`Cl2`)
+- `level-2`: build carbon monoxide (`CO`)
+- `level-3`: build carbon dioxide (`CO2`)
+- `level-4`: build ammonia (`NH3`)
+- `level-5`: build methane (`CH4`)
 - `level-6`: build hydrochloric acid (`HCl`)
-- `level-7`: build sodium hydroxide (`NaOH`)
-- `level-8`: build sodium oxide (`Na2O`)
-- `level-9`: build hydrogen peroxide (`H2O2`)
-- `level-10`: build sodium peroxide (`Na2O2`)
+- `level-7`: build sodium chloride (`NaCl`)
+- `level-8`: build calcium oxide (`CaO`)
+- `level-9`: build iron(II) oxide (`FeO`)
+- `level-10`: build iron(III) oxide (`Fe2O3`)
+- `level-11`: build sulfur dioxide (`SO2`)
+- `level-12`: build sulfur trioxide (`SO3`)
 
 ## Project Structure
 

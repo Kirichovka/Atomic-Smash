@@ -4,6 +4,7 @@ export function createModalController({
     refs,
     state,
     createHelpVisual,
+    onModalStateChanged,
     onThemeCompleteClosed
 }) {
     function bind() {
@@ -68,10 +69,12 @@ export function createModalController({
 
         refs.elementModalContent.append(symbol, name, meta, description);
         openModal(refs.elementModal);
+        onModalStateChanged?.();
     }
 
     function closeElementModal() {
         closeModal(refs.elementModal);
+        onModalStateChanged?.();
     }
 
     function openCompoundModal(compound) {
@@ -99,10 +102,12 @@ export function createModalController({
 
         refs.compoundModalContent.append(kicker, title, formula, description);
         openModal(refs.compoundModal);
+        onModalStateChanged?.();
     }
 
     function closeCompoundModal() {
         closeModal(refs.compoundModal);
+        onModalStateChanged?.();
     }
 
     function openHelpModal() {
@@ -137,10 +142,12 @@ export function createModalController({
 
         refs.helpModalContent.append(kicker, title, description, visual);
         openModal(refs.helpModal);
+        onModalStateChanged?.();
     }
 
     function closeHelpModal() {
         closeModal(refs.helpModal);
+        onModalStateChanged?.();
     }
 
     function openValencyModal(validation) {
@@ -177,10 +184,12 @@ export function createModalController({
 
         refs.valencyModalContent.append(kicker, title, description, issuePanel, theoryPanel);
         openModal(refs.valencyModal);
+        onModalStateChanged?.();
     }
 
     function closeValencyModal() {
         closeModal(refs.valencyModal);
+        onModalStateChanged?.();
     }
 
     function openThemeCompleteModal(theme, options = {}) {
@@ -237,11 +246,13 @@ export function createModalController({
         }
 
         openModal(refs.themeCompleteModal);
+        onModalStateChanged?.();
     }
 
     function closeThemeCompleteModal() {
         closeModal(refs.themeCompleteModal);
         onThemeCompleteClosed?.();
+        onModalStateChanged?.();
     }
 
     function closeActiveModal() {
