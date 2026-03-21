@@ -17,7 +17,7 @@ export function createState(gameData) {
             inspectedElementSymbol: null,
             paletteSelectedElementSymbol: null,
             sidebarCollapsed: false,
-            sidebarWidth: 260
+            sidebarWidth: 287
         },
         progress: {
             discoveredCompounds: new Set(),
@@ -71,7 +71,7 @@ export function hydrateState(state, snapshot) {
     state.ui.sidebarCollapsed = Boolean(snapshot.ui?.sidebarCollapsed);
     state.ui.sidebarWidth = Number.isFinite(snapshot.ui?.sidebarWidth)
         ? clampSidebarWidth(Number(snapshot.ui.sidebarWidth))
-        : 260;
+        : 287;
 
     const discoveredIds = Array.isArray(snapshot.progress?.discoveryHistory)
         ? snapshot.progress.discoveryHistory.filter(compoundId => validCompoundIds.has(compoundId))
@@ -256,7 +256,7 @@ function getMaxNodeId(nodes) {
 }
 
 function clampSidebarWidth(width) {
-    return Math.min(Math.max(width, 240), 420);
+    return Math.min(Math.max(width, 287), 420);
 }
 
 function getAvailableElementSymbols(state) {
