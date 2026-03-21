@@ -139,13 +139,19 @@
 
 .mix-zone-picker {
     width: min(220px, calc(100% - 24px));
+    max-height: min(420px, calc(100vh - 120px));
     padding: 4px;
+    overflow: hidden;
 }
 
 .mix-zone-picker-list {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    max-height: calc(min(420px, calc(100vh - 120px)) - 8px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 2px;
 }
 
 .mix-zone-picker-option {
@@ -235,6 +241,7 @@
 .node.dragging {
     opacity: 0.85;
     z-index: 25;
+    cursor: grabbing;
 }
 
 .node.outside-zone {

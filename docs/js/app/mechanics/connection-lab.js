@@ -22,8 +22,10 @@ const SPAWN_OFFSETS = [
 
 export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
+    const elementsBySymbol = new Map(state.catalog.elements.map(element => [element.symbol, element]));
     let resizeObserver = null;
     let resizeSyncFrame = null;
+    let movingGroup = [];
 
     function init() {
         if (!isMounted()) {
@@ -65,7 +67,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
                 return;
             }
 
-            setSelectedNode(null, { notify: false });
+            if (event.pointerType === "mouse" && event.button !== 0) {
+                return;
+            }
+
+            clearSelectedNodes({ notify: false });
             bus.publish("interaction:context-changed", {
                 source: "mix-zone-background",
                 zone: "mix-zone",
@@ -140,6 +146,60 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         return { status: "unknown" };
     }
 
+    function validateValency() {
+        const degreeByNodeId = new Map();
+
+        board.nodes.forEach((_, nodeId) => {
+            degreeByNodeId.set(nodeId, 0);
+        });
+
+        board.connections.forEach(connection => {
+            degreeByNodeId.set(connection.fromNodeId, (degreeByNodeId.get(connection.fromNodeId) ?? 0) + 1);
+            degreeByNodeId.set(connection.toNodeId, (degreeByNodeId.get(connection.toNodeId) ?? 0) + 1);
+        });
+
+        const issues = [...board.nodes.entries()]
+            .map(([nodeId, node]) => {
+                const element = elementsBySymbol.get(node.dataset.symbol);
+                const allowedBonds = Number(element?.valency);
+                const actualBonds = degreeByNodeId.get(nodeId) ?? 0;
+
+                if (!Number.isFinite(allowedBonds) || actualBonds <= allowedBonds) {
+                    return null;
+                }
+
+                return {
+                    actualBonds,
+                    allowedBonds,
+                    elementName: element?.name ?? node.dataset.symbol,
+                    nodeId,
+                    symbol: node.dataset.symbol
+                };
+            })
+            .filter(Boolean);
+
+        if (issues.length === 0) {
+            return { isValid: true, issues: [], elements: [] };
+        }
+
+        const issueSymbols = [...new Set(issues.map(issue => issue.symbol))];
+        const elements = issueSymbols
+            .map(symbol => elementsBySymbol.get(symbol))
+            .filter(Boolean)
+            .map(element => ({
+                name: element.name,
+                symbol: element.symbol,
+                valency: element.valency,
+                valencyTheory: element.valencyTheory
+            }));
+
+        return {
+            elements,
+            isValid: false,
+            issues
+        };
+    }
+
     function reset(options = {}) {
         const { preserveSavedState = false } = options;
 
@@ -153,7 +213,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function clearRuntimeBoard() {
-        setSelectedNode(null);
+        clearSelectedNodes();
         [...board.nodes.values()].forEach(node => node.remove());
         board.nodes.clear();
 
@@ -293,6 +353,34 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         return node;
     }
 
+    function spawnElementAtClientPoint(symbol, clientX, clientY) {
+        if (!symbol || !isMounted() || !isPointInsideMixZone(clientX, clientY)) {
+            return null;
+        }
+
+        const zoneRect = refs.mixZone.getBoundingClientRect();
+        const nodeMetrics = getNodeMetrics(refs.mixZone);
+        const node = createNode(
+            symbol,
+            clientX - zoneRect.left - (nodeMetrics.width / 2),
+            clientY - zoneRect.top - (nodeMetrics.height / 2)
+        );
+
+        if (!node) {
+            return null;
+        }
+
+        bus.publish("interaction:context-changed", {
+            source: "mix-zone-drop",
+            zone: "mix-zone",
+            clearPaletteSelection: true,
+            inspectedSymbol: symbol,
+            persist: true
+        });
+        sync();
+        return node;
+    }
+
     function getSuggestedSpawnPosition() {
         const nodeMetrics = getNodeMetrics(refs.mixZone);
         const rawPosition = getSuggestedSpawnPositionForCount(
@@ -356,6 +444,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         node.className = "node";
         node.dataset.id = id;
         node.dataset.symbol = symbol;
+        node.draggable = false;
         setNodePosition(node, position.x, position.y);
 
         label.className = "node-label";
@@ -372,6 +461,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         });
 
         node.addEventListener("pointerdown", startMoveNode);
+        node.addEventListener("dragstart", preventNativeDrag);
 
         refs.mixZone.appendChild(node);
         board.nodes.set(id, node);
@@ -403,7 +493,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const line = createSvgLine("var(--wire-solid)");
         line.classList.add("connection-hitbox");
         line.addEventListener("click", () => {
-            setSelectedNode(null);
+            clearSelectedNodes();
             removeConnectionByLine(line);
         });
         refs.svg.appendChild(line);
@@ -431,7 +521,22 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         event.preventDefault();
-        setSelectedNode(event.currentTarget.dataset.id, { notify: false });
+        const draggedNodeId = event.currentTarget.dataset.id;
+        if (event.ctrlKey) {
+            toggleNodeSelection(draggedNodeId);
+            return;
+        }
+
+        const shouldPreserveMultiSelection =
+            board.selectedNodeIds.has(draggedNodeId)
+            && board.selectedNodeIds.size > 1;
+
+        if (!shouldPreserveMultiSelection) {
+            selectSingleNode(draggedNodeId, { notify: false });
+        } else {
+            board.selectedNodeId = draggedNodeId;
+        }
+
         bus.publish("interaction:context-changed", {
             source: "mix-zone-node",
             zone: "mix-zone",
@@ -442,7 +547,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         board.movingNode = event.currentTarget;
         board.movingPointerId = event.pointerId;
-        board.movingNode.classList.add("dragging");
+        movingGroup = getMovingGroup(board.movingNode);
+        movingGroup.forEach(item => {
+            item.node.classList.add("dragging");
+        });
+        document.body.classList.add("dragging-element");
         board.movingNode.setPointerCapture(event.pointerId);
 
         const rect = board.movingNode.getBoundingClientRect();
@@ -459,17 +568,31 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
+        if (isPointerOutsideViewport(event.clientX, event.clientY)) {
+            const removedNodeIds = movingGroup.map(item => item.node.dataset.id);
+            cleanupMovingNode();
+            removeNodes(removedNodeIds);
+            return;
+        }
+
         const zoneRect = refs.mixZone.getBoundingClientRect();
-        const position = {
+        const anchorPosition = {
             x: event.clientX - zoneRect.left - board.moveOffsetX,
             y: event.clientY - zoneRect.top - board.moveOffsetY
         };
 
-        setNodePosition(board.movingNode, position.x, position.y, { clamp: false });
-        board.movingNode.classList.toggle(
-            "outside-zone",
-            isNodeOutsideMixZone(getNodeLeft(board.movingNode), getNodeTop(board.movingNode))
-        );
+        movingGroup.forEach(item => {
+            const position = {
+                x: anchorPosition.x + item.deltaX,
+                y: anchorPosition.y + item.deltaY
+            };
+
+            setNodePosition(item.node, position.x, position.y, { clamp: false });
+            item.node.classList.toggle(
+                "outside-zone",
+                isNodeOutsideMixZone(getNodeLeft(item.node), getNodeTop(item.node))
+            );
+        });
 
         redrawConnections(board.connections, board.nodes, refs.svg);
     }
@@ -479,30 +602,39 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        const releasedNode = board.movingNode;
+        const releasedNodeIds = movingGroup
+            .filter(item => isNodeOutsideMixZone(getNodeLeft(item.node), getNodeTop(item.node)))
+            .map(item => item.node.dataset.id);
+        cleanupMovingNode();
+
+        if (releasedNodeIds.length > 0) {
+            removeNodes(releasedNodeIds);
+            return;
+        }
+
+        captureState();
+    }
+
+    function cleanupMovingNode() {
+        movingGroup.forEach(item => {
+            item.node.classList.remove("dragging");
+            item.node.classList.remove("outside-zone");
+        });
 
         if (board.movingNode) {
-            board.movingNode.classList.remove("dragging");
-            board.movingNode.classList.remove("outside-zone");
-
             if (board.movingPointerId !== null && board.movingNode.hasPointerCapture(board.movingPointerId)) {
                 board.movingNode.releasePointerCapture(board.movingPointerId);
             }
         }
 
+        movingGroup = [];
         board.movingNode = null;
         board.movingPointerId = null;
+        document.body.classList.remove("dragging-element");
 
         document.removeEventListener("pointermove", moveNode);
         document.removeEventListener("pointerup", stopMoveNode);
         document.removeEventListener("pointercancel", stopMoveNode);
-
-        if (releasedNode && isNodeOutsideMixZone(getNodeLeft(releasedNode), getNodeTop(releasedNode))) {
-            removeNode(releasedNode.dataset.id);
-            return;
-        }
-
-        captureState();
     }
 
     function startConnection(event) {
@@ -517,7 +649,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         board.startConnector = event.currentTarget;
         const startNode = board.nodes.get(board.startConnector.dataset.nodeId) ?? null;
-        setSelectedNode(board.startConnector.dataset.nodeId, { notify: false });
+        selectSingleNode(board.startConnector.dataset.nodeId, { notify: false });
         bus.publish("interaction:context-changed", {
             source: "mix-zone-connector",
             zone: "mix-zone",
@@ -550,11 +682,23 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         const layerRect = refs.svg.getBoundingClientRect();
-        const x = event.clientX - layerRect.left;
-        const y = event.clientY - layerRect.top;
+        const pointerPoint = {
+            x: event.clientX - layerRect.left,
+            y: event.clientY - layerRect.top
+        };
+        const startPoint = {
+            x: Number(board.currentWire.getAttribute("x1")),
+            y: Number(board.currentWire.getAttribute("y1"))
+        };
+        const endPoint = getWireEndPointWithinLayer(
+            startPoint,
+            pointerPoint,
+            refs.svg.clientWidth,
+            refs.svg.clientHeight
+        );
 
-        board.currentWire.setAttribute("x2", x);
-        board.currentWire.setAttribute("y2", y);
+        board.currentWire.setAttribute("x2", endPoint.x);
+        board.currentWire.setAttribute("y2", endPoint.y);
     }
 
     function finishConnection(event) {
@@ -579,7 +723,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const line = createSvgLine("var(--wire-solid)");
         line.classList.add("connection-hitbox");
         line.addEventListener("click", () => {
-            setSelectedNode(null);
+            clearSelectedNodes();
             removeConnectionByLine(line);
         });
         refs.svg.appendChild(line);
@@ -821,14 +965,19 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         captureState();
     }
 
-    function removeNode(nodeId) {
+    function removeNode(nodeId, options = {}) {
+        const { notifySelection = true } = options;
         const node = board.nodes.get(nodeId);
         if (!node) {
             return;
         }
 
-        if (board.selectedNodeId === nodeId) {
-            setSelectedNode(null);
+        let selectionChanged = false;
+        if (board.selectedNodeIds.has(nodeId)) {
+            board.selectedNodeIds.delete(nodeId);
+            node.classList.remove("selected");
+            board.selectedNodeId = getPrimarySelectedNodeId();
+            selectionChanged = true;
         }
 
         node.remove();
@@ -843,6 +992,26 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         captureState();
+
+        if (selectionChanged && notifySelection) {
+            notifySelectionState();
+        }
+    }
+
+    function removeNodes(nodeIds = []) {
+        const uniqueNodeIds = [...new Set(nodeIds.filter(nodeId => typeof nodeId === "string"))];
+        if (uniqueNodeIds.length === 0) {
+            return;
+        }
+
+        uniqueNodeIds.forEach(nodeId => {
+            removeNode(nodeId, {
+                notifySelection: false
+            });
+        });
+
+        notifySelectionState();
+        captureState();
     }
 
     function isNodeOutsideMixZone(x, y) {
@@ -853,6 +1022,10 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             x + nodeMetrics.width > refs.mixZone.clientWidth ||
             y + nodeMetrics.height > refs.mixZone.clientHeight
         );
+    }
+
+    function preventNativeDrag(event) {
+        event.preventDefault();
     }
 
     function isPointInsideMixZone(clientX, clientY) {
@@ -870,52 +1043,144 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         return Boolean(refs.workspace && refs.mixZone && refs.svg);
     }
 
-    function setSelectedNode(nodeId, options = {}) {
+    function selectSingleNode(nodeId, options = {}) {
         const { notify = true } = options;
+        const nextNodeId = nodeId ?? null;
 
-        if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
-            board.nodes.get(board.selectedNodeId).classList.remove("selected");
-        }
-
-        board.selectedNodeId = nodeId ?? null;
-
-        if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
-            const selectedNode = board.nodes.get(board.selectedNodeId);
-            selectedNode.classList.add("selected");
+        if (nextNodeId && board.selectedNodeIds.size === 1 && board.selectedNodeIds.has(nextNodeId)) {
             if (notify) {
-                bus.publish("interaction:context-changed", {
-                    source: "mix-zone-selection",
-                    zone: "mix-zone",
-                    clearPaletteSelection: true,
-                    inspectedSymbol: selectedNode.dataset.symbol,
-                    persist: false
-                });
+                notifySelectionState();
             }
             return;
         }
 
+        board.selectedNodeIds.forEach(selectedNodeId => {
+            board.nodes.get(selectedNodeId)?.classList.remove("selected");
+        });
+        board.selectedNodeIds.clear();
+
+        if (nextNodeId && board.nodes.has(nextNodeId)) {
+            board.selectedNodeIds.add(nextNodeId);
+            board.nodes.get(nextNodeId)?.classList.add("selected");
+        }
+
+        board.selectedNodeId = nextNodeId && board.nodes.has(nextNodeId) ? nextNodeId : null;
+
         if (notify) {
+            notifySelectionState();
+        }
+    }
+
+    function toggleNodeSelection(nodeId, options = {}) {
+        const { notify = true } = options;
+        if (!nodeId || !board.nodes.has(nodeId)) {
+            return;
+        }
+
+        if (board.selectedNodeIds.has(nodeId)) {
+            board.selectedNodeIds.delete(nodeId);
+            board.nodes.get(nodeId)?.classList.remove("selected");
+        } else {
+            board.selectedNodeIds.add(nodeId);
+            board.nodes.get(nodeId)?.classList.add("selected");
+        }
+
+        board.selectedNodeId = getPrimarySelectedNodeId();
+
+        if (notify) {
+            notifySelectionState();
+        }
+    }
+
+    function clearSelectedNodes(options = {}) {
+        const { notify = true } = options;
+
+        board.selectedNodeIds.forEach(selectedNodeId => {
+            board.nodes.get(selectedNodeId)?.classList.remove("selected");
+        });
+        board.selectedNodeIds.clear();
+        board.selectedNodeId = null;
+
+        if (notify) {
+            notifySelectionState();
+        }
+    }
+
+    function notifySelectionState() {
+        const primarySelectedNodeId = getPrimarySelectedNodeId();
+        board.selectedNodeId = primarySelectedNodeId;
+
+        if (primarySelectedNodeId && board.nodes.has(primarySelectedNodeId)) {
+            const selectedNode = board.nodes.get(primarySelectedNodeId);
             bus.publish("interaction:context-changed", {
-                source: "mix-zone-selection-cleared",
+                source: "mix-zone-selection",
                 zone: "mix-zone",
                 clearPaletteSelection: true,
-                inspectedSymbol: null,
+                inspectedSymbol: selectedNode.dataset.symbol,
                 persist: false
             });
+            return;
         }
+
+        bus.publish("interaction:context-changed", {
+            source: "mix-zone-selection-cleared",
+            zone: "mix-zone",
+            clearPaletteSelection: true,
+            inspectedSymbol: null,
+            persist: false
+        });
+    }
+
+    function getPrimarySelectedNodeId() {
+        for (const nodeId of board.selectedNodeIds) {
+            if (board.nodes.has(nodeId)) {
+                return nodeId;
+            }
+        }
+
+        return null;
+    }
+
+    function getSelectedNodeIds() {
+        return [...board.selectedNodeIds].filter(nodeId => board.nodes.has(nodeId));
+    }
+
+    function getMovingGroup(anchorNode) {
+        const anchorNodeId = anchorNode.dataset.id;
+        const shouldMoveSelection =
+            board.selectedNodeIds.has(anchorNodeId)
+            && board.selectedNodeIds.size > 1;
+        const movingNodeIds = shouldMoveSelection
+            ? getSelectedNodeIds()
+            : [anchorNodeId];
+        const anchorLeft = getNodeLeft(anchorNode);
+        const anchorTop = getNodeTop(anchorNode);
+
+        return movingNodeIds
+            .map(nodeId => board.nodes.get(nodeId))
+            .filter(Boolean)
+            .map(node => ({
+                deltaX: getNodeLeft(node) - anchorLeft,
+                deltaY: getNodeTop(node) - anchorTop,
+                node
+            }));
     }
 
     return {
         captureState,
-        clearSelection: (options = {}) => setSelectedNode(null, { notify: !options.silent }),
+        clearSelection: (options = {}) => clearSelectedNodes({ notify: !options.silent }),
         createHelpVisual,
         evaluate,
+        validateValency,
+        getSelectedNodeIds,
         id: "connection-lab",
         init,
         removeNodeById: removeNode,
+        removeNodesByIds: removeNodes,
         reset,
         restore,
         spawnElement,
+        spawnElementAtClientPoint,
         sync
     };
 }
@@ -947,6 +1212,75 @@ function clampLocalCoordinate(value) {
     }
 
     return Math.min(Math.max(value, 0), 1);
+}
+
+function isPointerOutsideViewport(clientX, clientY) {
+    return (
+        clientX < 0 ||
+        clientY < 0 ||
+        clientX > document.documentElement.clientWidth ||
+        clientY > document.documentElement.clientHeight
+    );
+}
+
+function clampSvgCoordinate(value, size) {
+    return Math.min(Math.max(value, 0), Math.max(size, 0));
+}
+
+function getWireEndPointWithinLayer(startPoint, pointerPoint, width, height) {
+    if (isPointInsideRect(pointerPoint.x, pointerPoint.y, width, height)) {
+        return {
+            x: pointerPoint.x,
+            y: pointerPoint.y
+        };
+    }
+
+    const deltaX = pointerPoint.x - startPoint.x;
+    const deltaY = pointerPoint.y - startPoint.y;
+    const intersections = [];
+
+    if (deltaX !== 0) {
+        const leftT = (0 - startPoint.x) / deltaX;
+        const rightT = (width - startPoint.x) / deltaX;
+
+        intersections.push({ t: leftT, x: 0, y: startPoint.y + (deltaY * leftT) });
+        intersections.push({ t: rightT, x: width, y: startPoint.y + (deltaY * rightT) });
+    }
+
+    if (deltaY !== 0) {
+        const topT = (0 - startPoint.y) / deltaY;
+        const bottomT = (height - startPoint.y) / deltaY;
+
+        intersections.push({ t: topT, x: startPoint.x + (deltaX * topT), y: 0 });
+        intersections.push({ t: bottomT, x: startPoint.x + (deltaX * bottomT), y: height });
+    }
+
+    const validIntersection = intersections
+        .filter(point =>
+            point.t >= 0 &&
+            point.t <= 1 &&
+            point.x >= 0 &&
+            point.x <= width &&
+            point.y >= 0 &&
+            point.y <= height
+        )
+        .sort((left, right) => left.t - right.t)[0];
+
+    if (validIntersection) {
+        return {
+            x: validIntersection.x,
+            y: validIntersection.y
+        };
+    }
+
+    return {
+        x: clampSvgCoordinate(pointerPoint.x, width),
+        y: clampSvgCoordinate(pointerPoint.y, height)
+    };
+}
+
+function isPointInsideRect(x, y, width, height) {
+    return x >= 0 && x <= width && y >= 0 && y <= height;
 }
 
 function getSuggestedSpawnPositionForCount(count, width, height, nodeWidth, nodeHeight) {

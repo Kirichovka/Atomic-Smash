@@ -1,44 +1,39 @@
 import { getAvailableElements, getInspectedElement, getPaletteSelectedElement } from "./state.js";
 
+const PALETTE_DRAG_THRESHOLD = 6;
+
 export function createPaletteController({
     refs,
     state,
     bus
 }) {
     const prefersCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
+    const dragState = {
+        ghost: null,
+        ignoreClick: false,
+        isDragging: false,
+        pointerId: null,
+        startX: 0,
+        startY: 0,
+        symbol: null
+    };
 
     function bind() {
         if (!refs.elementList) {
             return;
         }
 
+        refs.elementList.addEventListener("pointerdown", handlePalettePointerDown);
         refs.elementList.addEventListener("dragstart", event => {
-            const template = event.target.closest(".element-template");
-            if (!template) {
-                return;
-            }
-
-            state.board.dragElementType = template.dataset.element;
-            if (!state.board.dragElementType) {
-                return;
-            }
-
-            bus.publish("interaction:context-changed", {
-                source: "palette-drag",
-                zone: "palette",
-                clearBoardSelection: true,
-                inspectedSymbol: state.board.dragElementType,
-                paletteSymbol: state.board.dragElementType,
-                persist: false
-            });
-            event.dataTransfer?.setData("text/plain", state.board.dragElementType);
-        });
-
-        refs.elementList.addEventListener("dragend", () => {
-            state.board.dragElementType = null;
+            event.preventDefault();
         });
 
         refs.elementList.addEventListener("click", event => {
+            if (dragState.ignoreClick) {
+                dragState.ignoreClick = false;
+                return;
+            }
+
             const template = event.target.closest(".element-template");
             if (!template) {
                 return;
@@ -62,6 +57,142 @@ export function createPaletteController({
                 return;
             }
         });
+    }
+
+    function handlePalettePointerDown(event) {
+        if (prefersCoarsePointer || event.pointerType !== "mouse" || event.button !== 0) {
+            return;
+        }
+
+        const template = event.target.closest(".element-template");
+        if (!template) {
+            return;
+        }
+
+        const symbol = template.dataset.element || null;
+        if (!symbol) {
+            return;
+        }
+
+        dragState.pointerId = event.pointerId;
+        dragState.startX = event.clientX;
+        dragState.startY = event.clientY;
+        dragState.symbol = symbol;
+        dragState.isDragging = false;
+
+        document.addEventListener("pointermove", handlePalettePointerMove);
+        document.addEventListener("pointerup", handlePalettePointerUp);
+        document.addEventListener("pointercancel", handlePalettePointerCancel);
+    }
+
+    function handlePalettePointerMove(event) {
+        if (event.pointerId !== dragState.pointerId || !dragState.symbol) {
+            return;
+        }
+
+        if (isPointerOutsideViewport(event.clientX, event.clientY)) {
+            cleanupPaletteDragSession();
+            return;
+        }
+
+        if (!dragState.isDragging) {
+            const travelDistance = Math.hypot(
+                event.clientX - dragState.startX,
+                event.clientY - dragState.startY
+            );
+            if (travelDistance < PALETTE_DRAG_THRESHOLD) {
+                return;
+            }
+
+            startPaletteCustomDrag(dragState.symbol, event.clientX, event.clientY);
+        }
+
+        updatePaletteDragGhost(event.clientX, event.clientY);
+    }
+
+    function handlePalettePointerUp(event) {
+        if (event.pointerId !== dragState.pointerId) {
+            return;
+        }
+
+        if (dragState.isDragging && dragState.symbol) {
+            bus.publish("element:drop-at-point", {
+                clientX: event.clientX,
+                clientY: event.clientY,
+                symbol: dragState.symbol
+            });
+            dragState.ignoreClick = true;
+        }
+
+        cleanupPaletteDragSession();
+    }
+
+    function handlePalettePointerCancel(event) {
+        if (event.pointerId !== dragState.pointerId) {
+            return;
+        }
+
+        cleanupPaletteDragSession();
+    }
+
+    function startPaletteCustomDrag(symbol, clientX, clientY) {
+        dragState.isDragging = true;
+        state.board.dragElementType = symbol;
+        document.body.classList.add("dragging-element");
+
+        bus.publish("interaction:context-changed", {
+            source: "palette-drag",
+            zone: "palette",
+            clearBoardSelection: true,
+            inspectedSymbol: symbol,
+            paletteSymbol: symbol,
+            persist: false
+        });
+
+        dragState.ghost = createPaletteDragGhost(symbol);
+        document.body.appendChild(dragState.ghost);
+        updatePaletteDragGhost(clientX, clientY);
+    }
+
+    function createPaletteDragGhost(symbol) {
+        const ghost = document.createElement("div");
+        ghost.className = "palette-drag-ghost";
+        ghost.textContent = symbol;
+        return ghost;
+    }
+
+    function updatePaletteDragGhost(clientX, clientY) {
+        if (!dragState.ghost) {
+            return;
+        }
+
+        dragState.ghost.style.left = `${clientX}px`;
+        dragState.ghost.style.top = `${clientY}px`;
+    }
+
+    function cleanupPaletteDragSession() {
+        dragState.ghost?.remove();
+        dragState.ghost = null;
+        dragState.isDragging = false;
+        dragState.pointerId = null;
+        dragState.startX = 0;
+        dragState.startY = 0;
+        dragState.symbol = null;
+        state.board.dragElementType = null;
+        document.body.classList.remove("dragging-element");
+
+        document.removeEventListener("pointermove", handlePalettePointerMove);
+        document.removeEventListener("pointerup", handlePalettePointerUp);
+        document.removeEventListener("pointercancel", handlePalettePointerCancel);
+    }
+
+    function isPointerOutsideViewport(clientX, clientY) {
+        return (
+            clientX < 0 ||
+            clientY < 0 ||
+            clientX > document.documentElement.clientWidth ||
+            clientY > document.documentElement.clientHeight
+        );
     }
 
     function render() {
@@ -90,7 +221,7 @@ export function createPaletteController({
         availableElements.forEach(element => {
             const template = document.createElement("div");
             template.className = "element-template";
-            template.draggable = true;
+            template.draggable = false;
             template.dataset.element = element.symbol;
             template.title = element.name;
             template.textContent = element.symbol;

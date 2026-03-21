@@ -28,6 +28,13 @@ export function createModalController({
             }
         });
 
+        bindIfPresent(refs.valencyModalClose, "click", closeValencyModal);
+        bindIfPresent(refs.valencyModal, "click", event => {
+            if (event.target.closest("[data-close-valency-modal='true']")) {
+                closeValencyModal();
+            }
+        });
+
         bindIfPresent(refs.themeCompleteClose, "click", closeThemeCompleteModal);
         bindIfPresent(refs.themeCompleteModal, "click", event => {
             if (event.target.closest("[data-close-theme-complete-modal='true']")) {
@@ -136,6 +143,46 @@ export function createModalController({
         closeModal(refs.helpModal);
     }
 
+    function openValencyModal(validation) {
+        if (!validation || !refs.valencyModalContent || !refs.valencyModal) {
+            return;
+        }
+
+        refs.valencyModalContent.replaceChildren();
+
+        const kicker = document.createElement("div");
+        const title = document.createElement("div");
+        const description = document.createElement("div");
+        const issuePanel = createValencyPanel(
+            "What is wrong",
+            "These atoms currently have more single connections than the simplified lab rules allow."
+        );
+        const theoryPanel = createValencyPanel(
+            "Valency theory",
+            "In this lab each line counts as one bond. Compare the current number of links with the allowed valency for each element below."
+        );
+
+        kicker.className = "valency-modal-kicker";
+        title.className = "valency-modal-title";
+        description.className = "valency-modal-description";
+
+        kicker.textContent = "Valency check failed";
+        title.id = "valency-modal-title";
+        title.textContent = "This structure breaks valency rules";
+        description.textContent =
+            "The atoms can stay on the board, but this mix cannot be evaluated until each element follows its allowed number of single connections.";
+
+        issuePanel.appendChild(createValencyIssueList(validation.issues));
+        theoryPanel.appendChild(createValencyTheoryList(validation.elements));
+
+        refs.valencyModalContent.append(kicker, title, description, issuePanel, theoryPanel);
+        openModal(refs.valencyModal);
+    }
+
+    function closeValencyModal() {
+        closeModal(refs.valencyModal);
+    }
+
     function openThemeCompleteModal(theme, options = {}) {
         if (!theme || !refs.themeCompleteContent || !refs.themeCompleteModal) {
             return;
@@ -208,6 +255,11 @@ export function createModalController({
             return true;
         }
 
+        if (isModalOpen(refs.valencyModal)) {
+            closeValencyModal();
+            return true;
+        }
+
         if (isModalOpen(refs.compoundModal)) {
             closeCompoundModal();
             return true;
@@ -228,8 +280,77 @@ export function createModalController({
         openCompoundModal,
         openElementModal,
         openHelpModal,
+        openValencyModal,
         openThemeCompleteModal
     };
+}
+
+function createValencyPanel(titleText, bodyText) {
+    const panel = document.createElement("section");
+    const title = document.createElement("div");
+    const body = document.createElement("div");
+
+    panel.className = "valency-panel";
+    title.className = "valency-panel-title";
+    body.className = "valency-panel-text";
+
+    title.textContent = titleText;
+    body.textContent = bodyText;
+
+    panel.append(title, body);
+    return panel;
+}
+
+function createValencyIssueList(issues) {
+    const list = document.createElement("div");
+    list.className = "valency-issue-list";
+
+    issues.forEach(issue => {
+        const item = document.createElement("div");
+        const symbol = document.createElement("div");
+        const title = document.createElement("div");
+        const body = document.createElement("div");
+
+        item.className = "valency-issue-item";
+        symbol.className = "valency-issue-symbol";
+        title.className = "valency-issue-title";
+        body.className = "valency-issue-body";
+
+        symbol.textContent = issue.symbol;
+        title.textContent = `${issue.elementName} has ${issue.actualBonds} connections, but only ${issue.allowedBonds} are allowed`;
+        body.textContent = `Node ${issue.nodeId} exceeds the allowed valency by ${issue.actualBonds - issue.allowedBonds}. Remove or rearrange some links before mixing.`;
+
+        item.append(symbol, title, body);
+        list.appendChild(item);
+    });
+
+    return list;
+}
+
+function createValencyTheoryList(elements) {
+    const list = document.createElement("div");
+    list.className = "valency-theory-list";
+
+    elements.forEach(element => {
+        const card = document.createElement("article");
+        const header = document.createElement("div");
+        const title = document.createElement("div");
+        const body = document.createElement("div");
+
+        card.className = "valency-theory-card";
+        header.className = "valency-theory-header";
+        title.className = "valency-theory-title";
+        body.className = "valency-theory-body";
+
+        header.textContent = `${element.symbol} | valency ${element.valency}`;
+        title.textContent = element.name;
+        body.textContent = element.valencyTheory ?? `${element.name} is limited to ${element.valency} single connections in this lab.`;
+
+        card.append(header, title, body);
+        list.appendChild(card);
+    });
+
+    return list;
 }
 
 function createThemeCompletePanel(titleText, bodyText) {

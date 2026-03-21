@@ -29,6 +29,9 @@ const MIX_ZONE_MENU_ACTIONS = {
     node: [
         { id: "delete", label: "Delete" }
     ],
+    selection: [
+        { id: "delete-selected", label: "Delete" }
+    ],
     zone: [
         { id: "add", label: "Add Element" },
         { id: "refresh", label: "Refresh" },
@@ -170,6 +173,10 @@ export async function initGame() {
 
         bus.subscribe("element:quick-add", ({ symbol }) => {
             addElementToBoard(symbol);
+        });
+
+        bus.subscribe("element:drop-at-point", ({ clientX, clientY, symbol }) => {
+            addElementToBoardAtPoint(symbol, clientX, clientY);
         });
     }
 
@@ -345,7 +352,11 @@ export async function initGame() {
         mixZoneContext.isOpen = true;
         mixZoneContext.isPickerOpen = false;
         mixZoneContext.menuIndex = 0;
-        mixZoneContext.menuMode = contextTarget.type === "node" ? "node" : "zone";
+        mixZoneContext.menuMode = contextTarget.type === "selection"
+            ? "selection"
+            : contextTarget.type === "node"
+                ? "node"
+                : "zone";
         mixZoneContext.restoreInspectedSymbol = null;
         mixZoneContext.targetNodeId = contextTarget.nodeId ?? null;
 
@@ -486,6 +497,11 @@ export async function initGame() {
 
         if (action === "delete") {
             removeBoardNode(mixZoneContext.targetNodeId);
+            return;
+        }
+
+        if (action === "delete-selected") {
+            removeSelectedBoardNodes();
             return;
         }
 
@@ -807,6 +823,7 @@ export async function initGame() {
 
         const activeOption = refs.mixZonePickerList.querySelector(".mix-zone-picker-option.active");
         activeOption?.focus({ preventScroll: true });
+        activeOption?.scrollIntoView({ block: "nearest" });
     }
 
     function renderMixZoneContextMenu() {
@@ -818,7 +835,11 @@ export async function initGame() {
         refs.mixZoneContextMenu.replaceChildren();
         refs.mixZoneContextMenu.setAttribute(
             "aria-label",
-            mixZoneContext.menuMode === "node" ? "Element actions" : "Mix zone actions"
+            mixZoneContext.menuMode === "selection"
+                ? "Selected element actions"
+                : mixZoneContext.menuMode === "node"
+                    ? "Element actions"
+                    : "Mix zone actions"
         );
 
         actions.forEach(action => {
@@ -865,6 +886,14 @@ export async function initGame() {
     }
 
     function resolveMixZoneContextTarget(target) {
+        const selectedNodeIds = getActiveMechanic().getSelectedNodeIds?.() ?? [];
+        if (selectedNodeIds.length > 0) {
+            return {
+                nodeId: selectedNodeIds[0] ?? null,
+                type: "selection"
+            };
+        }
+
         if (!(target instanceof Element)) {
             return {
                 nodeId: null,
@@ -1005,7 +1034,31 @@ export async function initGame() {
         persistCurrentState();
     }
 
+    function addElementToBoardAtPoint(symbol, clientX, clientY) {
+        if (!symbol || !Number.isFinite(clientX) || !Number.isFinite(clientY)) {
+            return;
+        }
+
+        const node = getActiveMechanic().spawnElementAtClientPoint?.(symbol, clientX, clientY);
+        if (!node) {
+            return;
+        }
+
+        persistCurrentState();
+    }
+
     function handleMixAttempt() {
+        const valencyValidation = getActiveMechanic().validateValency?.();
+        if (valencyValidation && !valencyValidation.isValid) {
+            registerFailedAttempt({ suppressAutoHelp: true });
+            if (refs.result) {
+                refs.result.textContent = "This structure breaks the current valency rules.";
+            }
+            modalController.openValencyModal(valencyValidation);
+            persistCurrentState();
+            return;
+        }
+
         const evaluation = getActiveMechanic().evaluate();
 
         if (evaluation.status === "unknown") {
@@ -1205,17 +1258,18 @@ export async function initGame() {
     }
 
     function handleDeleteSelectedNodeShortcut() {
-        removeBoardNode(state.board.selectedNodeId);
+        removeSelectedBoardNodes();
     }
 
-    function registerFailedAttempt() {
+    function registerFailedAttempt(options = {}) {
+        const { suppressAutoHelp = false } = options;
         if (!getCurrentLevel(state)) {
             return;
         }
 
         state.progress.failedAttempts += 1;
 
-        if (state.progress.failedAttempts >= 3) {
+        if (!suppressAutoHelp && state.progress.failedAttempts >= 3) {
             state.progress.failedAttempts = 0;
             modalController.openHelpModal();
         }
@@ -1231,6 +1285,16 @@ export async function initGame() {
         }
 
         getActiveMechanic().removeNodeById?.(nodeId);
+        persistCurrentState();
+    }
+
+    function removeSelectedBoardNodes() {
+        const selectedNodeIds = getActiveMechanic().getSelectedNodeIds?.() ?? [];
+        if (selectedNodeIds.length === 0) {
+            return;
+        }
+
+        getActiveMechanic().removeNodesByIds?.(selectedNodeIds);
         persistCurrentState();
     }
 

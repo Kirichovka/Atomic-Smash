@@ -47,16 +47,20 @@ The current gameplay mechanic is internally named `connection-lab`.
 It is responsible for:
 - spawning atoms onto the board;
 - dragging atoms to reposition them;
+- dragging groups of selected atoms together;
 - drawing connections between atoms;
 - evaluating whether the placed set of atoms matches a known compound;
+- validating valency rules before compound evaluation;
 - validating structure for compounds that require a specific connection pattern;
 - generating a help visual when the player fails several times.
 
 This mechanic already supports two layers of validation:
+- valency validation;
 - ingredient/formula validation;
 - structure validation for compounds that define explicit node-edge graphs.
 
 That means the project can already distinguish between:
+- "your bonding count breaks the rules for one or more elements";
 - "you used the right elements";
 - "you used the right elements, but connected them incorrectly".
 
@@ -93,6 +97,8 @@ The current `Game` screen supports multiple interaction layers depending on devi
 ### Board interactions
 
 - tap or click a node to select it and inspect its element data;
+- hold `Ctrl` and left click to add or remove nodes from the current selection;
+- drag any selected node to move the whole selected group together;
 - drag nodes to reposition them;
 - drag from connectors to create links;
 - remove a node by dragging it outside the `mix-zone`;
@@ -106,7 +112,7 @@ The `mix-zone` now supports context-aware menus:
   - `Add Element`
   - `Refresh`
   - `Mix`
-- on a selected node:
+- when one or more nodes are selected:
   - `Delete`
 
 Desktop trigger:
@@ -128,7 +134,17 @@ Current shortcuts:
 - `Shift + A`: open the add-element menu at the current cursor position;
 - `Shift + R`: refresh the board;
 - `Shift + M`: run mix;
-- `Delete`: remove the currently selected node.
+- `Delete`: remove the current selection.
+
+### Valency feedback
+
+The mix flow now checks simplified valency rules before trying to recognize a compound.
+
+- building an over-connected structure does not instantly block the player;
+- the player can keep experimenting on the board;
+- when `Mix` is pressed, the game validates the number of single connections per atom;
+- if any node exceeds the allowed valency, a dedicated error modal opens;
+- the modal explains which nodes are invalid and shows a short theory note for each involved element.
 
 ## Current Content
 
@@ -284,7 +300,9 @@ This area also now owns:
 - local coordinate handling inside the `mix-zone`;
 - dynamic node sizing support on very small screens;
 - SVG connection redraw logic when the board area changes size;
-- context-menu-aware node actions such as delete.
+- context-menu-aware node actions such as delete;
+- multi-node selection and grouped dragging;
+- valency validation before compound evaluation.
 
 ### State and persistence
 
@@ -361,9 +379,15 @@ It currently contains:
 - compounds;
 - themes;
 - levels;
+- element bonding metadata such as `valency` and `valencyTheory`;
 - structural definitions for compounds that need explicit graph validation.
 
 This data-first approach makes balancing and expansion easier because content can grow without rewriting the whole runtime.
+
+Each element entry can now define:
+- descriptive metadata for the journal and element card;
+- a simplified `valency` used by the board validator;
+- a `valencyTheory` string used by the error modal to explain the rule in educational terms.
 
 ## Mix Zone Technical Model
 
