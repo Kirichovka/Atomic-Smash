@@ -98,17 +98,19 @@
 }
 
 #element-list {
+    --palette-tile-size: 92px;
     flex: 1 1 auto;
     min-height: 0;
     margin-top: 6px;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    grid-template-columns: repeat(auto-fit, var(--palette-tile-size));
     gap: 16px;
     overflow-x: hidden;
     overflow-y: auto;
     align-content: start;
     align-items: start;
+    justify-content: start;
     padding-right: 16px;
     scrollbar-gutter: stable both-edges;
 }
@@ -129,9 +131,9 @@
     aspect-ratio: 1 / 1;
     user-select: none;
     cursor: grab;
-    width: 100%;
-    min-height: 92px;
-    max-width: 100%;
+    width: var(--palette-tile-size);
+    min-height: var(--palette-tile-size);
+    max-width: var(--palette-tile-size);
     padding: 0;
     border: 1px solid var(--palette-node-border);
     border-radius: 14px;
