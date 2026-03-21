@@ -256,7 +256,7 @@ function getMaxNodeId(nodes) {
 }
 
 function clampSidebarWidth(width) {
-    return Math.min(Math.max(width, 220), 420);
+    return Math.min(Math.max(width, 240), 420);
 }
 
 function getAvailableElementSymbols(state) {
