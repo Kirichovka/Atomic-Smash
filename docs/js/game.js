@@ -1407,6 +1407,7 @@ export async function initGame() {
 
         if (hadRemainingThemeLevels) {
             refreshMetaViews();
+            paletteController.render();
             renderCurrentLevel();
             if (refs.result) {
                 refs.result.textContent =
@@ -1418,6 +1419,7 @@ export async function initGame() {
 
         state.progress.currentThemeId = null;
         refreshMetaViews();
+        paletteController.render();
         renderCurrentLevel();
         if (refs.result) {
             refs.result.textContent = "";
