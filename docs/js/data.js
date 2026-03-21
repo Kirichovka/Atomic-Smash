@@ -8,7 +8,6 @@ export async function loadGameData() {
     const rawData = await response.json();
     return normalizeGameData(rawData);
 }
-}
 
 export async function loadHotkeysConfig() {
     const response = await fetch("./data/hotkeys.json");
