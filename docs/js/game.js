@@ -1114,7 +1114,7 @@ export async function initGame() {
                         onAction: null,
                         placement: "right",
                         targetRect: target.getBoundingClientRect(),
-                        text: "Перетащите нужный элемент на поле, чтобы начать собирать молекулу."
+                        text: "Drag the required element onto the board to start building the molecule."
                     }
                     : null;
             }
@@ -1126,7 +1126,7 @@ export async function initGame() {
                         onAction: null,
                         placement: "top-left",
                         targetRect: refs.mixZone.getBoundingClientRect(),
-                        text: "Отпустите элемент в зоне поля. Для H2O сначала разместите два H и один O."
+                        text: "Drop the element inside the board area. For H2O, place two H atoms and one O atom first."
                     }
                     : null;
             case "connect-atoms": {
@@ -1138,7 +1138,7 @@ export async function initGame() {
                         onAction: null,
                         placement: "top",
                         targetRect: target.getBoundingClientRect(),
-                        text: "Теперь соедините атомы: потяните от этой точки к другому атому, чтобы собрать нужную структуру."
+                        text: "Now connect the atoms: drag from this connector to another atom to build the correct structure."
                     }
                     : null;
             }
@@ -1150,14 +1150,14 @@ export async function initGame() {
                         onAction: null,
                         placement: "bottom-left",
                         targetRect: refs.mixButton.getBoundingClientRect(),
-                        text: "Когда все атомы и связи готовы, нажмите Mix и игра проверит вашу молекулу."
+                        text: "Once the atoms and connections are ready, press Mix and the game will check your molecule."
                     }
                     : null;
             case "after-mix": {
                 const target = getTutorialPostMixTarget();
                 return target
                     ? {
-                        actionLabel: "Дальше",
+                        actionLabel: "Next",
                         arrow: false,
                         onAction: () => {
                             basicTutorial.postMixShown = true;
@@ -1165,14 +1165,14 @@ export async function initGame() {
                         },
                         placement: "bottom-left",
                         targetRect: target.getBoundingClientRect(),
-                        text: "После Mix игра проверяет состав, связи и показывает результат прямо в верхней панели."
+                        text: "After Mix, the game checks the ingredients and the links, then shows the result in the top panel."
                     }
                     : null;
             }
             case "hotkeys":
                 return refs.controls
                     ? {
-                        actionLabel: "Понятно",
+                        actionLabel: "Got it",
                         arrow: false,
                         onAction: () => {
                             state.progress.basicTutorialCompleted = true;
@@ -1181,7 +1181,7 @@ export async function initGame() {
                         },
                         placement: "bottom-left",
                         targetRect: refs.controls.getBoundingClientRect(),
-                        text: "Горячие клавиши: Shift + A открывает меню добавления, Shift + M запускает Mix, Shift + R очищает поле, Delete удаляет выделение, Esc закрывает окна."
+                        text: "Hotkeys: Shift + A opens the add menu, Shift + M runs Mix, Shift + R clears the board, Delete removes the selection, and Esc closes overlays."
                     }
                     : null;
             default:
