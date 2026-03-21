@@ -14,7 +14,8 @@ export function createState(gameData) {
         },
         ui: {
             activeScreen: "menu",
-            selectedElementSymbol: null
+            inspectedElementSymbol: null,
+            paletteSelectedElementSymbol: null
         },
         progress: {
             discoveredCompounds: new Set(),
@@ -53,9 +54,17 @@ export function hydrateState(state, snapshot) {
     const validLevelIds = new Set(state.catalog.levels.map(level => level.id));
     const validElementSymbols = new Set(state.catalog.elements.map(element => element.symbol));
 
-    if (validElementSymbols.has(snapshot.ui?.selectedElementSymbol)) {
-        state.ui.selectedElementSymbol = snapshot.ui.selectedElementSymbol;
-    }
+    const paletteSelectedElementSymbol = validElementSymbols.has(snapshot.ui?.paletteSelectedElementSymbol)
+        ? snapshot.ui.paletteSelectedElementSymbol
+        : validElementSymbols.has(snapshot.ui?.selectedElementSymbol)
+            ? snapshot.ui.selectedElementSymbol
+            : null;
+    const inspectedElementSymbol = validElementSymbols.has(snapshot.ui?.inspectedElementSymbol)
+        ? snapshot.ui.inspectedElementSymbol
+        : paletteSelectedElementSymbol;
+
+    state.ui.paletteSelectedElementSymbol = paletteSelectedElementSymbol;
+    state.ui.inspectedElementSymbol = inspectedElementSymbol;
 
     const discoveredIds = Array.isArray(snapshot.progress?.discoveryHistory)
         ? snapshot.progress.discoveryHistory.filter(compoundId => validCompoundIds.has(compoundId))
@@ -116,7 +125,8 @@ export function hydrateState(state, snapshot) {
 export function createPersistedStateSnapshot(state) {
     return {
         ui: {
-            selectedElementSymbol: state.ui.selectedElementSymbol
+            inspectedElementSymbol: state.ui.inspectedElementSymbol,
+            paletteSelectedElementSymbol: state.ui.paletteSelectedElementSymbol
         },
         progress: {
             discoveryHistory: [...state.progress.discoveryHistory],
@@ -149,8 +159,16 @@ export function getAvailableElements(state) {
     );
 }
 
+export function getPaletteSelectedElement(state) {
+    return getAvailableElements(state).find(element => element.symbol === state.ui.paletteSelectedElementSymbol) ?? null;
+}
+
+export function getInspectedElement(state) {
+    return state.catalog.elements.find(element => element.symbol === state.ui.inspectedElementSymbol) ?? null;
+}
+
 export function getSelectedElement(state) {
-    return getAvailableElements(state).find(element => element.symbol === state.ui.selectedElementSymbol) ?? null;
+    return getPaletteSelectedElement(state);
 }
 
 export function getElementBySymbol(state, symbol) {

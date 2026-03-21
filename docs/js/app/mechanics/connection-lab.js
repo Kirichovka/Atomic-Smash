@@ -20,7 +20,7 @@ const SPAWN_OFFSETS = [
     { x: -36, y: 0 }
 ];
 
-export function createConnectionLabMechanic({ refs, state, onSelectBoardElement }) {
+export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
 
     function init() {
@@ -112,9 +112,9 @@ export function createConnectionLabMechanic({ refs, state, onSelectBoardElement 
     }
 
     function clearRuntimeBoard() {
+        setSelectedNode(null);
         [...board.nodes.values()].forEach(node => node.remove());
         board.nodes.clear();
-        board.selectedNodeId = null;
 
         board.connections.forEach(connection => connection.line.remove());
         board.connections.length = 0;
@@ -757,8 +757,14 @@ export function createConnectionLabMechanic({ refs, state, onSelectBoardElement 
         if (board.selectedNodeId && board.nodes.has(board.selectedNodeId)) {
             const selectedNode = board.nodes.get(board.selectedNodeId);
             selectedNode.classList.add("selected");
-            onSelectBoardElement?.(selectedNode.dataset.symbol);
+            bus.publish("board:selection-changed", {
+                nodeId: selectedNode.dataset.id,
+                symbol: selectedNode.dataset.symbol
+            });
+            return;
         }
+
+        bus.publish("board:selection-cleared");
     }
 
     return {

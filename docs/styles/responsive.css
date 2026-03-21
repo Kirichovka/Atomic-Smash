@@ -66,6 +66,7 @@
     }
 
     #element-list {
+        display: flex;
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
@@ -75,6 +76,7 @@
 
     .element-template {
         flex: 0 0 82px;
+        width: 82px;
     }
 
     #element-info {

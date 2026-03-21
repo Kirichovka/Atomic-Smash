@@ -1,4 +1,5 @@
 import { loadGameData, loadHotkeysConfig } from "./data.js";
+import { createEventBus } from "./app/event-bus.js";
 import { createHotkeysController } from "./app/hotkeys.js";
 import { createModalController } from "./app/modals.js";
 import { createNavigationController } from "./app/navigation.js";
@@ -9,7 +10,6 @@ import { loadStoredState, persistState } from "./app/storage.js";
 import {
     createState,
     getActiveMechanicId,
-    getAvailableElements,
     getCompoundById,
     getCompletedCountForTheme,
     getCurrentLevel,
@@ -28,6 +28,7 @@ export async function initGame() {
     const refs = createRefs();
     const currentPage = document.body.dataset.page ?? "menu";
     const state = createState(gameData);
+    const bus = createEventBus();
 
     hydrateState(state, loadStoredState());
     state.ui.activeScreen = currentPage;
@@ -35,7 +36,7 @@ export async function initGame() {
     const mechanicsRegistry = createMechanicsRegistry({
         refs,
         state,
-        onSelectBoardElement: selectElement
+        bus
     });
     const getActiveMechanic = () => mechanicsRegistry.get(getActiveMechanicId(state));
 
@@ -50,8 +51,7 @@ export async function initGame() {
     const paletteController = createPaletteController({
         refs,
         state,
-        onQuickAddElement: addElementToBoard,
-        onSelectElement: selectElement
+        bus
     });
 
     navigationController = createNavigationController({
@@ -80,10 +80,7 @@ export async function initGame() {
     modalController.bind();
     hotkeysController.bind();
     bindGameplayControls();
-
-    if (!state.ui.selectedElementSymbol) {
-        state.ui.selectedElementSymbol = getAvailableElements(state)[0]?.symbol ?? null;
-    }
+    bindObservers();
 
     refreshAllViews();
     persistCurrentState();
@@ -107,13 +104,37 @@ export async function initGame() {
         }
     }
 
+    function bindObservers() {
+        bus.subscribe("palette:selection-changed", ({ source, symbol }) => {
+            selectPaletteElement(symbol, {
+                persist: source !== "palette-drag"
+            });
+        });
+
+        bus.subscribe("board:selection-changed", ({ symbol }) => {
+            inspectElement(symbol, {
+                persist: false
+            });
+        });
+
+        bus.subscribe("board:selection-cleared", () => {
+            inspectElement(state.ui.paletteSelectedElementSymbol, {
+                persist: false
+            });
+        });
+
+        bus.subscribe("element:quick-add", ({ symbol }) => {
+            addElementToBoard(symbol);
+        });
+    }
+
     function persistCurrentState() {
         getActiveMechanic().captureState?.();
         persistState(state);
     }
 
     function addSelectedElementToBoard() {
-        const selectedSymbol = state.ui.selectedElementSymbol;
+        const selectedSymbol = state.ui.paletteSelectedElementSymbol;
         if (!selectedSymbol) {
             return;
         }
@@ -181,10 +202,31 @@ export async function initGame() {
         persistCurrentState();
     }
 
-    function selectElement(symbol) {
-        state.ui.selectedElementSymbol = symbol;
-        paletteController.render();
-        persistCurrentState();
+    function selectElement(symbol, options = {}) {
+        selectPaletteElement(symbol, options);
+    }
+
+    function selectPaletteElement(symbol, options = {}) {
+        const { persist = true } = options;
+
+        state.ui.paletteSelectedElementSymbol = symbol ?? null;
+        state.ui.inspectedElementSymbol = symbol ?? null;
+        paletteController.renderSelectionUi();
+
+        if (persist) {
+            persistCurrentState();
+        }
+    }
+
+    function inspectElement(symbol, options = {}) {
+        const { persist = true } = options;
+
+        state.ui.inspectedElementSymbol = symbol ?? null;
+        paletteController.renderSelectionUi();
+
+        if (persist) {
+            persistCurrentState();
+        }
     }
 
     function refreshAllViews() {
@@ -432,7 +474,8 @@ export async function initGame() {
         const firstBonusElement = state.catalog.elements.find(element => element.category === "bonus") ?? null;
 
         if (firstBonusElement) {
-            state.ui.selectedElementSymbol = firstBonusElement.symbol;
+            state.ui.paletteSelectedElementSymbol = firstBonusElement.symbol;
+            state.ui.inspectedElementSymbol = firstBonusElement.symbol;
         }
 
         navigationController.renderMenu();

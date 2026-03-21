@@ -1,10 +1,9 @@
-import { getAvailableElements, getSelectedElement } from "./state.js";
+import { getAvailableElements, getInspectedElement, getPaletteSelectedElement } from "./state.js";
 
 export function createPaletteController({
     refs,
     state,
-    onQuickAddElement,
-    onSelectElement
+    bus
 }) {
     const prefersCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
 
@@ -20,6 +19,14 @@ export function createPaletteController({
             }
 
             state.board.dragElementType = template.dataset.element;
+            if (!state.board.dragElementType) {
+                return;
+            }
+
+            bus.publish("palette:selection-changed", {
+                source: "palette-drag",
+                symbol: state.board.dragElementType
+            });
             event.dataTransfer?.setData("text/plain", state.board.dragElementType);
         });
 
@@ -33,11 +40,17 @@ export function createPaletteController({
                 return;
             }
 
-            const symbol = template.dataset.element;
-            onSelectElement(symbol);
+            const symbol = template.dataset.element || null;
+            bus.publish("palette:selection-changed", {
+                source: "palette-click",
+                symbol
+            });
 
-            if (prefersCoarsePointer) {
-                onQuickAddElement?.(symbol);
+            if (prefersCoarsePointer && symbol) {
+                bus.publish("element:quick-add", {
+                    source: "palette-click",
+                    symbol
+                });
                 return;
             }
         });
@@ -45,6 +58,11 @@ export function createPaletteController({
 
     function render() {
         renderAvailableElements();
+        renderSelectionUi();
+    }
+
+    function renderSelectionUi() {
+        syncSelectedElementHighlight();
         renderAddButton();
         renderSelectedElementCard();
     }
@@ -57,8 +75,8 @@ export function createPaletteController({
         const availableElements = getAvailableElements(state);
         refs.elementList.replaceChildren();
 
-        if (!availableElements.some(element => element.symbol === state.ui.selectedElementSymbol)) {
-            state.ui.selectedElementSymbol = availableElements[0]?.symbol ?? null;
+        if (!availableElements.some(element => element.symbol === state.ui.paletteSelectedElementSymbol)) {
+            state.ui.paletteSelectedElementSymbol = null;
         }
 
         availableElements.forEach(element => {
@@ -69,11 +87,20 @@ export function createPaletteController({
             template.title = element.name;
             template.textContent = element.symbol;
 
-            if (element.symbol === state.ui.selectedElementSymbol) {
-                template.classList.add("selected");
-            }
-
             refs.elementList.appendChild(template);
+        });
+
+        syncSelectedElementHighlight();
+    }
+
+    function syncSelectedElementHighlight() {
+        if (!refs.elementList) {
+            return;
+        }
+
+        [...refs.elementList.querySelectorAll(".element-template")].forEach(template => {
+            const templateSymbol = template.dataset.element || null;
+            template.classList.toggle("selected", templateSymbol === state.ui.paletteSelectedElementSymbol);
         });
     }
 
@@ -84,7 +111,7 @@ export function createPaletteController({
 
         refs.elementCard.replaceChildren();
 
-        const element = getSelectedElement(state);
+        const element = getInspectedElement(state);
         if (!element) {
             const emptyState = document.createElement("div");
             emptyState.className = "empty-state";
@@ -116,7 +143,7 @@ export function createPaletteController({
             return;
         }
 
-        const element = getSelectedElement(state);
+        const element = getPaletteSelectedElement(state);
 
         refs.addSelectedButton.disabled = !element;
         refs.addSelectedButton.textContent = element
@@ -126,6 +153,7 @@ export function createPaletteController({
 
     return {
         bind,
-        render
+        render,
+        renderSelectionUi
     };
 }
