@@ -91,7 +91,7 @@ export async function initGame() {
         clientY: null
     };
     const basicTutorial = {
-        postMixShown: false,
+        postLevelStage: null,
         syncFrame: null
     };
 
@@ -1070,7 +1070,7 @@ export async function initGame() {
         }
 
         if (state.progress.completedLevelIds.has(BASIC_TUTORIAL_FIRST_LEVEL_ID)) {
-            return basicTutorial.postMixShown ? "hotkeys" : "after-mix";
+            return basicTutorial.postLevelStage ?? "after-mix";
         }
 
         const currentLevel = getCurrentLevel(state);
@@ -1088,12 +1088,8 @@ export async function initGame() {
             return "drop-on-board";
         }
 
-        if (nodeCount === 0) {
-            return "place-element";
-        }
-
         if (nodeCount < requiredNodeCount) {
-            return "drop-on-board";
+            return "pick-next-element";
         }
 
         if (connectionCount < requiredConnectionCount) {
@@ -1105,8 +1101,9 @@ export async function initGame() {
 
     function getBasicTutorialStageConfig(stageId) {
         switch (stageId) {
-            case "place-element": {
+            case "pick-next-element": {
                 const target = getTutorialPaletteTarget();
+                const nextSymbol = getTutorialNextRequiredSymbol();
                 return target
                     ? {
                         actionLabel: null,
@@ -1114,7 +1111,9 @@ export async function initGame() {
                         onAction: null,
                         placement: "right",
                         targetRect: target.getBoundingClientRect(),
-                        text: "Drag the required element onto the board to start building the molecule."
+                        text: nextSymbol
+                            ? `Drag ${nextSymbol} onto the board. Keep following the highlighted element until the full molecule is placed.`
+                            : "Drag the highlighted element onto the board to continue building the molecule."
                     }
                     : null;
             }
@@ -1160,7 +1159,7 @@ export async function initGame() {
                         actionLabel: "Next",
                         arrow: false,
                         onAction: () => {
-                            basicTutorial.postMixShown = true;
+                            basicTutorial.postLevelStage = "hotkeys";
                             scheduleBasicTutorialSync();
                         },
                         placement: "bottom-left",
@@ -1172,16 +1171,45 @@ export async function initGame() {
             case "hotkeys":
                 return refs.controls
                     ? {
+                        actionLabel: "Next",
+                        arrow: false,
+                        onAction: () => {
+                            basicTutorial.postLevelStage = "journal-nav";
+                            scheduleBasicTutorialSync();
+                        },
+                        placement: "bottom-left",
+                        targetRect: refs.controls.getBoundingClientRect(),
+                        text: "Hotkeys: Shift + A opens the add menu, Shift + M runs Mix, Shift + R clears the board, Delete removes the selection, and Esc closes overlays."
+                    }
+                    : null;
+            case "journal-nav":
+                return refs.journalButton
+                    ? {
+                        actionLabel: "Next",
+                        arrow: false,
+                        onAction: () => {
+                            basicTutorial.postLevelStage = "menu-nav";
+                            scheduleBasicTutorialSync();
+                        },
+                        placement: "bottom-left",
+                        targetRect: refs.journalButton.getBoundingClientRect(),
+                        text: "Use Journal to review discovered compounds and the elements you have already unlocked."
+                    }
+                    : null;
+            case "menu-nav":
+                return refs.menuButton
+                    ? {
                         actionLabel: "Got it",
                         arrow: false,
                         onAction: () => {
+                            basicTutorial.postLevelStage = null;
                             state.progress.basicTutorialCompleted = true;
                             persistCurrentState();
                             hideBasicTutorial();
                         },
                         placement: "bottom-left",
-                        targetRect: refs.controls.getBoundingClientRect(),
-                        text: "Hotkeys: Shift + A opens the add menu, Shift + M runs Mix, Shift + R clears the board, Delete removes the selection, and Esc closes overlays."
+                        targetRect: refs.menuButton.getBoundingClientRect(),
+                        text: "Use Menu whenever you want to leave the lab, return to navigation, and pick a different section."
                     }
                     : null;
             default:
@@ -1308,14 +1336,36 @@ export async function initGame() {
             return null;
         }
 
-        const currentLevel = getCurrentLevel(state);
-        const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
-        const preferredSymbol = targetCompound?.ingredients?.[0] ?? null;
+        const preferredSymbol = getTutorialNextRequiredSymbol();
         const preferredTile = preferredSymbol
             ? refs.elementList.querySelector(`.element-template[data-element="${preferredSymbol}"]`)
             : null;
 
         return preferredTile ?? refs.elementList.querySelector(".element-template");
+    }
+
+    function getTutorialNextRequiredSymbol() {
+        const currentLevel = getCurrentLevel(state);
+        const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
+        const requiredSymbols = targetCompound?.structure?.nodes ?? targetCompound?.ingredients ?? [];
+
+        if (!Array.isArray(requiredSymbols) || requiredSymbols.length === 0) {
+            return null;
+        }
+
+        const remainingCounts = new Map();
+        requiredSymbols.forEach(symbol => {
+            remainingCounts.set(symbol, (remainingCounts.get(symbol) ?? 0) + 1);
+        });
+
+        state.board.savedNodes.forEach(node => {
+            const remainingCount = remainingCounts.get(node.symbol) ?? 0;
+            if (remainingCount > 0) {
+                remainingCounts.set(node.symbol, remainingCount - 1);
+            }
+        });
+
+        return requiredSymbols.find(symbol => (remainingCounts.get(symbol) ?? 0) > 0) ?? null;
     }
 
     function getTutorialConnectionTarget() {
@@ -1592,7 +1642,7 @@ export async function initGame() {
         renderCurrentLevel();
         persistCurrentState();
         navigationController.showGameScreen();
-        basicTutorial.postMixShown = false;
+        basicTutorial.postLevelStage = null;
         scheduleBasicTutorialSync();
     }
 
@@ -1787,7 +1837,7 @@ export async function initGame() {
         mechanicsRegistry.resetAll();
 
         if (currentTheme.id === BASIC_TUTORIAL_THEME_ID && currentLevel.id === BASIC_TUTORIAL_FIRST_LEVEL_ID) {
-            basicTutorial.postMixShown = false;
+            basicTutorial.postLevelStage = "after-mix";
         }
 
         if (hadRemainingThemeLevels) {
