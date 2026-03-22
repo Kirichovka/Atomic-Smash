@@ -102,6 +102,23 @@
         height 0.18s ease;
 }
 
+.tutorial-highlight[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    top: -12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(13, 28, 55, 0.92);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translate(-50%, -100%);
+    box-shadow: 0 10px 24px rgba(7, 15, 31, 0.22);
+}
+
 .tutorial-highlight-secondary {
     border-color: rgba(19, 159, 116, 0.88);
     background: rgba(73, 206, 157, 0.1);

@@ -1234,12 +1234,15 @@ export async function initGame() {
         }
 
         positionTutorialHighlight(refs.tutorialHighlight, stage.targetRect);
+        setTutorialHighlightLabel(refs.tutorialHighlight, stage.primaryLabel);
 
         if (stage.secondaryTargetRect && refs.tutorialHighlightSecondary) {
             refs.tutorialHighlightSecondary.classList.remove("hidden");
             positionTutorialHighlight(refs.tutorialHighlightSecondary, stage.secondaryTargetRect, 8);
+            setTutorialHighlightLabel(refs.tutorialHighlightSecondary, stage.secondaryLabel);
         } else {
             refs.tutorialHighlightSecondary?.classList.add("hidden");
+            setTutorialHighlightLabel(refs.tutorialHighlightSecondary, null);
         }
 
         refs.tutorialBubble.style.left = "-9999px";
@@ -1260,6 +1263,8 @@ export async function initGame() {
         refs.tutorialOverlay?.setAttribute("aria-hidden", "true");
         refs.tutorialArrow?.classList.add("hidden");
         refs.tutorialHighlightSecondary?.classList.add("hidden");
+        setTutorialHighlightLabel(refs.tutorialHighlight, null);
+        setTutorialHighlightLabel(refs.tutorialHighlightSecondary, null);
 
         if (refs.tutorialBubbleAction) {
             refs.tutorialBubbleAction.onclick = null;
@@ -1275,6 +1280,19 @@ export async function initGame() {
         highlightElement.style.top = `${Math.max(targetRect.top - padding, 8)}px`;
         highlightElement.style.width = `${Math.max(targetRect.width + (padding * 2), 24)}px`;
         highlightElement.style.height = `${Math.max(targetRect.height + (padding * 2), 24)}px`;
+    }
+
+    function setTutorialHighlightLabel(highlightElement, label) {
+        if (!highlightElement) {
+            return;
+        }
+
+        if (label) {
+            highlightElement.dataset.label = label;
+            return;
+        }
+
+        delete highlightElement.dataset.label;
     }
 
     function positionTutorialArrow(stage, bubbleRect) {
@@ -1409,6 +1427,8 @@ export async function initGame() {
                 ? {
                     arrowFromRect: fallbackTarget.getBoundingClientRect(),
                     arrowToRect: refs.mixZone?.getBoundingClientRect() ?? null,
+                    primaryLabel: "Start here",
+                    secondaryLabel: "Target area",
                     secondaryTargetRect: refs.mixZone?.getBoundingClientRect() ?? null,
                     target: fallbackNode ?? fallbackTarget,
                     text: "Start from this atom and drag the bond toward the highlighted target area."
@@ -1438,8 +1458,10 @@ export async function initGame() {
         return {
             arrowFromRect: fromConnector.getBoundingClientRect(),
             arrowToRect: toConnector.getBoundingClientRect(),
-            secondaryTargetRect: toNodeElement?.getBoundingClientRect() ?? toConnector.getBoundingClientRect(),
-            target: fromNodeElement ?? fromConnector,
+            primaryLabel: "Start here",
+            secondaryLabel: "Connect here",
+            secondaryTargetRect: toConnector.getBoundingClientRect(),
+            target: fromConnector,
             text: missingEdgeGuide.remainingEdges > 1
                 ? `Start from this ${fromName} atom and drag the bond to the highlighted ${toName} atom.`
                 : `Make the last bond by dragging from this ${fromName} atom to the highlighted ${toName} atom.`
