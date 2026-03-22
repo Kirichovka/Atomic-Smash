@@ -45,13 +45,13 @@
     padding: 20px;
     border: 1px solid var(--color-border-soft);
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--color-surface-panel);
     box-shadow: 0 12px 34px var(--color-shadow-soft);
 }
 
 .theme-card.active {
-    border-color: var(--color-accent);
-    box-shadow: 0 16px 36px rgba(45, 108, 223, 0.16);
+    border-color: var(--color-border-selected);
+    box-shadow: 0 16px 36px var(--color-glow-primary);
 }
 
 .theme-card-name {

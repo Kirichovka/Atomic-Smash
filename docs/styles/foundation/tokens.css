@@ -1,41 +1,90 @@
 :root {
-    --color-bg-app: #f8f6fb;
-    --color-screen-radial: rgba(146, 200, 242, 0.601);
-    --color-screen-start: #fff9fb;
-    --color-screen-end: #eef4ff;
-    --color-surface-primary: rgba(255, 255, 255, 0.92);
-    --color-surface-panel: rgba(255, 255, 255, 0.95);
-    --color-surface-panel-strong: rgba(255, 255, 255, 0.96);
+    /* Backgrounds */
+    --color-bg-app: #f4f6fb;
+    --color-screen-radial: rgba(146, 200, 242, 0.5);
+    --color-screen-start: #f8fbff;
+    --color-screen-end: #ebf1f9;
+
+    /* Surfaces */
+    --color-surface-primary: rgba(255, 255, 255, 0.94);
+    --color-surface-panel: rgba(255, 255, 255, 0.98);
+    --color-surface-panel-strong: #ffffff;
     --color-surface-solid: #ffffff;
-    --color-surface-soft: #fdf7fa;
-    --color-surface-visual-start: #fff7fa;
-    --color-surface-visual-end: #edf4ff;
-    --color-border-soft: #4ab7e9;
-    --color-border-default: #89a3f1;
-    --color-border-strong: #e7d5f9;
-    --color-border-grid: #b5bfee;
-    --color-border-visual: #94d4fb;
-    --color-border-visual-soft: #8ce8f4;
-    --color-text-brand: #2a1f3d;
+    --color-surface-soft: rgba(0, 0, 0, 0.02);
+    --color-surface-visual-start: #ffffff;
+    --color-surface-visual-end: #f4f7fe;
+
+    /* Surface Interaction States */
+    --color-surface-hover: rgba(0, 0, 0, 0.035);
+    --color-surface-active: rgba(0, 0, 0, 0.07);
+    --color-surface-selected: rgba(45, 108, 223, 0.08);
+
+    /* Borders */
+    --color-border-soft: rgba(0, 0, 0, 0.06);
+    --color-border-default: rgba(0, 0, 0, 0.12);
+    --color-border-strong: rgba(0, 0, 0, 0.22);
+    --color-border-grid: rgba(0, 0, 0, 0.05);
+    --color-border-visual: rgba(45, 108, 223, 0.25);
+    --color-border-visual-soft: rgba(45, 108, 223, 0.15);
+
+    /* Border Interaction States */
+    --color-border-hover: rgba(0, 0, 0, 0.28);
+    --color-border-active: rgba(45, 108, 223, 0.5);
+    --color-border-selected: #2d6cdf;
+
+    /* Text */
+    --color-text-brand: #0f172a;
     --color-text-primary: #334155;
-    --color-text-muted: #6b5c7a;
-    --color-text-subtle: #7c8aa0;
-    --color-text-dark: #0f172a;
-    --color-accent: #32605f;
-    --color-accent-strong: #2d6cdf;
-    --color-shadow-strong: rgba(20, 10, 30, 0.08);
-    --color-shadow-soft: rgba(20, 10, 30, 0.06);
-    --color-shadow-modal: rgba(15, 23, 42, 0.24);
-    --color-overlay: rgba(20, 10, 30, 0.62);
-    --color-grid-line: rgba(0, 0, 0, 0.03);
-    --palette-surface: #eef4ff;
-    --palette-surface-strong: #e6efff;
-    --palette-node-surface: #d9e6ff;
-    --palette-border: #b8c2d1;
-    --palette-node-border: #8ea2c0;
-    --palette-selected-ring: rgba(189, 244, 247, 0.15);
+    --color-text-muted: #64748b;
+    --color-text-subtle: #94a3b8;
+    --color-text-dark: #020617;
+    --color-text-on-accent: #ffffff;
+
+    /* Accents */
+    --color-accent: #6b21a8;
+    /* Deep Purple */
+    --color-accent-strong: #2563eb;
+    /* Vibrant Blue */
+
+    /* Accent Interaction States */
+    --color-accent-hover: #cfb3e9;
+    --color-accent-active: #581c87;
+    --color-accent-selected: rgba(107, 33, 168, 0.15);
+    --color-accent-strong-hover: #3b82f6;
+    --color-accent-strong-active: #1d4ed8;
+    --color-accent-strong-selected: rgba(37, 99, 235, 0.15);
+
+    /* Shadows */
+    --color-shadow-strong: rgba(15, 23, 42, 0.12);
+    --color-shadow-soft: rgba(15, 23, 42, 0.06);
+    --color-shadow-modal: rgba(15, 23, 42, 0.22);
+    --color-shadow-hover: rgba(15, 23, 42, 0.10);
+    --color-shadow-node: rgba(0, 0, 0, 0.08);
+
+    /* Tutorial & Glow */
+    --color-glow-primary: rgba(37, 99, 235, 0.18);
+    --color-glow-secondary: rgba(147, 51, 234, 0.15);
+
+    /* Game Overlays */
+    --color-overlay: rgba(15, 23, 42, 0.45);
+    --color-grid-line: rgba(0, 0, 0, 0.035);
+
+    /* Game & Palette Specific */
+    --palette-surface: #f8fafc;
+    --palette-surface-strong: #f1f5f9;
+    --palette-node-surface: #ffffff;
+    --palette-border: var(--color-border-soft);
+    --palette-node-border: var(--color-border-default);
+    --palette-selected-ring: rgba(37, 99, 235, 0.15);
+
+    /* Palette Node Interaction States */
+    --palette-node-surface-hover: #f8fafc;
+    --palette-node-surface-active: #f1f5f9;
+    --palette-node-surface-selected: var(--color-accent-strong-selected);
+
+    /* Connection lines */
     --connector-fill: var(--color-accent-strong);
     --connector-border: #ffffff;
-    --wire-solid: #0f172a;
-    --wire-temp: #334155;
+    --wire-solid: #1e3a8a;
+    --wire-temp: rgba(30, 58, 138, 0.5);
 }

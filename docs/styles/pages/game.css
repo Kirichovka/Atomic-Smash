@@ -89,12 +89,12 @@
 
 .tutorial-highlight {
     position: fixed;
-    border: 2px solid rgba(45, 108, 223, 0.82);
+    border: 2px solid var(--color-accent-strong);
     border-radius: 18px;
-    background: rgba(110, 157, 255, 0.08);
+    background: var(--color-surface-selected);
     box-shadow:
-        0 0 0 9999px rgba(11, 21, 39, 0.18),
-        0 18px 44px rgba(21, 44, 88, 0.18);
+        0 0 0 9999px var(--color-overlay),
+        0 18px 44px var(--color-shadow-strong);
     transition:
         left 0.18s ease,
         top 0.18s ease,
@@ -109,22 +109,22 @@
     top: -12px;
     padding: 4px 8px;
     border-radius: 999px;
-    background: rgba(13, 28, 55, 0.92);
-    color: #ffffff;
+    background: var(--color-surface-primary);
+    color: var(--color-text-brand);
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
     transform: translate(-50%, -100%);
-    box-shadow: 0 10px 24px rgba(7, 15, 31, 0.22);
+    box-shadow: 0 10px 24px var(--color-shadow-strong);
 }
 
 .tutorial-highlight-secondary {
-    border-color: rgba(19, 159, 116, 0.88);
-    background: rgba(73, 206, 157, 0.1);
+    border-color: var(--color-accent);
+    background: var(--color-glow-secondary);
     box-shadow:
-        0 0 0 5px rgba(73, 206, 157, 0.18),
-        0 12px 28px rgba(12, 70, 52, 0.18);
+        0 0 0 5px var(--color-glow-secondary),
+        0 12px 28px var(--color-shadow-strong);
 }
 
 .tutorial-bubble {
@@ -132,10 +132,10 @@
     min-width: 220px;
     max-width: 300px;
     padding: 14px 16px;
-    border: 1px solid rgba(132, 163, 217, 0.9);
+    border: 1px solid var(--color-border-strong);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 20px 40px rgba(16, 31, 59, 0.18);
+    background: var(--color-surface-panel-strong);
+    box-shadow: 0 20px 40px var(--color-shadow-modal);
     pointer-events: auto;
 }
 
@@ -156,8 +156,8 @@
     font-size: 0;
     color: transparent;
     border-radius: 999px;
-    background: linear-gradient(90deg, rgba(45, 108, 223, 0.92), rgba(45, 108, 223, 0.64));
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
+    background: linear-gradient(90deg, var(--color-accent-strong), transparent);
+    box-shadow: 0 0 0 1px var(--color-border-soft);
     transform-origin: left center;
 }
 
@@ -168,8 +168,8 @@
     right: -1px;
     width: 12px;
     height: 12px;
-    border-top: 4px solid rgba(45, 108, 223, 0.92);
-    border-right: 4px solid rgba(45, 108, 223, 0.92);
+    border-top: 4px solid var(--color-accent-strong);
+    border-right: 4px solid var(--color-accent-strong);
     transform: translateY(-50%) rotate(45deg);
     border-radius: 2px;
 }
@@ -194,12 +194,12 @@
 .mix-zone-picker {
     position: absolute;
     min-width: 190px;
-    border: 1px solid #c9d1df;
+    border: 1px solid var(--color-border-strong);
     border-radius: 8px;
-    background: #f7f7f7;
+    background: var(--color-surface-panel);
     box-shadow:
-        0 12px 24px rgba(14, 24, 43, 0.18),
-        0 0 0 1px rgba(255, 255, 255, 0.85) inset;
+        0 12px 24px var(--color-shadow-modal),
+        0 0 0 1px var(--color-border-soft) inset;
     pointer-events: auto;
 }
 
@@ -226,8 +226,8 @@
 .mix-zone-context-action:hover,
 .mix-zone-context-action:focus-visible,
 .mix-zone-context-action.active {
-    background: #dbe9ff;
-    color: #173866;
+    background: var(--color-surface-hover);
+    color: var(--color-text-brand);
     outline: none;
 }
 
@@ -265,8 +265,8 @@
 .mix-zone-picker-option:hover,
 .mix-zone-picker-option:focus-visible,
 .mix-zone-picker-option.active {
-    background: #dbe9ff;
-    color: #173866;
+    background: var(--color-surface-hover);
+    color: var(--color-text-brand);
     outline: none;
     box-shadow: none;
 }
@@ -278,9 +278,9 @@
     width: 26px;
     min-width: 26px;
     height: 26px;
-    border: 1px solid #9fb0ca;
+    border: 1px solid var(--color-border-strong);
     border-radius: 6px;
-    background: #ffffff;
+    background: var(--color-surface-solid);
     color: var(--color-text-brand);
     font-size: 14px;
     font-weight: 700;
@@ -321,15 +321,15 @@
 }
 
 .node.selected {
-    border-color: var(--color-accent);
-    background: linear-gradient(180deg, #f6f9ff 0%, #deebff 100%);
+    border-color: var(--color-border-selected);
+    background: var(--color-surface-selected);
     box-shadow:
-        0 0 0 3px rgba(45, 108, 223, 0.18),
-        0 10px 24px rgba(45, 108, 223, 0.18);
+        0 0 0 3px var(--color-glow-primary),
+        0 10px 24px var(--color-glow-primary);
 }
 
 .node.selected .connector {
-    box-shadow: 0 0 0 4px rgba(45, 108, 223, 0.16);
+    box-shadow: 0 0 0 4px var(--color-glow-primary);
 }
 
 .node.dragging {

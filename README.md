@@ -106,6 +106,8 @@ The current `Game` screen supports multiple interaction layers depending on devi
 - palette selection updates the element card without opening a modal;
 - the `Add To Board` button uses the current palette selection and repeats placement quickly.
 
+*Note on AI Usage: AI assistance was utilized to expand and standardize the interactive color palette and tokens (`tokens.css`). This refactoring established a "Single Source of Truth" architecture across the application, defining coordinated CSS variables for interactive UI states (hover, active, selected etc) to ensure consistency and harmonious tones.*
+
 ### Board interactions
 
 - tap or click a node to select it and inspect its element data;
@@ -281,6 +283,8 @@ Good ownership for:
 - element cards;
 - palette layout;
 - touch behavior.
+
+*Note on AI Usage: AI assistance was utilized to expand and standardize the interactive color palette and tokens (`tokens.css`). This refactoring established a "Single Source of Truth" architecture across the application, defining coordinated CSS variables for interactive UI states (hover, active, selected) to ensure consistency and harmonious tones.*
 
 ### Mechanics
 
