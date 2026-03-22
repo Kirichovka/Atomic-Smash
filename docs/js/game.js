@@ -1129,15 +1129,15 @@ export async function initGame() {
                     }
                     : null;
             case "connect-atoms": {
-                const target = getTutorialConnectionTarget();
-                return target
+                const connectionHint = getTutorialConnectionHint();
+                return connectionHint
                     ? {
                         actionLabel: null,
                         arrow: false,
                         onAction: null,
                         placement: "top",
-                        targetRect: target.getBoundingClientRect(),
-                        text: "Now connect the atoms: drag from this connector to another atom to build the correct structure."
+                        targetRect: connectionHint.target.getBoundingClientRect(),
+                        text: connectionHint.text
                     }
                     : null;
             }
@@ -1368,26 +1368,24 @@ export async function initGame() {
         return requiredSymbols.find(symbol => (remainingCounts.get(symbol) ?? 0) > 0) ?? null;
     }
 
-    function getTutorialConnectionTarget() {
-        const preferredSymbol = getPreferredConnectorSymbol();
-        const preferredNode = preferredSymbol
-            ? refs.mixZone?.querySelector(`.node[data-symbol="${preferredSymbol}"]`)
-            : null;
-        const fallbackNode = preferredNode ?? refs.mixZone?.querySelector(".node");
-
-        return fallbackNode?.querySelector(".connector.right")
-            ?? fallbackNode?.querySelector(".connector")
-            ?? null;
-    }
-
-    function getPreferredConnectorSymbol() {
+    function getTutorialConnectionHint() {
         const currentLevel = getCurrentLevel(state);
         const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
         const structureNodes = targetCompound?.structure?.nodes;
         const structureEdges = targetCompound?.structure?.edges;
 
         if (!Array.isArray(structureNodes) || !Array.isArray(structureEdges)) {
-            return targetCompound?.ingredients?.[0] ?? null;
+            const fallbackNode = refs.mixZone?.querySelector(".node");
+            const fallbackTarget = fallbackNode?.querySelector(".connector.right")
+                ?? fallbackNode?.querySelector(".connector")
+                ?? null;
+
+            return fallbackTarget
+                ? {
+                    target: fallbackTarget,
+                    text: "Keep connecting the atoms until the molecule matches the target structure."
+                }
+                : null;
         }
 
         const degreeByIndex = new Map(structureNodes.map((_, index) => [index, 0]));
@@ -1396,10 +1394,90 @@ export async function initGame() {
             degreeByIndex.set(toIndex, (degreeByIndex.get(toIndex) ?? 0) + 1);
         });
 
-        const preferredIndex = [...degreeByIndex.entries()]
-            .sort((left, right) => right[1] - left[1])[0]?.[0];
+        const targetDegreesBySymbol = new Map();
+        degreeByIndex.forEach((degree, index) => {
+            const symbol = structureNodes[index];
+            const list = targetDegreesBySymbol.get(symbol) ?? [];
+            list.push(degree);
+            targetDegreesBySymbol.set(symbol, list);
+        });
+        targetDegreesBySymbol.forEach(list => list.sort((left, right) => right - left));
 
-        return Number.isInteger(preferredIndex) ? structureNodes[preferredIndex] : targetCompound?.ingredients?.[0] ?? null;
+        const boardDegreesByNodeId = new Map();
+        state.board.savedNodes.forEach(node => {
+            boardDegreesByNodeId.set(node.id, 0);
+        });
+        state.board.savedConnections.forEach(connection => {
+            boardDegreesByNodeId.set(connection.fromNodeId, (boardDegreesByNodeId.get(connection.fromNodeId) ?? 0) + 1);
+            boardDegreesByNodeId.set(connection.toNodeId, (boardDegreesByNodeId.get(connection.toNodeId) ?? 0) + 1);
+        });
+
+        let bestCandidate = null;
+
+        [...targetDegreesBySymbol.entries()].forEach(([symbol, targetDegrees]) => {
+            const boardNodes = state.board.savedNodes
+                .filter(node => node.symbol === symbol)
+                .map(node => ({
+                    currentDegree: boardDegreesByNodeId.get(node.id) ?? 0,
+                    nodeId: node.id,
+                    symbol
+                }))
+                .sort((left, right) => left.currentDegree - right.currentDegree);
+
+            targetDegrees.forEach((targetDegree, index) => {
+                const boardNode = boardNodes[index];
+                if (!boardNode) {
+                    return;
+                }
+
+                const remainingDegree = Math.max(targetDegree - boardNode.currentDegree, 0);
+                if (remainingDegree === 0) {
+                    return;
+                }
+
+                const candidate = {
+                    nodeId: boardNode.nodeId,
+                    remainingDegree,
+                    symbol,
+                    targetDegree
+                };
+
+                if (
+                    !bestCandidate
+                    || candidate.remainingDegree > bestCandidate.remainingDegree
+                    || (
+                        candidate.remainingDegree === bestCandidate.remainingDegree
+                        && candidate.targetDegree > bestCandidate.targetDegree
+                    )
+                ) {
+                    bestCandidate = candidate;
+                }
+            });
+        });
+
+        const targetNode = bestCandidate
+            ? refs.mixZone?.querySelector(`.node[data-id="${bestCandidate.nodeId}"]`)
+            : refs.mixZone?.querySelector(".node");
+        const targetConnector = targetNode?.querySelector(".connector.right")
+            ?? targetNode?.querySelector(".connector")
+            ?? null;
+
+        if (!targetConnector) {
+            return null;
+        }
+
+        const elementName = state.catalog.elements.find(element => element.symbol === bestCandidate?.symbol)?.name
+            ?? bestCandidate?.symbol
+            ?? targetNode?.dataset.symbol
+            ?? "this atom";
+        const remainingConnections = Math.max(structureEdges.length - state.board.savedConnections.length, 1);
+
+        return {
+            target: targetConnector,
+            text: remainingConnections > 1
+                ? `Keep building the structure. Start from ${elementName} and create the next required bond.`
+                : `Make the last connection from ${elementName} to finish the target structure.`
+        };
     }
 
     function getTutorialPostMixTarget() {
