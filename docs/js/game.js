@@ -1410,8 +1410,8 @@ export async function initGame() {
                     arrowFromRect: fallbackTarget.getBoundingClientRect(),
                     arrowToRect: refs.mixZone?.getBoundingClientRect() ?? null,
                     secondaryTargetRect: refs.mixZone?.getBoundingClientRect() ?? null,
-                    target: fallbackTarget,
-                    text: "Keep connecting the atoms until the molecule matches the target structure."
+                    target: fallbackNode ?? fallbackTarget,
+                    text: "Start from this atom and drag the bond toward the highlighted target area."
                 }
                 : null;
         }
@@ -1438,11 +1438,11 @@ export async function initGame() {
         return {
             arrowFromRect: fromConnector.getBoundingClientRect(),
             arrowToRect: toConnector.getBoundingClientRect(),
-            secondaryTargetRect: toConnector.getBoundingClientRect(),
-            target: fromConnector,
+            secondaryTargetRect: toNodeElement?.getBoundingClientRect() ?? toConnector.getBoundingClientRect(),
+            target: fromNodeElement ?? fromConnector,
             text: missingEdgeGuide.remainingEdges > 1
-                ? `Create the next bond: connect ${fromName} to ${toName}.`
-                : `Make the last bond: connect ${fromName} to ${toName}.`
+                ? `Start from this ${fromName} atom and drag the bond to the highlighted ${toName} atom.`
+                : `Make the last bond by dragging from this ${fromName} atom to the highlighted ${toName} atom.`
         };
     }
 
