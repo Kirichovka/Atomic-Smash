@@ -1080,9 +1080,7 @@ export async function initGame() {
 
         const targetCompound = getCompoundById(state, currentLevel.targetCompoundId);
         const requiredNodeCount = targetCompound?.ingredients?.length ?? 0;
-        const requiredConnectionCount = targetCompound?.structure?.edges?.length ?? Math.max(requiredNodeCount - 1, 0);
         const nodeCount = state.board.savedNodes.length;
-        const connectionCount = state.board.savedConnections.length;
 
         if (state.board.dragElementType) {
             return "drop-on-board";
@@ -1092,7 +1090,7 @@ export async function initGame() {
             return "pick-next-element";
         }
 
-        if (connectionCount < requiredConnectionCount) {
+        if (!isTutorialStructureReady(targetCompound)) {
             return "connect-atoms";
         }
 
@@ -1235,7 +1233,14 @@ export async function initGame() {
             }
         }
 
-        positionTutorialHighlight(stage.targetRect);
+        positionTutorialHighlight(refs.tutorialHighlight, stage.targetRect);
+
+        if (stage.secondaryTargetRect && refs.tutorialHighlightSecondary) {
+            refs.tutorialHighlightSecondary.classList.remove("hidden");
+            positionTutorialHighlight(refs.tutorialHighlightSecondary, stage.secondaryTargetRect, 8);
+        } else {
+            refs.tutorialHighlightSecondary?.classList.add("hidden");
+        }
 
         refs.tutorialBubble.style.left = "-9999px";
         refs.tutorialBubble.style.top = "-9999px";
@@ -1247,45 +1252,65 @@ export async function initGame() {
         refs.tutorialBubble.style.left = `${bubblePosition.left}px`;
         refs.tutorialBubble.style.top = `${bubblePosition.top}px`;
 
-        positionTutorialArrow(stage.targetRect, refs.tutorialBubble.getBoundingClientRect(), stage.arrow);
+        positionTutorialArrow(stage, refs.tutorialBubble.getBoundingClientRect());
     }
 
     function hideBasicTutorial() {
         refs.tutorialOverlay?.classList.add("hidden");
         refs.tutorialOverlay?.setAttribute("aria-hidden", "true");
         refs.tutorialArrow?.classList.add("hidden");
+        refs.tutorialHighlightSecondary?.classList.add("hidden");
 
         if (refs.tutorialBubbleAction) {
             refs.tutorialBubbleAction.onclick = null;
         }
     }
 
-    function positionTutorialHighlight(targetRect) {
-        if (!refs.tutorialHighlight) {
+    function positionTutorialHighlight(highlightElement, targetRect, padding = 10) {
+        if (!highlightElement) {
             return;
         }
 
-        const padding = 10;
-        refs.tutorialHighlight.style.left = `${Math.max(targetRect.left - padding, 8)}px`;
-        refs.tutorialHighlight.style.top = `${Math.max(targetRect.top - padding, 8)}px`;
-        refs.tutorialHighlight.style.width = `${Math.max(targetRect.width + (padding * 2), 24)}px`;
-        refs.tutorialHighlight.style.height = `${Math.max(targetRect.height + (padding * 2), 24)}px`;
+        highlightElement.style.left = `${Math.max(targetRect.left - padding, 8)}px`;
+        highlightElement.style.top = `${Math.max(targetRect.top - padding, 8)}px`;
+        highlightElement.style.width = `${Math.max(targetRect.width + (padding * 2), 24)}px`;
+        highlightElement.style.height = `${Math.max(targetRect.height + (padding * 2), 24)}px`;
     }
 
-    function positionTutorialArrow(targetRect, bubbleRect, shouldShowArrow) {
+    function positionTutorialArrow(stage, bubbleRect) {
         if (!refs.tutorialArrow) {
             return;
         }
 
-        if (!shouldShowArrow) {
+        if (stage.arrowFromRect && stage.arrowToRect) {
+            const startRect = stage.arrowFromRect;
+            const endRect = stage.arrowToRect;
+            const startX = startRect.left + (startRect.width / 2);
+            const startY = startRect.top + (startRect.height / 2);
+            const endX = endRect.left + (endRect.width / 2);
+            const endY = endRect.top + (endRect.height / 2);
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+            const length = Math.max(Math.hypot(deltaX, deltaY) - 18, 24);
+            const angle = Math.atan2(deltaY, deltaX);
+
+            refs.tutorialArrow.classList.remove("hidden");
+            refs.tutorialArrow.style.left = `${startX}px`;
+            refs.tutorialArrow.style.top = `${startY}px`;
+            refs.tutorialArrow.style.width = `${length}px`;
+            refs.tutorialArrow.style.transform = `rotate(${angle}rad)`;
+            return;
+        }
+
+        if (!stage.arrow) {
             refs.tutorialArrow.classList.add("hidden");
             return;
         }
 
         const startX = bubbleRect.left + (bubbleRect.width / 2);
         const startY = bubbleRect.top + (bubbleRect.height / 2);
-        const endX = targetRect.left + (targetRect.width / 2);
-        const endY = targetRect.top + Math.min(targetRect.height * 0.35, 72);
+        const endX = stage.targetRect.left + (stage.targetRect.width / 2);
+        const endY = stage.targetRect.top + Math.min(stage.targetRect.height * 0.35, 72);
         const deltaX = endX - startX;
         const deltaY = endY - startY;
         const length = Math.max(Math.hypot(deltaX, deltaY) - 22, 48);
@@ -1382,101 +1407,42 @@ export async function initGame() {
 
             return fallbackTarget
                 ? {
+                    arrowFromRect: fallbackTarget.getBoundingClientRect(),
+                    arrowToRect: refs.mixZone?.getBoundingClientRect() ?? null,
+                    secondaryTargetRect: refs.mixZone?.getBoundingClientRect() ?? null,
                     target: fallbackTarget,
                     text: "Keep connecting the atoms until the molecule matches the target structure."
                 }
                 : null;
         }
 
-        const degreeByIndex = new Map(structureNodes.map((_, index) => [index, 0]));
-        structureEdges.forEach(([fromIndex, toIndex]) => {
-            degreeByIndex.set(fromIndex, (degreeByIndex.get(fromIndex) ?? 0) + 1);
-            degreeByIndex.set(toIndex, (degreeByIndex.get(toIndex) ?? 0) + 1);
-        });
-
-        const targetDegreesBySymbol = new Map();
-        degreeByIndex.forEach((degree, index) => {
-            const symbol = structureNodes[index];
-            const list = targetDegreesBySymbol.get(symbol) ?? [];
-            list.push(degree);
-            targetDegreesBySymbol.set(symbol, list);
-        });
-        targetDegreesBySymbol.forEach(list => list.sort((left, right) => right - left));
-
-        const boardDegreesByNodeId = new Map();
-        state.board.savedNodes.forEach(node => {
-            boardDegreesByNodeId.set(node.id, 0);
-        });
-        state.board.savedConnections.forEach(connection => {
-            boardDegreesByNodeId.set(connection.fromNodeId, (boardDegreesByNodeId.get(connection.fromNodeId) ?? 0) + 1);
-            boardDegreesByNodeId.set(connection.toNodeId, (boardDegreesByNodeId.get(connection.toNodeId) ?? 0) + 1);
-        });
-
-        let bestCandidate = null;
-
-        [...targetDegreesBySymbol.entries()].forEach(([symbol, targetDegrees]) => {
-            const boardNodes = state.board.savedNodes
-                .filter(node => node.symbol === symbol)
-                .map(node => ({
-                    currentDegree: boardDegreesByNodeId.get(node.id) ?? 0,
-                    nodeId: node.id,
-                    symbol
-                }))
-                .sort((left, right) => left.currentDegree - right.currentDegree);
-
-            targetDegrees.forEach((targetDegree, index) => {
-                const boardNode = boardNodes[index];
-                if (!boardNode) {
-                    return;
-                }
-
-                const remainingDegree = Math.max(targetDegree - boardNode.currentDegree, 0);
-                if (remainingDegree === 0) {
-                    return;
-                }
-
-                const candidate = {
-                    nodeId: boardNode.nodeId,
-                    remainingDegree,
-                    symbol,
-                    targetDegree
-                };
-
-                if (
-                    !bestCandidate
-                    || candidate.remainingDegree > bestCandidate.remainingDegree
-                    || (
-                        candidate.remainingDegree === bestCandidate.remainingDegree
-                        && candidate.targetDegree > bestCandidate.targetDegree
-                    )
-                ) {
-                    bestCandidate = candidate;
-                }
-            });
-        });
-
-        const targetNode = bestCandidate
-            ? refs.mixZone?.querySelector(`.node[data-id="${bestCandidate.nodeId}"]`)
-            : refs.mixZone?.querySelector(".node");
-        const targetConnector = targetNode?.querySelector(".connector.right")
-            ?? targetNode?.querySelector(".connector")
-            ?? null;
-
-        if (!targetConnector) {
+        const missingEdgeGuide = getTutorialMissingEdgeGuide(structureNodes, structureEdges);
+        if (!missingEdgeGuide) {
             return null;
         }
 
-        const elementName = state.catalog.elements.find(element => element.symbol === bestCandidate?.symbol)?.name
-            ?? bestCandidate?.symbol
-            ?? targetNode?.dataset.symbol
-            ?? "this atom";
-        const remainingConnections = Math.max(structureEdges.length - state.board.savedConnections.length, 1);
+        const fromNodeElement = refs.mixZone?.querySelector(`.node[data-id="${missingEdgeGuide.fromNodeId}"]`);
+        const toNodeElement = refs.mixZone?.querySelector(`.node[data-id="${missingEdgeGuide.toNodeId}"]`);
+        const fromConnector = getConnectorTowardNode(fromNodeElement, toNodeElement);
+        const toConnector = getConnectorTowardNode(toNodeElement, fromNodeElement);
+
+        if (!fromConnector || !toConnector) {
+            return null;
+        }
+
+        const fromName = state.catalog.elements.find(element => element.symbol === missingEdgeGuide.fromSymbol)?.name
+            ?? missingEdgeGuide.fromSymbol;
+        const toName = state.catalog.elements.find(element => element.symbol === missingEdgeGuide.toSymbol)?.name
+            ?? missingEdgeGuide.toSymbol;
 
         return {
-            target: targetConnector,
-            text: remainingConnections > 1
-                ? `Keep building the structure. Start from ${elementName} and create the next required bond.`
-                : `Make the last connection from ${elementName} to finish the target structure.`
+            arrowFromRect: fromConnector.getBoundingClientRect(),
+            arrowToRect: toConnector.getBoundingClientRect(),
+            secondaryTargetRect: toConnector.getBoundingClientRect(),
+            target: fromConnector,
+            text: missingEdgeGuide.remainingEdges > 1
+                ? `Create the next bond: connect ${fromName} to ${toName}.`
+                : `Make the last bond: connect ${fromName} to ${toName}.`
         };
     }
 
@@ -1501,6 +1467,138 @@ export async function initGame() {
 
     function isModalVisible(modal) {
         return Boolean(modal && !modal.classList.contains("hidden"));
+    }
+
+    function isTutorialStructureReady(targetCompound) {
+        const structure = targetCompound?.structure;
+        if (!structure?.nodes || !structure?.edges) {
+            const requiredConnectionCount = targetCompound?.ingredients?.length
+                ? Math.max(targetCompound.ingredients.length - 1, 0)
+                : 0;
+            return state.board.savedConnections.length >= requiredConnectionCount;
+        }
+
+        return !getTutorialMissingEdgeGuide(structure.nodes, structure.edges);
+    }
+
+    function getTutorialMissingEdgeGuide(structureNodes, structureEdges) {
+        const mapping = findBestTutorialNodeMapping(structureNodes, structureEdges);
+        if (!mapping) {
+            return null;
+        }
+
+        const boardEdgeSet = new Set(
+            state.board.savedConnections.map(connection => createLocalEdgeKey(connection.fromNodeId, connection.toNodeId))
+        );
+
+        for (const [fromIndex, toIndex] of structureEdges) {
+            const fromNodeId = mapping[fromIndex];
+            const toNodeId = mapping[toIndex];
+            if (!fromNodeId || !toNodeId) {
+                continue;
+            }
+
+            if (!boardEdgeSet.has(createLocalEdgeKey(fromNodeId, toNodeId))) {
+                return {
+                    fromNodeId,
+                    fromSymbol: structureNodes[fromIndex],
+                    remainingEdges: structureEdges.length - countSatisfiedMappedEdges(structureEdges, mapping, boardEdgeSet),
+                    toNodeId,
+                    toSymbol: structureNodes[toIndex]
+                };
+            }
+        }
+
+        return null;
+    }
+
+    function findBestTutorialNodeMapping(structureNodes, structureEdges) {
+        if (state.board.savedNodes.length < structureNodes.length) {
+            return null;
+        }
+
+        const boardNodesBySymbol = new Map();
+        state.board.savedNodes.forEach(node => {
+            const list = boardNodesBySymbol.get(node.symbol) ?? [];
+            list.push(node.id);
+            boardNodesBySymbol.set(node.symbol, list);
+        });
+
+        if (structureNodes.some(symbol => !(boardNodesBySymbol.get(symbol)?.length))) {
+            return null;
+        }
+
+        const boardEdgeSet = new Set(
+            state.board.savedConnections.map(connection => createLocalEdgeKey(connection.fromNodeId, connection.toNodeId))
+        );
+        const assignments = new Array(structureNodes.length).fill(null);
+        let bestMapping = null;
+        let bestScore = -1;
+
+        function backtrack(index, usedNodeIds) {
+            if (index >= structureNodes.length) {
+                const score = countSatisfiedMappedEdges(structureEdges, assignments, boardEdgeSet);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMapping = [...assignments];
+                }
+                return;
+            }
+
+            const symbol = structureNodes[index];
+            const candidates = boardNodesBySymbol.get(symbol) ?? [];
+            candidates.forEach(nodeId => {
+                if (usedNodeIds.has(nodeId)) {
+                    return;
+                }
+
+                assignments[index] = nodeId;
+                usedNodeIds.add(nodeId);
+                backtrack(index + 1, usedNodeIds);
+                usedNodeIds.delete(nodeId);
+                assignments[index] = null;
+            });
+        }
+
+        backtrack(0, new Set());
+        return bestMapping;
+    }
+
+    function countSatisfiedMappedEdges(structureEdges, mapping, boardEdgeSet) {
+        return structureEdges.reduce((count, [fromIndex, toIndex]) => {
+            const fromNodeId = mapping[fromIndex];
+            const toNodeId = mapping[toIndex];
+            if (!fromNodeId || !toNodeId) {
+                return count;
+            }
+
+            return count + (boardEdgeSet.has(createLocalEdgeKey(fromNodeId, toNodeId)) ? 1 : 0);
+        }, 0);
+    }
+
+    function getConnectorTowardNode(fromNodeElement, toNodeElement) {
+        if (!fromNodeElement || !toNodeElement) {
+            return null;
+        }
+
+        const fromRect = fromNodeElement.getBoundingClientRect();
+        const toRect = toNodeElement.getBoundingClientRect();
+        const deltaX = (toRect.left + (toRect.width / 2)) - (fromRect.left + (fromRect.width / 2));
+        const deltaY = (toRect.top + (toRect.height / 2)) - (fromRect.top + (fromRect.height / 2));
+
+        let connectorSelector = ".connector.right";
+        if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+            connectorSelector = deltaX >= 0 ? ".connector.right" : ".connector.left";
+        } else {
+            connectorSelector = deltaY >= 0 ? ".connector.bottom" : ".connector.top";
+        }
+
+        return fromNodeElement.querySelector(connectorSelector)
+            ?? fromNodeElement.querySelector(".connector");
+    }
+
+    function createLocalEdgeKey(leftId, rightId) {
+        return [leftId, rightId].sort().join("|");
     }
 
     function persistCurrentState() {

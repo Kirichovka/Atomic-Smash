@@ -52,6 +52,7 @@ export function createRefs() {
         tutorialBubbleAction: document.getElementById("tutorial-bubble-action"),
         tutorialBubbleText: document.getElementById("tutorial-bubble-text"),
         tutorialHighlight: document.getElementById("tutorial-highlight"),
+        tutorialHighlightSecondary: document.getElementById("tutorial-highlight-secondary"),
         tutorialOverlay: document.getElementById("tutorial-overlay"),
         mixZoneContextRoot: document.getElementById("mix-zone-context-root"),
         mixZoneContextBackdrop: document.getElementById("mix-zone-context-backdrop"),

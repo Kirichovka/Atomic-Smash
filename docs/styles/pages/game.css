@@ -102,6 +102,14 @@
         height 0.18s ease;
 }
 
+.tutorial-highlight-secondary {
+    border-color: rgba(19, 159, 116, 0.88);
+    background: rgba(73, 206, 157, 0.1);
+    box-shadow:
+        0 0 0 5px rgba(73, 206, 157, 0.18),
+        0 12px 28px rgba(12, 70, 52, 0.18);
+}
+
 .tutorial-bubble {
     position: fixed;
     min-width: 220px;
