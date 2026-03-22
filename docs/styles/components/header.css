@@ -6,12 +6,12 @@
     padding: 1rem 1.5rem;
     margin: 10px auto 1.5rem;
     max-width: 1100px;
-    background: rgba(218, 218, 237, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--color-surface-panel);
+    border: 1px solid var(--color-border-soft);
     border-radius: 18px;
     backdrop-filter: blur(14px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    color: #0f172a;
+    box-shadow: 0 10px 30px var(--color-shadow-strong);
+    color: var(--color-text-brand);
 }
 
 .app-brand {
@@ -27,10 +27,10 @@
     display: grid;
     place-items: center;
     border-radius: 14px;
-    background: linear-gradient(135deg, #7c5cff, #23d5ab);
-    color: #fff;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
+    color: var(--color-text-brand);
     font-size: 1.2rem;
-    box-shadow: 0 8px 18px rgba(124, 92, 255, 0.35);
+    box-shadow: 0 8px 18px var(--color-glow-primary);
     flex: 0 0 auto;
 }
 
@@ -42,12 +42,12 @@
 
 .app-brand-text strong {
     font-size: 1rem;
-    color: #0f172a;
+    color: var(--color-text-brand);
 }
 
 .app-brand-text span {
     font-size: 0.85rem;
-    color: #0f172a;
+    color: var(--color-text-primary);
 }
 
 .app-nav {
@@ -63,23 +63,23 @@
     justify-content: center;
     padding: 0.7rem 1rem;
     border-radius: 999px;
-    color: rgba(13, 14, 16, 0.72);
+    color: var(--color-text-primary);
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-soft);
     transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .nav-link:hover,
 .nav-link:focus-visible {
-    background: rgba(124, 92, 255, 0.22);
-    color: #fff;
+    background: var(--color-surface-hover);
+    color: var(--color-text-brand);
     transform: translateY(-1px);
     outline: none;
 }
 
 .nav-link.is-active {
-    background: linear-gradient(135deg, rgba(124, 92, 255, 0.35), rgba(35, 213, 171, 0.24));
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.14);
+    background: var(--color-surface-selected);
+    color: var(--color-text-brand);
+    border-color: var(--color-border-selected);
 }

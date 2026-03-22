@@ -128,7 +128,7 @@
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #c55d11;
+    color: var(--color-accent);
 }
 
 .valency-modal-title {
@@ -149,9 +149,9 @@
 .valency-panel {
     margin-top: 22px;
     padding: 20px;
-    border: 1px solid rgba(197, 93, 17, 0.18);
+    border: 1px solid var(--color-border-strong);
     border-radius: 20px;
-    background: linear-gradient(180deg, #fff8ef 0%, #fffdf8 100%);
+    background: var(--color-surface-panel-strong);
 }
 
 .valency-panel-title {
@@ -159,7 +159,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #c55d11;
+    color: var(--color-accent);
 }
 
 .valency-panel-text {
@@ -181,9 +181,9 @@
     display: grid;
     gap: 6px;
     padding: 16px 18px;
-    border: 1px solid rgba(197, 93, 17, 0.16);
+    border: 1px solid var(--color-border-soft);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.88);
+    background: var(--color-surface-soft);
 }
 
 .valency-issue-item {
@@ -198,8 +198,8 @@
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    border: 1px solid rgba(64, 98, 150, 0.28);
-    background: linear-gradient(180deg, #f4f7ff 0%, #deebff 100%);
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface-solid);
     color: var(--color-text-brand);
     font-size: 22px;
     font-weight: 700;
@@ -228,7 +228,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #c55d11;
+    color: var(--color-accent);
 }
 
 .theme-complete-kicker {
@@ -304,7 +304,7 @@
 }
 
 .help-line {
-    stroke: #9db4da;
+    stroke: var(--wire-temp);
     stroke-width: 6;
     stroke-linecap: round;
     stroke-dasharray: 120;
