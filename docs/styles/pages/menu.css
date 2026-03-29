@@ -1,5 +1,76 @@
+#menu-screen {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    background: #ffffff;
+}
+
+.menu-dynamic-bg.pattern-bg {
+    display: none;
+}
+
+#menu-screen .screen-shell {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+#menu-screen .screen-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    margin-top: 2rem;
+}
+
+/* Comic / Arcade Style Title */
+#menu-screen .screen-hero .comic-title {
+    font-size: 5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #ffd166; /* Vibrant yellow */
+    letter-spacing: 2px;
+    transform: skew(-4deg) rotate(-2deg);
+    text-shadow: 
+        4px 4px 0 #ef476f,
+        8px 8px 0 #118ab2,
+        12px 12px 0 #073b4c;
+    margin: 10px 0 20px;
+    line-height: 1;
+}
+
+#menu-screen .screen-hero .comic-subtitle {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #fff;
+    max-width: 650px;
+    margin: 0 auto;
+    background: #118ab2;
+    padding: 12px 24px;
+    border-radius: 16px;
+    border: 4px solid #073b4c;
+    box-shadow: 6px 6px 0 #073b4c;
+    transform: rotate(1deg);
+}
+
+.theme-kicker {
+    display: inline-block;
+    background: #ef476f;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    border: 4px solid #073b4c;
+    box-shadow: 4px 4px 0 #073b4c;
+    margin-bottom: 10px;
+    transform: rotate(-3deg);
+}
+
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+    padding: 20px 0;
 }
