@@ -5,9 +5,7 @@
     min-height: 100dvh;
     overflow: auto;
     padding: 36px;
-    background:
-        radial-gradient(circle at top left, var(--color-screen-radial), transparent 32%),
-        linear-gradient(180deg, var(--color-screen-start) 0%, var(--color-screen-end) 100%);
+    background: #ffffff;
 }
 
 .screen-shell,

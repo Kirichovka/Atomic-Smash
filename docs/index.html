@@ -25,17 +25,40 @@
     </nav>
 </header>
 
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-flask-container">
+            <svg class="chemistry-flask" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <!-- Flask shape -->
+                <path class="flask-glass" d="M 40 10 L 60 10 L 60 40 L 85 90 C 95 110, 80 115, 50 115 C 20 115, 5 110, 15 90 L 40 40 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+                <!-- Liquid -->
+                <path class="flask-liquid" d="M 33 55 L 67 55 L 82 85 C 88 98, 75 110, 50 110 C 25 110, 12 98, 18 85 Z" fill="#00ff80" />
+                <!-- Highlights -->
+                <path d="M 23 85 C 19 95, 25 102, 35 105" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" />
+                <path d="M 43 15 L 43 35" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" />
+            </svg>
+            <div class="bubbles">
+                <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+            </div>
+            <div class="splash-instruction">Tap to start the reaction</div>
+        </div>
+        <div class="splash-flash"></div>
+    </div>
 
     <section id="menu-screen" class="app-screen">
+        <div class="menu-dynamic-bg pattern-bg"></div>
         <div class="screen-shell">
             <div class="screen-hero">
                 <div class="theme-kicker">Atomic Smash</div>
-                <h1>Main Menu</h1>
-                <p>Choose where you want to go: themed missions, your discovery journal, or back into the current experiment.</p>
+                <h1 class="comic-title">Main Menu</h1>
+                <p class="comic-subtitle">Choose your experiment path! Complete missions or check your lab journal.</p>
             </div>
 
             <div class="menu-grid">
-                <article class="menu-card">
+                <article class="menu-card card-play">
+                    <div class="menu-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </div>
                     <div class="menu-card-kicker">Play</div>
                     <div class="menu-card-title">Theme Missions</div>
                     <div class="menu-card-description">Pick a chemistry topic like Basic or Oxides and solve its task chain.</div>
@@ -43,7 +66,10 @@
                     <button id="menu-themes-btn" type="button">Open Themes</button>
                 </article>
 
-                <article class="menu-card">
+                <article class="menu-card card-archive">
+                    <div class="menu-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </div>
                     <div class="menu-card-kicker">Archive</div>
                     <div class="menu-card-title">Lab Journal</div>
                     <div class="menu-card-description">Reopen discovered compounds and read every unlocked element again.</div>
@@ -51,7 +77,10 @@
                     <button id="menu-journal-btn" type="button">Open Journal</button>
                 </article>
 
-                <article class="menu-card">
+                <article class="menu-card card-resume">
+                    <div class="menu-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    </div>
                     <div class="menu-card-kicker">Resume</div>
                     <div class="menu-card-title">Current Theme</div>
                     <div class="menu-card-description">Jump straight back into the active board and continue your current theme.</div>
@@ -63,5 +92,6 @@
     </section>
 
     <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/splash.js"></script>
 </body>
 </html>
