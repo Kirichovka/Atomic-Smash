@@ -1,5 +1,17 @@
 .journal-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+#journal-screen .screen-shell {
+    padding-top: 18px;
+}
+
+#journal-screen .screen-hero {
+    max-width: 860px;
+}
+
+#journal-screen .journal-section + .journal-section {
+    margin-top: 34px;
 }

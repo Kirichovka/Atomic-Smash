@@ -129,57 +129,89 @@
 }
 
 .theme-card {
-    padding: 20px;
-    border: 1px solid var(--color-border-soft);
-    border-radius: 20px;
-    background: var(--color-surface-panel);
-    box-shadow: 0 12px 34px var(--color-shadow-soft);
+    position: relative;
+    padding: 28px 22px 22px;
+    border: 4px solid #073b4c;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 8px 10px 0 #073b4c;
+    overflow: hidden;
 }
 
 .theme-card.active {
-    border-color: var(--color-border-selected);
-    box-shadow: 0 16px 36px var(--color-glow-primary);
+    transform: translate(2px, 2px);
+    box-shadow: 6px 8px 0 #073b4c;
+    background: #fff8d8;
 }
 
 .theme-card-name {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-text-brand);
+    position: relative;
+    z-index: 1;
+    font-size: 30px;
+    font-weight: 900;
+    color: #073b4c;
+    text-transform: uppercase;
 }
 
 .theme-card-description {
-    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+    margin-top: 14px;
     min-height: 64px;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 700;
     line-height: 1.5;
-    color: var(--color-text-muted);
+    color: #1e293b;
 }
 
 .theme-card-progress {
-    margin-top: 16px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--color-accent);
+    position: relative;
+    z-index: 1;
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 3px solid #073b4c;
+    border-radius: 12px;
+    background: #06d6a0;
+    color: #073b4c;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .theme-card-meta {
-    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
     font-size: 13px;
-    color: var(--color-text-subtle);
+    font-weight: 800;
+    color: #4b5563;
 }
 
 .theme-card button {
-    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
     width: 100%;
+    border: 4px solid #073b4c;
+    border-radius: 16px;
+    background: #ffd166;
+    box-shadow: 4px 6px 0 #073b4c;
+    color: #073b4c;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .journal-section {
-    margin-top: 26px;
-    padding: 22px;
-    border: 1px solid var(--color-border-soft);
-    border-radius: 24px;
-    background: var(--color-surface-primary);
-    box-shadow: 0 16px 42px var(--color-shadow-soft);
+    position: relative;
+    margin-top: 28px;
+    padding: 24px;
+    border: 4px solid #073b4c;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 8px 10px 0 #073b4c;
 }
 
 .journal-section:first-of-type {
@@ -195,59 +227,99 @@
 }
 
 .journal-count {
-    font-size: 13px;
-    color: var(--color-text-subtle);
+    font-size: 14px;
+    font-weight: 800;
+    color: #475569;
 }
 
 .journal-card {
     width: 100%;
-    padding: 16px;
-    border: 1px solid var(--color-border-strong);
-    border-radius: 18px;
-    background: var(--color-surface-soft);
+    padding: 18px;
+    border: 4px solid #073b4c;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 6px 8px 0 #073b4c;
     text-align: left;
-    color: var(--color-text-brand);
+    color: #073b4c;
 }
 
 .journal-card.locked {
     cursor: default;
-    opacity: 0.7;
+    opacity: 0.72;
+    background: #f1f5f9;
 }
 
 .journal-card:disabled {
-    opacity: 0.7;
+    opacity: 0.72;
 }
 
 .journal-card-kicker {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 3px solid #073b4c;
+    border-radius: 12px;
+    background: #ffd166;
     font-size: 12px;
+    font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
+    letter-spacing: 0.06em;
+    color: #073b4c;
 }
 
 .journal-card-title {
     margin-top: 8px;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--color-text-brand);
+    font-size: 30px;
+    font-weight: 900;
+    color: #073b4c;
 }
 
 .journal-card-subtitle {
     margin-top: 6px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 900;
+    color: #1e293b;
 }
 
 .journal-card-description {
     margin-top: 10px;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 700;
     line-height: 1.55;
-    color: var(--color-text-muted);
+    color: #475569;
 }
 
 .journal-card-index {
     margin-top: 12px;
     font-size: 12px;
-    color: var(--color-text-subtle);
+    font-weight: 800;
+    color: #64748b;
+}
+
+.theme-card::before,
+.journal-section::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 14px;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(7, 59, 76, 0.12),
+        rgba(7, 59, 76, 0.12) 8px,
+        rgba(7, 59, 76, 0.2) 8px,
+        rgba(7, 59, 76, 0.2) 16px
+    );
+    border-bottom: 4px solid #073b4c;
+}
+
+.theme-card:nth-child(3n + 1) {
+    background: linear-gradient(180deg, #fffef6 0%, #fef8d4 100%);
+}
+
+.theme-card:nth-child(3n + 2) {
+    background: linear-gradient(180deg, #f5fffc 0%, #dff8ef 100%);
+}
+
+.theme-card:nth-child(3n + 3) {
+    background: linear-gradient(180deg, #f5fbff 0%, #ddeefe 100%);
 }

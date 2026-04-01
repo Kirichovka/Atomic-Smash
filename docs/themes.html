@@ -7,13 +7,31 @@
     <link rel="stylesheet" href="./styles.css" />
 </head>
 <body data-page="themes">
+    <header class="app-header">
+        <div class="app-brand">
+            <span class="app-brand-mark">⚛</span>
+            <div class="app-brand-text">
+                <strong>Atomic Smash</strong>
+                <span>Element puzzle lab</span>
+            </div>
+        </div>
+
+        <nav class="app-nav" aria-label="Primary">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="game.html" class="nav-link">Game</a>
+            <a href="journal.html" class="nav-link">Journal</a>
+            <a href="themes.html" class="nav-link is-active">Themes</a>
+        </nav>
+    </header>
+
     <section id="theme-screen" class="app-screen">
+        <div class="theme-dynamic-bg pattern-bg" aria-hidden="true"></div>
         <div class="theme-shell">
             <div class="screen-header">
                 <div class="screen-hero">
-                    <div class="theme-kicker">Atomic Smash</div>
-                    <h1>Choose A Theme</h1>
-                    <p>Select a chemistry path to get a themed set of tasks.</p>
+                    <div class="theme-kicker">Mission Control</div>
+                    <h1 class="comic-title">Choose A Theme</h1>
+                    <p class="comic-subtitle">Pick your chemistry route and unlock each mission chain one experiment at a time.</p>
                 </div>
                 <div class="screen-actions">
                     <button id="theme-menu-btn" class="secondary" type="button">Menu</button>
