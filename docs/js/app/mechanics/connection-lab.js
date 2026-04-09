@@ -1,6 +1,8 @@
 import { createBoardConnectionSessionController } from "../board-scene/connection-session-controller.js";
 import { createBoardSceneController } from "../board-scene/controller.js";
 import { createBoardDragSessionController } from "../board-scene/drag-session-controller.js";
+import { BOARD_SCENE_PART_KIND } from "../board-scene/contracts.js";
+import { createBoardScenePart } from "../board-scene/factory.js";
 import { createBoardMutationController } from "../board-scene/mutation-controller.js";
 import { createBoardRenderController } from "../board-scene/render-controller.js";
 import { createBoardSelectionController } from "../board-scene/selection-controller.js";
@@ -26,62 +28,90 @@ const SPAWN_OFFSETS = [
 
 export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
-    const boardState = createBoardStateController(board);
+    const boardState = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.state,
+        context: board,
+        factory: sourceBoard => createBoardStateController(sourceBoard)
+    });
     const elementsBySymbol = new Map(state.catalog.elements.map(element => [element.symbol, element]));
-    const boardScene = createBoardSceneController({
-        defaultNodeHeight: DEFAULT_NODE_HEIGHT,
-        defaultNodeWidth: DEFAULT_NODE_WIDTH,
-        offsets: SPAWN_OFFSETS,
-        viewportElement: refs.mixZone
+    const boardScene = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.geometry,
+        context: {
+            defaultNodeHeight: DEFAULT_NODE_HEIGHT,
+            defaultNodeWidth: DEFAULT_NODE_WIDTH,
+            offsets: SPAWN_OFFSETS,
+            viewportElement: refs.mixZone
+        },
+        factory: createBoardSceneController
     });
-    const boardRender = createBoardRenderController({
-        boardScene,
-        mixZoneElement: refs.mixZone,
-        svgElement: refs.svg
+    const boardRender = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.render,
+        context: {
+            boardScene,
+            mixZoneElement: refs.mixZone,
+            svgElement: refs.svg
+        },
+        factory: createBoardRenderController
     });
-    const boardSelection = createBoardSelectionController({
-        board,
-        boardState,
-        bus
+    const boardSelection = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.selection,
+        context: {
+            board,
+            boardState,
+            bus
+        },
+        factory: createBoardSelectionController
     });
     let resizeObserver = null;
     let resizeSyncFrame = null;
     const publishInteractionContext = payload => {
         bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, payload);
     };
-    const boardDragSession = createBoardDragSessionController({
-        board,
-        boardRender,
-        boardSelection,
-        boardState,
-        captureState,
-        isNodeOutsideMixZone,
-        isPointerOutsideViewport,
-        publishInteractionContext,
-        removeNodes
+    const boardDragSession = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.dragSession,
+        context: {
+            board,
+            boardRender,
+            boardSelection,
+            boardState,
+            captureState,
+            isNodeOutsideMixZone,
+            isPointerOutsideViewport,
+            publishInteractionContext,
+            removeNodes
+        },
+        factory: createBoardDragSessionController
     });
-    const boardConnectionSession = createBoardConnectionSessionController({
-        board,
-        boardRender,
-        boardSelection,
-        boardState,
-        captureState: () => boardMutation.captureState(),
-        connectionExists,
-        getConnectionTargetAtPoint,
-        publishInteractionContext,
-        removeConnectionByLine: line => boardMutation.removeConnectionByLine(line)
+    const boardConnectionSession = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.connectionSession,
+        context: {
+            board,
+            boardRender,
+            boardSelection,
+            boardState,
+            captureState: () => boardMutation.captureState(),
+            connectionExists,
+            getConnectionTargetAtPoint,
+            publishInteractionContext,
+            removeConnectionByLine: line => boardMutation.removeConnectionByLine(line)
+        },
+        factory: createBoardConnectionSessionController
     });
-    const boardMutation = createBoardMutationController({
-        board,
-        boardConnectionSession,
-        boardRender,
-        boardScene,
-        boardSelection,
-        boardState,
-        getMaxNodeId,
-        isMounted,
-        parseNodeIndex,
-        sync
+    const boardMutation = createBoardScenePart({
+        kind: BOARD_SCENE_PART_KIND.mutation,
+        context: {
+            board,
+            boardConnectionSession,
+            boardRender,
+            boardScene,
+            boardSelection,
+            boardState,
+            getMaxNodeId,
+            isMounted,
+            parseNodeIndex,
+            sync
+        },
+        factory: createBoardMutationController
     });
 
     function init() {
