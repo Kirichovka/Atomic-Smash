@@ -1,3 +1,4 @@
+import { createStackLayoutRule } from "./layout-rules.js";
 import { SceneContainerBuilder } from "./builders.js";
 
 export class SceneStackLayoutBuilder {
@@ -7,7 +8,7 @@ export class SceneStackLayoutBuilder {
         this.alignItems = null;
         this.classNames = [];
         this.justifyContent = null;
-        this.wrap = null;
+        this.wrapMode = null;
     }
 
     className(...classNames) {
@@ -26,7 +27,7 @@ export class SceneStackLayoutBuilder {
     }
 
     wrap(value = "wrap") {
-        this.wrap = value;
+        this.wrapMode = value;
         return this;
     }
 
@@ -38,18 +39,16 @@ export class SceneStackLayoutBuilder {
     build(children = []) {
         const builder = new SceneContainerBuilder()
             .className(...this.classNames)
-            .layout({
-                alignItems: this.alignItems ?? "stretch",
-                display: "flex",
-                flexDirection: this.direction,
-                gap: this.gap,
-                justifyContent: this.justifyContent ?? "flex-start"
-            })
+            .layoutRule(
+                createStackLayoutRule({
+                    align: this.alignItems ?? "stretch",
+                    direction: this.direction,
+                    gap: this.gap,
+                    justify: this.justifyContent ?? "flex-start",
+                    wrap: this.wrapMode
+                })
+            )
             .children(children);
-
-        if (this.wrap) {
-            builder.style("flexWrap", this.wrap);
-        }
 
         return builder.build();
     }

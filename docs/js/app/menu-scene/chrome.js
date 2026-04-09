@@ -1,8 +1,14 @@
-import { SceneButtonBuilder, SceneContainerBuilder, SceneTextBuilder } from "../scene-ui/builders.js";
 import { createSceneUiFactory } from "../scene-ui/factory.js";
-import { SceneStackLayoutBuilder } from "../scene-ui/layouts.js";
+import {
+    compileSceneSchema,
+    resolveSceneSchema,
+    sceneButton,
+    sceneContainer,
+    sceneStack,
+    sceneText
+} from "../scene-ui/schema.js";
 
-export function createHomeChromeController({ refs }) {
+export function createHomeChromeController({ refs, schemaConfig = null, actionRegistry = {} }) {
     const factory = createSceneUiFactory();
 
     function renderScaffold() {
@@ -30,107 +36,9 @@ export function createHomeChromeController({ refs }) {
 
         refs.menuHeaderRoot.replaceChildren(
             factory.createElement(
-                new SceneContainerBuilder()
-                    .children([
-                        new SceneContainerBuilder()
-                            .className("home-header-bar")
-                            .attr("aria-hidden", "true")
-                            .build(),
-                        new SceneStackLayoutBuilder({ direction: "row", gap: 1.7 })
-                            .className("home-header-row")
-                            .align("center")
-                            .justify("space-between")
-                            .build([
-                                new SceneContainerBuilder()
-                                    .className("home-brand")
-                                    .attr("aria-label", "Atomic Smash home")
-                                    .attr("role", "link")
-                                    .children([
-                                        new SceneTextBuilder()
-                                            .className("home-brand-mark")
-                                            .text("☣")
-                                            .build(),
-                                        new SceneContainerBuilder()
-                                            .className("home-brand-copy")
-                                            .children([
-                                                new SceneTextBuilder()
-                                                    .tagName("strong")
-                                                    .text("Atomic Smash")
-                                                    .build(),
-                                                new SceneTextBuilder()
-                                                    .tagName("span")
-                                                    .text("Chemistry sandbox")
-                                                    .build()
-                                            ])
-                                            .build()
-                                    ])
-                                    .build(),
-                                new SceneStackLayoutBuilder({ direction: "row", gap: 1.05 })
-                                    .className("home-header-actions")
-                                    .align("center")
-                                    .build([
-                                        new SceneButtonBuilder()
-                                            .className("home-icon-button")
-                                            .attr("aria-label", "Settings")
-                                            .label("⚙")
-                                            .build(),
-                                        new SceneButtonBuilder()
-                                            .className("home-icon-button", "home-icon-button-profile")
-                                            .attr("aria-label", "Profile")
-                                            .label("◌")
-                                            .build()
-                                    ])
-                            ]),
-                        new SceneStackLayoutBuilder({ direction: "row", gap: 1.35 })
-                            .className("home-header-strap")
-                            .align("center")
-                            .justify("space-between")
-                            .wrap()
-                            .build([
-                                new SceneStackLayoutBuilder({ direction: "row", gap: 1.05 })
-                                    .className("home-route-meta")
-                                    .align("center")
-                                    .wrap()
-                                    .build([
-                                        new SceneTextBuilder()
-                                            .className("home-header-pill")
-                                            .text("Current Route")
-                                            .build(),
-                                        new SceneContainerBuilder()
-                                            .className("home-route-copy")
-                                            .children([
-                                                new SceneTextBuilder()
-                                                    .tagName("strong")
-                                                    .id("menu-route-name")
-                                                    .text("Basic")
-                                                    .build(),
-                                                new SceneTextBuilder()
-                                                    .tagName("span")
-                                                    .id("menu-route-progress")
-                                                    .text("0/0 complete")
-                                                    .build()
-                                            ])
-                                            .build()
-                                    ]),
-                                new SceneStackLayoutBuilder({ direction: "row", gap: 0.85 })
-                                    .className("home-header-nav")
-                                    .align("center")
-                                    .wrap()
-                                    .build([
-                                        new SceneButtonBuilder()
-                                            .id("menu-journal-btn")
-                                            .className("home-header-link")
-                                            .label("Journal")
-                                            .build(),
-                                        new SceneButtonBuilder()
-                                            .id("menu-continue-btn")
-                                            .className("home-header-link", "home-header-link-primary")
-                                            .label("Continue")
-                                            .build()
-                                    ])
-                            ])
-                    ])
-                    .build()
+                compileSceneSchema(
+                    resolveSceneSchema(schemaConfig?.header ?? createHeaderSchema(), {}, actionRegistry)
+                )
             )
         );
     }
@@ -142,28 +50,9 @@ export function createHomeChromeController({ refs }) {
 
         refs.menuToolbarRoot.replaceChildren(
             factory.createElement(
-                new SceneStackLayoutBuilder({ direction: "row", gap: 1.2 })
-                    .align("center")
-                    .justify("space-between")
-                    .build([
-                        new SceneButtonBuilder()
-                            .id("menu-prev-theme-btn")
-                            .className("home-sheet-arrow")
-                            .attr("aria-label", "Previous theme sheet")
-                            .label("<")
-                            .build(),
-                        new SceneContainerBuilder()
-                            .id("menu-sheet-dots")
-                            .className("home-sheet-dots")
-                            .attr("aria-label", "Theme sheets")
-                            .build(),
-                        new SceneButtonBuilder()
-                            .id("menu-next-theme-btn")
-                            .className("home-sheet-arrow")
-                            .attr("aria-label", "Next theme sheet")
-                            .label(">")
-                            .build()
-                    ])
+                compileSceneSchema(
+                    resolveSceneSchema(schemaConfig?.toolbar ?? createToolbarSchema(), {}, actionRegistry)
+                )
             )
         );
     }
@@ -172,4 +61,147 @@ export function createHomeChromeController({ refs }) {
         renderHeaderState,
         renderScaffold
     };
+}
+
+function createHeaderSchema() {
+    return sceneContainer({
+        children: [
+            sceneContainer({
+                attrs: { "aria-hidden": "true" },
+                className: "home-header-bar"
+            }),
+            sceneStack({
+                align: "center",
+                className: "home-header-row",
+                gap: 1.7,
+                justify: "space-between",
+                children: [
+                    sceneContainer({
+                        attrs: {
+                            "aria-label": "Atomic Smash home",
+                            role: "link"
+                        },
+                        className: "home-brand",
+                        children: [
+                            sceneText({
+                                className: "home-brand-mark",
+                                text: "\u269B"
+                            }),
+                            sceneContainer({
+                                className: "home-brand-copy",
+                                children: [
+                                    sceneText({
+                                        tagName: "strong",
+                                        text: "Atomic Smash"
+                                    }),
+                                    sceneText({
+                                        tagName: "span",
+                                        text: "Chemistry sandbox"
+                                    })
+                                ]
+                            })
+                        ]
+                    }),
+                    sceneStack({
+                        align: "center",
+                        className: "home-header-actions",
+                        gap: 1.05,
+                        children: [
+                            sceneButton({
+                                attrs: { "aria-label": "Settings" },
+                                className: "home-icon-button",
+                                text: "\u2699"
+                            }),
+                            sceneButton({
+                                attrs: { "aria-label": "Profile" },
+                                classNames: ["home-icon-button", "home-icon-button-profile"],
+                                text: "\u25CC"
+                            })
+                        ]
+                    })
+                ]
+            }),
+            sceneStack({
+                align: "center",
+                className: "home-header-strap",
+                gap: 1.35,
+                justify: "space-between",
+                wrap: "wrap",
+                children: [
+                    sceneStack({
+                        align: "center",
+                        className: "home-route-meta",
+                        gap: 1.05,
+                        wrap: "wrap",
+                        children: [
+                            sceneText({
+                                className: "home-header-pill",
+                                text: "Current Route"
+                            }),
+                            sceneContainer({
+                                className: "home-route-copy",
+                                children: [
+                                    sceneText({
+                                        id: "menu-route-name",
+                                        tagName: "strong",
+                                        text: "Basic"
+                                    }),
+                                    sceneText({
+                                        id: "menu-route-progress",
+                                        tagName: "span",
+                                        text: "0/0 complete"
+                                    })
+                                ]
+                            })
+                        ]
+                    }),
+                    sceneStack({
+                        align: "center",
+                        className: "home-header-nav",
+                        gap: 0.85,
+                        wrap: "wrap",
+                        children: [
+                            sceneButton({
+                                className: "home-header-link",
+                                id: "menu-journal-btn",
+                                text: "Journal"
+                            }),
+                            sceneButton({
+                                classNames: ["home-header-link", "home-header-link-primary"],
+                                id: "menu-continue-btn",
+                                text: "Continue"
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+}
+
+function createToolbarSchema() {
+    return sceneStack({
+        align: "center",
+        gap: 1.2,
+        justify: "space-between",
+        children: [
+            sceneButton({
+                attrs: { "aria-label": "Previous theme sheet" },
+                className: "home-sheet-arrow",
+                id: "menu-prev-theme-btn",
+                text: "<"
+            }),
+            sceneContainer({
+                attrs: { "aria-label": "Theme sheets" },
+                className: "home-sheet-dots",
+                id: "menu-sheet-dots"
+            }),
+            sceneButton({
+                attrs: { "aria-label": "Next theme sheet" },
+                className: "home-sheet-arrow",
+                id: "menu-next-theme-btn",
+                text: ">"
+            })
+        ]
+    });
 }

@@ -1,9 +1,13 @@
+import { SceneObject, SCENE_OBJECT_ROLE } from "../scene-object.js";
 import { MENU_SCENE_DEFAULTS, MENU_SCENE_ENTITY_KIND } from "./contracts.js";
 
-export class MenuSceneEntity {
+export class MenuSceneEntity extends SceneObject {
     constructor({ id, kind }) {
-        this.id = id;
-        this.kind = kind;
+        super({
+            id,
+            kind,
+            role: SCENE_OBJECT_ROLE.entity
+        });
     }
 }
 

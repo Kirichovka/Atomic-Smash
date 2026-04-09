@@ -8,6 +8,11 @@ import {
 } from "./state.js";
 import { createMenuSceneController } from "./menu-scene/controller.js";
 import { createHomeChromeController } from "./menu-scene/chrome.js";
+import {
+    renderJournalCompoundCards,
+    renderJournalElementCards,
+    renderThemeCards
+} from "./screen-runtime/content-builders.js";
 
 const PAGE_ROUTES = {
     game: "game.html",
@@ -20,8 +25,11 @@ const MENU_SWIPE_THRESHOLD = 64;
 export function createNavigationController({
     refs,
     state,
+    homeChromeSchemaConfig,
     menuMapConfig,
+    menuSceneSchemaConfig,
     levelBriefsConfig,
+    actionRegistry,
     currentPage,
     onBeforeNavigate,
     onStartTheme,
@@ -34,11 +42,23 @@ export function createNavigationController({
     onOpenJournalScreen,
     onResumeCurrentTheme
 }) {
-    const homeChromeController = createHomeChromeController({ refs });
+    actionRegistry?.registerMany?.({
+        nextThemeSheet: () => cycleMenuTheme(1),
+        openJournalScreen: () => onOpenJournalScreen?.(),
+        previousThemeSheet: () => cycleMenuTheme(-1),
+        resumeViewedTheme: () => resumeViewedTheme()
+    });
+    const homeChromeController = createHomeChromeController({
+        refs,
+        schemaConfig: homeChromeSchemaConfig,
+        actionRegistry
+    });
     const menuSceneController = createMenuSceneController({
         refs,
         state,
         menuMapConfig,
+        sceneSchemaConfig: menuSceneSchemaConfig,
+        actionRegistry,
         levelBriefsConfig,
         onPreviewLevelIntro
     });
@@ -49,10 +69,6 @@ export function createNavigationController({
     function bind() {
         homeChromeController.renderScaffold();
         refreshMenuChromeRefs();
-        bindIfPresent(refs.menuJournalButton, "click", onOpenJournalScreen);
-        bindIfPresent(refs.menuContinueButton, "click", resumeViewedTheme);
-        bindIfPresent(refs.menuPrevThemeButton, "click", () => cycleMenuTheme(-1));
-        bindIfPresent(refs.menuNextThemeButton, "click", () => cycleMenuTheme(1));
         bindIfPresent(refs.themeMenuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.themeJournalButton, "click", onOpenJournalScreen);
         bindIfPresent(refs.journalMenuButton, "click", onOpenMainMenu);
@@ -116,51 +132,29 @@ export function createNavigationController({
         if (!refs.journalCompoundList || !refs.journalCompoundCount) {
             return;
         }
-
-        refs.journalCompoundList.replaceChildren();
         refs.journalCompoundCount.textContent = `${state.progress.discoveryHistory.length} discovered`;
 
-        if (state.progress.discoveryHistory.length === 0) {
-            const emptyState = document.createElement("div");
-            emptyState.className = "empty-state";
-            emptyState.textContent = "No compounds discovered yet";
-            refs.journalCompoundList.appendChild(emptyState);
-            return;
-        }
+        const compounds = state.progress.discoveryHistory
+            .map((compoundId, index) => {
+                const compound = state.catalog.compoundsById.get(compoundId);
+                if (!compound) {
+                    return null;
+                }
 
-        state.progress.discoveryHistory.forEach((compoundId, index) => {
-            const compound = state.catalog.compoundsById.get(compoundId);
-            if (!compound) {
-                return;
-            }
+                return {
+                    description: compound.description ?? `${compound.name} is stored in your journal.`,
+                    formula: compound.formula,
+                    indexLabel: `Discovery #${index + 1}`,
+                    name: compound.name,
+                    raw: compound
+                };
+            })
+            .filter(Boolean);
 
-            const card = document.createElement("button");
-            const kicker = document.createElement("div");
-            const title = document.createElement("div");
-            const subtitle = document.createElement("div");
-            const description = document.createElement("div");
-            const order = document.createElement("div");
-
-            card.type = "button";
-            card.className = "journal-card";
-            kicker.className = "journal-card-kicker";
-            title.className = "journal-card-title";
-            subtitle.className = "journal-card-subtitle";
-            description.className = "journal-card-description";
-            order.className = "journal-card-index";
-
-            kicker.textContent = "Discovered compound";
-            title.textContent = compound.formula;
-            subtitle.textContent = compound.name;
-            description.textContent = compound.description ?? `${compound.name} is stored in your journal.`;
-            order.textContent = `Discovery #${index + 1}`;
-
-            card.addEventListener("click", () => {
-                onOpenCompoundModal(compound);
-            });
-
-            card.append(kicker, title, subtitle, description, order);
-            refs.journalCompoundList.appendChild(card);
+        renderJournalCompoundCards({
+            compounds,
+            container: refs.journalCompoundList,
+            onOpenCompoundModal
         });
     }
 
@@ -169,53 +163,32 @@ export function createNavigationController({
             return;
         }
 
-        refs.journalElementList.replaceChildren();
-
         const unlockedElements = getAvailableElements(state);
         const unlockedSymbols = new Set(unlockedElements.map(element => element.symbol));
         refs.journalElementCount.textContent = `${unlockedElements.length}/${state.catalog.elements.length} unlocked`;
 
-        state.catalog.elements.forEach(element => {
+        const elements = state.catalog.elements.map(element => {
             const isUnlocked = unlockedSymbols.has(element.symbol);
-            const card = document.createElement("button");
-            const kicker = document.createElement("div");
-            const title = document.createElement("div");
-            const subtitle = document.createElement("div");
-            const description = document.createElement("div");
-            const status = document.createElement("div");
 
-            card.type = "button";
-            card.className = "journal-card";
-            if (!isUnlocked) {
-                card.classList.add("locked");
-                card.disabled = true;
-            }
+            return {
+                description: isUnlocked
+                    ? element.description
+                    : "Complete more tasks to unlock this element in the lab.",
+                kicker: isUnlocked ? "Unlocked element" : "Locked element",
+                locked: !isUnlocked,
+                name: element.name,
+                raw: element,
+                status: isUnlocked ? "Unlocked for your current progress" : "Locked",
+                symbol: element.symbol,
+                title: isUnlocked ? element.symbol : "?"
+            };
+        });
 
-            kicker.className = "journal-card-kicker";
-            title.className = "journal-card-title";
-            subtitle.className = "journal-card-subtitle";
-            description.className = "journal-card-description";
-            status.className = "journal-card-index";
-
-            kicker.textContent = isUnlocked ? "Unlocked element" : "Locked element";
-            title.textContent = isUnlocked ? element.symbol : "?";
-            subtitle.textContent = element.name;
-            description.textContent = isUnlocked
-                ? element.description
-                : "Complete more tasks to unlock this element in the lab.";
-            status.textContent = isUnlocked
-                ? "Unlocked for your current progress"
-                : "Locked";
-
-            if (isUnlocked) {
-                card.addEventListener("click", () => {
-                    onSelectElement(element.symbol);
-                    onOpenElementModal(element);
-                });
-            }
-
-            card.append(kicker, title, subtitle, description, status);
-            refs.journalElementList.appendChild(card);
+        renderJournalElementCards({
+            container: refs.journalElementList,
+            elements,
+            onOpenElementModal,
+            onSelectElement
         });
     }
 
@@ -224,68 +197,49 @@ export function createNavigationController({
             return;
         }
 
-        refs.themeList.replaceChildren();
-
-        if (state.catalog.themes.length === 0) {
-            const emptyState = document.createElement("div");
-            emptyState.className = "empty-state";
-            emptyState.textContent = "No themes available yet.";
-            refs.themeList.appendChild(emptyState);
-            return;
-        }
-
-        state.catalog.themes.forEach(theme => {
+        const themeCards = state.catalog.themes.map(theme => {
             const levels = getLevelsForTheme(state, theme.id);
             const completedCount = getCompletedCountForTheme(state, theme.id);
             const mechanic = getMechanicById(state, theme.primaryMechanicId);
             const isReady = theme.sheetStatus !== "planned" && levels.length > 0;
-            const card = document.createElement("article");
-            const kicker = document.createElement("div");
-            const name = document.createElement("div");
-            const description = document.createElement("div");
-            const progress = document.createElement("div");
-            const meta = document.createElement("div");
-            const button = document.createElement("button");
             const metaParts = [
                 theme.schoolTopic ?? "Chemistry topic",
                 mechanic?.name ?? theme.primaryMechanicId ?? "Mechanic not assigned"
             ];
 
-            card.className = "theme-card";
+            const classNames = [];
             if (theme.id === state.progress.currentThemeId) {
-                card.classList.add("active");
+                classNames.push("active");
                 metaParts.push("current theme");
             }
             if (!isReady) {
-                card.classList.add("coming-soon");
+                classNames.push("coming-soon");
                 metaParts.push("sheet in design");
             }
 
-            kicker.className = "theme-card-kicker";
-            name.className = "theme-card-name";
-            description.className = "theme-card-description";
-            progress.className = "theme-card-progress";
-            meta.className = "theme-card-meta";
+            return {
+                actionLabel: getThemeActionLabel(theme.id, completedCount, levels.length, state.progress.currentThemeId, isReady),
+                classNames,
+                description: theme.description,
+                id: theme.id,
+                isReady,
+                kicker: theme.schoolTopic ?? "Chemistry route",
+                meta: metaParts.join(" | "),
+                name: theme.name,
+                progress: isReady
+                    ? (
+                        completedCount >= levels.length && levels.length > 0
+                            ? "Theme complete"
+                            : `${completedCount}/${levels.length} lessons complete`
+                    )
+                    : "Theme sheet coming soon"
+            };
+        });
 
-            kicker.textContent = theme.schoolTopic ?? "Chemistry route";
-            name.textContent = theme.name;
-            description.textContent = theme.description;
-            progress.textContent = isReady
-                ? (
-                    completedCount >= levels.length && levels.length > 0
-                        ? "Theme complete"
-                        : `${completedCount}/${levels.length} lessons complete`
-                )
-                : "Theme sheet coming soon";
-            meta.textContent = metaParts.join(" | ");
-            button.textContent = getThemeActionLabel(theme.id, completedCount, levels.length, state.progress.currentThemeId, isReady);
-            button.disabled = !isReady;
-            if (isReady) {
-                button.addEventListener("click", () => onStartTheme(theme.id));
-            }
-
-            card.append(kicker, name, description, progress, meta, button);
-            refs.themeList.appendChild(card);
+        renderThemeCards({
+            container: refs.themeList,
+            onStartTheme,
+            themes: themeCards
         });
     }
 

@@ -1,3 +1,5 @@
+import { SCENE_LAYOUT_RULE_KIND } from "./layout-rules.js";
+
 const PERCENT_STYLE_PROPERTIES = new Set([
     "bottom",
     "columnGap",
@@ -52,6 +54,36 @@ export class SceneLayoutEngine {
                 element.style[propertyName] = resolvedValue;
             }
         });
+    }
+
+    applyLayoutRules(element, layoutRules = []) {
+        layoutRules.forEach(rule => {
+            const resolvedStyles = this.resolveRule(rule);
+            this.applyStyles(element, resolvedStyles);
+        });
+    }
+
+    resolveRule(rule) {
+        if (!rule || typeof rule !== "object") {
+            return {};
+        }
+
+        if (rule.kind === SCENE_LAYOUT_RULE_KIND.stack) {
+            return {
+                alignItems: rule.align ?? "stretch",
+                display: "flex",
+                flexDirection: rule.direction ?? "row",
+                gap: rule.gap ?? 0,
+                justifyContent: rule.justify ?? "flex-start",
+                ...(rule.wrap ? { flexWrap: rule.wrap } : {})
+            };
+        }
+
+        if (rule.kind === SCENE_LAYOUT_RULE_KIND.inline) {
+            return rule.styles ?? {};
+        }
+
+        return {};
     }
 }
 

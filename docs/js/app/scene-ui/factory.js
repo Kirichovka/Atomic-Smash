@@ -35,6 +35,7 @@ export function createSceneUiFactory({ layoutEngine = createSceneLayoutEngine() 
             }
         });
 
+        layoutEngine.applyLayoutRules(element, definition.layoutRules ?? []);
         layoutEngine.applyStyles(element, definition.styles ?? {});
 
         (definition.listeners ?? []).forEach(({ eventName, handler }) => {

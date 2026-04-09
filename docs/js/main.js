@@ -1,4 +1,4 @@
-import { initGame } from "./game.js";
+import { initGame } from "./game.js?v=20260409-scene-schema";
 
 initGame().catch(error => {
     console.error(error);

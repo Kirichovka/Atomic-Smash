@@ -1,9 +1,19 @@
 import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
+import {
+    renderCompoundModalContent,
+    renderElementModalContent,
+    renderHelpModalContent,
+    renderLevelIntroContent,
+    renderThemeCompleteContent,
+    renderValencyModalContent
+} from "./modal-runtime/content-builders.js";
 
 export function createModalController({
     refs,
     state,
     levelBriefsConfig,
+    actionRegistry,
+    registerLevelIntroAction,
     createHelpVisual,
     onModalStateChanged,
     onThemeCompleteClosed,
@@ -67,57 +77,33 @@ export function createModalController({
             isCurrent = false,
             isUnlocked = false
         } = options;
+        const actionId = `start-level-intro:${theme.id}:${level.id}`;
 
-        refs.levelIntroContent.replaceChildren();
+        registerLevelIntroAction?.({
+            actionId,
+            handler: () => {
+                if (!isUnlocked) {
+                    return;
+                }
 
-        const kicker = document.createElement("div");
-        const title = document.createElement("div");
-        const summary = document.createElement("div");
-        const overviewPanel = createLevelIntroPanel(
-            "Theme Context",
-            themeOverview ?? "This theme groups related beginner chemistry lessons into one route."
-        );
-        const theoryPanel = createLevelIntroPanel(
-            "Lesson Theory",
-            briefing?.theory ?? theme.description ?? "This lesson introduces a new chemistry concept for the current route."
-        );
-        const mechanicPanel = createLevelIntroPanel(
-            "Mechanic",
-            briefing?.mechanicSummary
-            ?? mechanic?.description
-            ?? "This lesson currently uses the Connection Lab mechanic."
-        );
-        const detailsPanel = createLevelIntroPanel(
-            "Level Goal",
-            compound
-                ? `${level.learningFocus ?? level.displayTitle ?? level.objective}. Target compound: ${compound.formula} (${compound.name}).`
-                : `${level.learningFocus ?? level.displayTitle ?? level.objective}.`
-        );
-        const actions = document.createElement("div");
-        const actionButton = document.createElement("button");
-
-        kicker.className = "level-intro-kicker";
-        title.className = "level-intro-title";
-        summary.className = "level-intro-summary";
-        actions.className = "level-intro-actions";
-        actionButton.className = "level-intro-action";
-
-        kicker.textContent = `${theme.name} | ${briefing?.mechanicName ?? mechanic?.name ?? "Mechanic briefing"}`;
-        title.id = "level-intro-title";
-        title.textContent = briefing?.introTitle ?? level.displayTitle ?? level.objective;
-        summary.textContent = compound
-            ? `Target outcome: ${compound.formula} (${compound.name}).`
-            : "This lesson opens a new concept in the current route.";
-
-        actionButton.textContent = getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked });
-        actionButton.disabled = !isUnlocked;
-        actionButton.addEventListener("click", () => {
-            closeLevelIntroModal();
-            onStartLevelIntro?.(theme, level, options);
+                closeLevelIntroModal();
+                onStartLevelIntro?.(theme, level, options);
+            }
         });
 
-        actions.appendChild(actionButton);
-        refs.levelIntroContent.append(kicker, title, summary, overviewPanel, detailsPanel, theoryPanel, mechanicPanel, actions);
+        renderLevelIntroContent({
+            actionId,
+            actionLabel: getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }),
+            actionRegistry,
+            briefing,
+            compound,
+            container: refs.levelIntroContent,
+            level,
+            mechanic,
+            theme,
+            themeOverview
+        });
+
         openModal(refs.levelIntroModal);
         onModalStateChanged?.();
     }
@@ -132,25 +118,10 @@ export function createModalController({
             return;
         }
 
-        refs.elementModalContent.replaceChildren();
-
-        const symbol = document.createElement("div");
-        const name = document.createElement("div");
-        const meta = document.createElement("div");
-        const description = document.createElement("div");
-
-        symbol.className = "element-modal-symbol";
-        name.className = "element-modal-name";
-        meta.className = "element-modal-meta";
-        description.className = "element-modal-description";
-
-        symbol.id = "element-modal-title";
-        symbol.textContent = element.symbol;
-        name.textContent = element.name;
-        meta.textContent = "Available element | Drag into the mix zone to use";
-        description.textContent = element.description;
-
-        refs.elementModalContent.append(symbol, name, meta, description);
+        renderElementModalContent({
+            container: refs.elementModalContent,
+            element
+        });
         openModal(refs.elementModal);
         onModalStateChanged?.();
     }
@@ -165,25 +136,10 @@ export function createModalController({
             return;
         }
 
-        refs.compoundModalContent.replaceChildren();
-
-        const kicker = document.createElement("div");
-        const title = document.createElement("div");
-        const formula = document.createElement("div");
-        const description = document.createElement("div");
-
-        kicker.className = "compound-modal-kicker";
-        title.className = "compound-modal-title";
-        formula.className = "compound-modal-formula";
-        description.className = "compound-modal-description";
-
-        kicker.textContent = "Congratulations, you discovered";
-        title.id = "compound-modal-title";
-        title.textContent = compound.name;
-        formula.textContent = compound.formula;
-        description.textContent = compound.description ?? `${compound.name} is now added to your discovered compounds list.`;
-
-        refs.compoundModalContent.append(kicker, title, formula, description);
+        renderCompoundModalContent({
+            compound,
+            container: refs.compoundModalContent
+        });
         openModal(refs.compoundModal);
         onModalStateChanged?.();
     }
@@ -204,26 +160,11 @@ export function createModalController({
             return;
         }
 
-        refs.helpModalContent.replaceChildren();
-
-        const kicker = document.createElement("div");
-        const title = document.createElement("div");
-        const description = document.createElement("div");
-        const visual = document.createElement("div");
-
-        kicker.className = "help-modal-kicker";
-        title.className = "help-modal-title";
-        description.className = "help-modal-description";
-        visual.className = "help-visual";
-
-        kicker.textContent = "Help is here";
-        title.id = "help-modal-title";
-        title.textContent = `Build ${targetCompound.formula} the right way`;
-        description.textContent =
-            "Follow the animated path: start from one highlighted atom and drag through the glowing connection order.";
-        visual.appendChild(createHelpVisual(targetCompound));
-
-        refs.helpModalContent.append(kicker, title, description, visual);
+        renderHelpModalContent({
+            compound: targetCompound,
+            container: refs.helpModalContent,
+            helpVisual: createHelpVisual(targetCompound)
+        });
         openModal(refs.helpModal);
         onModalStateChanged?.();
     }
@@ -238,34 +179,10 @@ export function createModalController({
             return;
         }
 
-        refs.valencyModalContent.replaceChildren();
-
-        const kicker = document.createElement("div");
-        const title = document.createElement("div");
-        const description = document.createElement("div");
-        const issuePanel = createValencyPanel(
-            "What is wrong",
-            "These atoms currently have more single connections than the simplified lab rules allow."
-        );
-        const theoryPanel = createValencyPanel(
-            "Valency theory",
-            "In this lab each line counts as one bond. Compare the current number of links with the allowed valency for each element below."
-        );
-
-        kicker.className = "valency-modal-kicker";
-        title.className = "valency-modal-title";
-        description.className = "valency-modal-description";
-
-        kicker.textContent = "Valency check failed";
-        title.id = "valency-modal-title";
-        title.textContent = "This structure breaks valency rules";
-        description.textContent =
-            "The atoms can stay on the board, but this mix cannot be evaluated until each element follows its allowed number of single connections.";
-
-        issuePanel.appendChild(createValencyIssueList(validation.issues));
-        theoryPanel.appendChild(createValencyTheoryList(validation.elements));
-
-        refs.valencyModalContent.append(kicker, title, description, issuePanel, theoryPanel);
+        renderValencyModalContent({
+            container: refs.valencyModalContent,
+            validation
+        });
         openModal(refs.valencyModal);
         onModalStateChanged?.();
     }
@@ -291,42 +208,13 @@ export function createModalController({
             return element ? `${element.symbol} - ${element.name}` : symbol;
         });
 
-        refs.themeCompleteContent.replaceChildren();
-
-        const kicker = document.createElement("div");
-        const title = document.createElement("div");
-        const description = document.createElement("div");
-        const learnedPanel = createThemeCompletePanel(
-            "What You Learned",
-            `You completed the ${theme.name} section and practiced the main compounds from this topic.`
-        );
-        const elementsPanel = createThemeCompletePanel(
-            "Elements In This Section",
-            "These are the elements you worked with while clearing this theme."
-        );
-
-        kicker.className = "theme-complete-kicker";
-        title.className = "theme-complete-title";
-        description.className = "theme-complete-description";
-
-        kicker.textContent = "Section complete";
-        title.id = "theme-complete-title";
-        title.textContent = `Congratulations! You finished ${theme.name}`;
-        description.textContent =
-            `You cleared every task in the ${theme.name} section. ` +
-            "Your next step is to choose another theme and keep building new compounds.";
-
-        learnedPanel.appendChild(createThemeCompletePillList(learnedLabels));
-        elementsPanel.appendChild(createThemeCompletePillList(elementLabels));
-
-        refs.themeCompleteContent.append(kicker, title, description, learnedPanel, elementsPanel);
-
-        if (options.bonusUnlockMessage) {
-            const note = document.createElement("div");
-            note.className = "theme-complete-note";
-            note.textContent = options.bonusUnlockMessage;
-            refs.themeCompleteContent.appendChild(note);
-        }
+        renderThemeCompleteContent({
+            bonusUnlockMessage: options.bonusUnlockMessage,
+            container: refs.themeCompleteContent,
+            elementLabels,
+            learnedLabels,
+            theme
+        });
 
         openModal(refs.themeCompleteModal);
         onModalStateChanged?.();
@@ -385,22 +273,6 @@ export function createModalController({
     };
 }
 
-function createLevelIntroPanel(titleText, bodyText) {
-    const panel = document.createElement("section");
-    const title = document.createElement("div");
-    const body = document.createElement("div");
-
-    panel.className = "level-intro-panel";
-    title.className = "level-intro-panel-title";
-    body.className = "level-intro-panel-text";
-
-    title.textContent = titleText;
-    body.textContent = bodyText;
-
-    panel.append(title, body);
-    return panel;
-}
-
 function getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }) {
     if (!isUnlocked) {
         return "Locked";
@@ -419,105 +291,6 @@ function getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }) {
 
 function getLevelBriefing(levelBriefsConfig, themeId, levelId) {
     return levelBriefsConfig?.themes?.[themeId]?.levels?.find(level => level.levelId === levelId) ?? null;
-}
-
-function createValencyPanel(titleText, bodyText) {
-    const panel = document.createElement("section");
-    const title = document.createElement("div");
-    const body = document.createElement("div");
-
-    panel.className = "valency-panel";
-    title.className = "valency-panel-title";
-    body.className = "valency-panel-text";
-
-    title.textContent = titleText;
-    body.textContent = bodyText;
-
-    panel.append(title, body);
-    return panel;
-}
-
-function createValencyIssueList(issues) {
-    const list = document.createElement("div");
-    list.className = "valency-issue-list";
-
-    issues.forEach(issue => {
-        const item = document.createElement("div");
-        const symbol = document.createElement("div");
-        const title = document.createElement("div");
-        const body = document.createElement("div");
-
-        item.className = "valency-issue-item";
-        symbol.className = "valency-issue-symbol";
-        title.className = "valency-issue-title";
-        body.className = "valency-issue-body";
-
-        symbol.textContent = issue.symbol;
-        title.textContent = `${issue.elementName} has ${issue.actualBonds} connections, but only ${issue.allowedBonds} are allowed`;
-        body.textContent = `Node ${issue.nodeId} exceeds the allowed valency by ${issue.actualBonds - issue.allowedBonds}. Remove or rearrange some links before mixing.`;
-
-        item.append(symbol, title, body);
-        list.appendChild(item);
-    });
-
-    return list;
-}
-
-function createValencyTheoryList(elements) {
-    const list = document.createElement("div");
-    list.className = "valency-theory-list";
-
-    elements.forEach(element => {
-        const card = document.createElement("article");
-        const header = document.createElement("div");
-        const title = document.createElement("div");
-        const body = document.createElement("div");
-
-        card.className = "valency-theory-card";
-        header.className = "valency-theory-header";
-        title.className = "valency-theory-title";
-        body.className = "valency-theory-body";
-
-        header.textContent = `${element.symbol} | valency ${element.valency}`;
-        title.textContent = element.name;
-        body.textContent = element.valencyTheory ?? `${element.name} is limited to ${element.valency} single connections in this lab.`;
-
-        card.append(header, title, body);
-        list.appendChild(card);
-    });
-
-    return list;
-}
-
-function createThemeCompletePanel(titleText, bodyText) {
-    const panel = document.createElement("section");
-    const title = document.createElement("div");
-    const body = document.createElement("div");
-
-    panel.className = "theme-complete-panel";
-    title.className = "theme-complete-panel-title";
-    body.className = "theme-complete-panel-text";
-
-    title.textContent = titleText;
-    body.textContent = bodyText;
-
-    panel.append(title, body);
-    return panel;
-}
-
-function createThemeCompletePillList(labels) {
-    const list = document.createElement("div");
-
-    list.className = "theme-complete-pill-list";
-
-    labels.forEach(label => {
-        const pill = document.createElement("div");
-        pill.className = "theme-complete-pill";
-        pill.textContent = label;
-        list.appendChild(pill);
-    });
-
-    return list;
 }
 
 function openModal(modal) {

@@ -1,6 +1,7 @@
+import { SceneObject, SCENE_OBJECT_ROLE } from "../scene-object.js";
 import { SCENE_UI_DEFAULT_TAGS, SCENE_UI_ELEMENT_KIND } from "./contracts.js";
 
-export class SceneUiElement {
+export class SceneUiElement extends SceneObject {
     constructor({
         attributes = {},
         children = [],
@@ -8,17 +9,27 @@ export class SceneUiElement {
         dataset = {},
         id = null,
         kind,
+        layoutRules = [],
         styles = {},
         tagName = null,
         textContent = "",
         listeners = []
     }) {
+        super({
+            id,
+            kind,
+            role: SCENE_OBJECT_ROLE.ui,
+            children,
+            classes: classNames,
+            metadata: {
+                tagName: tagName ?? SCENE_UI_DEFAULT_TAGS[kind]
+            }
+        });
+
         this.attributes = attributes;
-        this.children = children;
         this.classNames = classNames;
         this.dataset = dataset;
-        this.id = id;
-        this.kind = kind;
+        this.layoutRules = layoutRules;
         this.styles = styles;
         this.tagName = tagName ?? SCENE_UI_DEFAULT_TAGS[kind];
         this.textContent = textContent;

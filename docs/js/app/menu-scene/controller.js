@@ -2,13 +2,15 @@ import { MenuSceneCamera, MenuSceneSpace } from "./entities.js";
 import { MenuSceneSheetBuilder } from "./builders.js";
 import { getMenuStageOverflow, projectNodeToViewport, createSceneEdgePath } from "./methods.js";
 import { MenuSceneViewport } from "./view.js";
-import { SceneButtonBuilder, SceneContainerBuilder, SceneTextBuilder } from "../scene-ui/builders.js";
 import { createSceneUiFactory } from "../scene-ui/factory.js";
+import { compileSceneSchema, resolveSceneSchema, sceneButton, sceneContainer, sceneText } from "../scene-ui/schema.js";
 
 export function createMenuSceneController({
     refs,
     state,
     menuMapConfig,
+    sceneSchemaConfig,
+    actionRegistry,
     levelBriefsConfig,
     onPreviewLevelIntro
 }) {
@@ -180,64 +182,54 @@ export function createMenuSceneController({
     }
 
     function createNodeElement(node) {
+        const definition = sceneSchemaConfig?.node
+            ? resolveSceneSchema(sceneSchemaConfig.node, createNodeBindings(node), createNodeActionRegistry(node))
+            : createNodeSchema(node);
+
         return factory.createElement(
-            new SceneButtonBuilder()
-                .className(
-                    "home-level-node",
-                    `level-size-${node.size}`,
-                    `level-status-${node.status}`
-                )
-                .data("levelId", node.levelId)
-                .disabled(!node.isUnlocked)
-                .on("click", () => {
-                    onPreviewLevelIntro?.(node.theme, node.level, node.options);
-                })
-                .children([
-                    new SceneTextBuilder()
-                        .className("home-level-index")
-                        .text(`Level ${node.level.levelNumber ?? resolveLevelNumber(node.levelId)}`)
-                        .build(),
-                    new SceneTextBuilder()
-                        .className("home-level-formula")
-                        .text(node.title)
-                        .build(),
-                    new SceneTextBuilder()
-                        .className("home-level-objective")
-                        .text(node.subtitle)
-                        .build()
-                ])
-                .build()
+            compileSceneSchema(definition)
         );
     }
 
+    function createNodeActionRegistry(node) {
+        if (actionRegistry?.register && typeof actionRegistry.register === "function") {
+            const actionId = `previewLevelIntro:${node.levelId}`;
+            if (!actionRegistry.has?.(actionId)) {
+                actionRegistry.register(actionId, () => {
+                    onPreviewLevelIntro?.(node.theme, node.level, node.options);
+                });
+            }
+
+            return {
+                resolve(requestedActionId, args) {
+                    if (requestedActionId === "previewLevelIntro") {
+                        return actionRegistry.resolve(actionId, args);
+                    }
+
+                    return actionRegistry.resolve(requestedActionId, args);
+                }
+            };
+        }
+
+        return {
+            previewLevelIntro: () => {
+                onPreviewLevelIntro?.(node.theme, node.level, node.options);
+            }
+        };
+    }
+
     function renderPlaceholder(placeholder) {
+        const definition = sceneSchemaConfig?.placeholder
+            ? resolveSceneSchema(sceneSchemaConfig.placeholder, {
+                body: placeholder.body,
+                kicker: placeholder.kicker,
+                meta: placeholder.meta,
+                title: placeholder.title
+            })
+            : createPlaceholderSchema(placeholder);
         viewport.renderNode(
             factory.createElement(
-                new SceneContainerBuilder()
-                    .className("home-sheet-placeholder")
-                    .children([
-                        new SceneTextBuilder()
-                            .className("home-sheet-placeholder-kicker")
-                            .text(placeholder.kicker)
-                            .tagName("div")
-                            .build(),
-                        new SceneTextBuilder()
-                            .className("home-sheet-placeholder-title")
-                            .text(placeholder.title)
-                            .tagName("div")
-                            .build(),
-                        new SceneTextBuilder()
-                            .className("home-sheet-placeholder-body")
-                            .text(placeholder.body)
-                            .tagName("div")
-                            .build(),
-                        new SceneTextBuilder()
-                            .className("home-sheet-placeholder-meta")
-                            .text(placeholder.meta)
-                            .tagName("div")
-                            .build()
-                    ])
-                    .build()
+                compileSceneSchema(definition)
             )
         );
     }
@@ -253,4 +245,84 @@ export function createMenuSceneController({
 function resolveLevelNumber(levelId) {
     const match = /^level-(\d+)$/.exec(levelId);
     return match ? match[1] : levelId;
+}
+
+function createNodeSchema(node) {
+    return sceneButton({
+        classNames: [
+            "home-level-node",
+            `level-size-${node.size}`,
+            `level-status-${node.status}`
+        ],
+        data: {
+            levelId: node.levelId
+        },
+        attrs: {
+            disabled: !node.isUnlocked
+        },
+        on: {
+            click: {
+                action: "previewLevelIntro"
+            }
+        },
+        children: [
+            sceneText({
+                className: "home-level-index",
+                text: `Level ${node.level.levelNumber ?? resolveLevelNumber(node.levelId)}`
+            }),
+            sceneText({
+                className: "home-level-formula",
+                text: node.title
+            }),
+            sceneText({
+                className: "home-level-objective",
+                text: node.subtitle
+            })
+        ]
+    });
+}
+
+function createNodeBindings(node) {
+    return {
+        disabled: !node.isUnlocked,
+        isUnlocked: node.isUnlocked,
+        level: {
+            id: node.levelId,
+            index: `Level ${node.level.levelNumber ?? resolveLevelNumber(node.levelId)}`
+        },
+        node: {
+            sizeClass: `level-size-${node.size}`,
+            statusClass: `level-status-${node.status}`,
+            title: node.title,
+            subtitle: node.subtitle
+        }
+    };
+}
+
+function createPlaceholderSchema(placeholder) {
+    return sceneContainer({
+        className: "home-sheet-placeholder",
+        children: [
+            sceneText({
+                className: "home-sheet-placeholder-kicker",
+                tagName: "div",
+                text: placeholder.kicker
+            }),
+            sceneText({
+                className: "home-sheet-placeholder-title",
+                tagName: "div",
+                text: placeholder.title
+            }),
+            sceneText({
+                className: "home-sheet-placeholder-body",
+                tagName: "div",
+                text: placeholder.body
+            }),
+            sceneText({
+                className: "home-sheet-placeholder-meta",
+                tagName: "div",
+                text: placeholder.meta
+            })
+        ]
+    });
 }

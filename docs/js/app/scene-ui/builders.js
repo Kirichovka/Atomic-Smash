@@ -1,3 +1,4 @@
+import { createInlineLayoutRule } from "./layout-rules.js";
 import { SceneUiButton, SceneUiContainer, SceneUiText } from "./elements.js";
 
 class SceneUiBuilder {
@@ -7,6 +8,7 @@ class SceneUiBuilder {
             children: [],
             classNames: [],
             dataset: {},
+            layoutRules: [],
             listeners: [],
             styles: {}
         };
@@ -43,33 +45,17 @@ class SceneUiBuilder {
     }
 
     layout({
-        alignItems,
-        display,
-        flexDirection,
-        gap,
-        height,
-        inset,
-        justifyContent,
-        left,
-        padding,
-        position,
-        top,
-        width
+        ...layout
     } = {}) {
-        return this.styles({
-            ...(alignItems ? { alignItems } : {}),
-            ...(display ? { display } : {}),
-            ...(flexDirection ? { flexDirection } : {}),
-            ...(gap !== undefined ? { gap } : {}),
-            ...(height !== undefined ? { height } : {}),
-            ...(inset !== undefined ? { inset } : {}),
-            ...(justifyContent ? { justifyContent } : {}),
-            ...(left !== undefined ? { left } : {}),
-            ...(padding !== undefined ? { padding } : {}),
-            ...(position ? { position } : {}),
-            ...(top !== undefined ? { top } : {}),
-            ...(width !== undefined ? { width } : {})
-        });
+        this.definition.layoutRules.push(createInlineLayoutRule(layout));
+        return this;
+    }
+
+    layoutRule(rule) {
+        if (rule && typeof rule === "object") {
+            this.definition.layoutRules.push(rule);
+        }
+        return this;
     }
 
     child(child) {

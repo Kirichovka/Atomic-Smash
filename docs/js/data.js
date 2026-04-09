@@ -1,3 +1,5 @@
+import { validateSceneSchemaConfig } from "./app/scene-ui/validator.js";
+
 export async function loadGameData() {
     const response = await fetch("./data/game-data.json");
 
@@ -27,6 +29,28 @@ export async function loadMenuMapConfig() {
     }
 
     return response.json();
+}
+
+export async function loadHomeChromeSchemaConfig() {
+    const response = await fetch("./data/home-chrome.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load home chrome schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "home-chrome.schema");
+}
+
+export async function loadMenuSceneSchemaConfig() {
+    const response = await fetch("./data/menu-scene.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load menu scene schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "menu-scene.schema");
 }
 
 export async function loadLevelBriefsConfig() {
