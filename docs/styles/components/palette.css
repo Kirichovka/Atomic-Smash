@@ -176,26 +176,33 @@
         5px 6px 0 rgba(7, 59, 76, 0.72);
 }
 
+.element-template.drag-origin {
+    opacity: 0.35;
+    transform: scale(0.96);
+}
+
 .palette-drag-ghost {
     position: fixed;
     left: 0;
     top: 0;
     width: 72px;
     height: 72px;
-    margin-left: -36px;
-    margin-top: -36px;
+    transform: translate(-50%, -50%) rotate(-3deg);
     border: 4px solid #073b4c;
     border-radius: 18px;
-    background: rgba(255, 250, 238, 0.95);
-    box-shadow: 6px 8px 0 rgba(7, 59, 76, 0.72);
+    background: linear-gradient(180deg, rgba(255, 247, 215, 0.98), rgba(255, 227, 154, 0.98));
+    box-shadow:
+        0 0 0 4px rgba(255, 255, 255, 0.85),
+        8px 10px 0 rgba(7, 59, 76, 0.72);
     color: #073b4c;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 900;
+    letter-spacing: 0.02em;
     pointer-events: none;
-    z-index: 120;
+    z-index: 9999;
 }
 
 body.dragging-element,

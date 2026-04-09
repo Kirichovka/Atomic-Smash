@@ -13,7 +13,10 @@ export function createPaletteController({
         ghost: null,
         ignoreClick: false,
         isDragging: false,
+        lastClientX: 0,
+        lastClientY: 0,
         pointerId: null,
+        sourceElement: null,
         startX: 0,
         startY: 0,
         symbol: null
@@ -75,21 +78,37 @@ export function createPaletteController({
             return;
         }
 
+        event.preventDefault();
+
         dragState.pointerId = event.pointerId;
+        dragState.sourceElement = template;
         dragState.startX = event.clientX;
         dragState.startY = event.clientY;
+        dragState.lastClientX = event.clientX;
+        dragState.lastClientY = event.clientY;
         dragState.symbol = symbol;
         dragState.isDragging = false;
 
-        document.addEventListener("pointermove", handlePalettePointerMove);
-        document.addEventListener("pointerup", handlePalettePointerUp);
-        document.addEventListener("pointercancel", handlePalettePointerCancel);
+        if (typeof template.setPointerCapture === "function") {
+            try {
+                template.setPointerCapture(event.pointerId);
+            } catch {
+                // Ignore pointer capture failures and keep the custom drag flow alive.
+            }
+        }
+
+        window.addEventListener("pointermove", handlePalettePointerMove);
+        window.addEventListener("pointerup", handlePalettePointerUp);
+        window.addEventListener("pointercancel", handlePalettePointerCancel);
     }
 
     function handlePalettePointerMove(event) {
         if (event.pointerId !== dragState.pointerId || !dragState.symbol) {
             return;
         }
+
+        dragState.lastClientX = event.clientX;
+        dragState.lastClientY = event.clientY;
 
         if (isPointerOutsideViewport(event.clientX, event.clientY)) {
             cleanupPaletteDragSession();
@@ -108,7 +127,7 @@ export function createPaletteController({
             startPaletteCustomDrag(dragState.symbol, event.clientX, event.clientY);
         }
 
-        updatePaletteDragGhost(event.clientX, event.clientY);
+        updatePaletteDragGhost(dragState.lastClientX, dragState.lastClientY);
     }
 
     function handlePalettePointerUp(event) {
@@ -139,6 +158,7 @@ export function createPaletteController({
     function startPaletteCustomDrag(symbol, clientX, clientY) {
         dragState.isDragging = true;
         state.board.dragElementType = symbol;
+        dragState.sourceElement?.classList.add("drag-origin");
         document.body.classList.add("dragging-element");
 
         bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
@@ -175,16 +195,33 @@ export function createPaletteController({
         dragState.ghost?.remove();
         dragState.ghost = null;
         dragState.isDragging = false;
+        if (
+            dragState.sourceElement &&
+            typeof dragState.sourceElement.releasePointerCapture === "function" &&
+            dragState.pointerId !== null &&
+            dragState.sourceElement.hasPointerCapture?.(dragState.pointerId)
+        ) {
+            try {
+                dragState.sourceElement.releasePointerCapture(dragState.pointerId);
+            } catch {
+                // Ignore release failures during cleanup.
+            }
+        }
+        dragState.sourceElement?.classList.remove("drag-origin");
         dragState.pointerId = null;
+        dragState.sourceElement = null;
         dragState.startX = 0;
         dragState.startY = 0;
         dragState.symbol = null;
         state.board.dragElementType = null;
         document.body.classList.remove("dragging-element");
 
-        document.removeEventListener("pointermove", handlePalettePointerMove);
-        document.removeEventListener("pointerup", handlePalettePointerUp);
-        document.removeEventListener("pointercancel", handlePalettePointerCancel);
+        dragState.lastClientX = 0;
+        dragState.lastClientY = 0;
+
+        window.removeEventListener("pointermove", handlePalettePointerMove);
+        window.removeEventListener("pointerup", handlePalettePointerUp);
+        window.removeEventListener("pointercancel", handlePalettePointerCancel);
     }
 
     function isPointerOutsideViewport(clientX, clientY) {

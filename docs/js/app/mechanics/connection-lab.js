@@ -1,13 +1,11 @@
 import {
     createSvgLine,
     getConnectorCenter,
-    redrawConnections,
-    syncConnectionsLayer
 } from "../../svg.js";
 import { createBoardSceneController } from "../board-scene/controller.js";
+import { createBoardRenderController } from "../board-scene/render-controller.js";
 import { createBoardStateController } from "../board-scene/state-controller.js";
 import {
-    clampBoardLocalCoordinate,
     getBoardNodeMetrics
 } from "../board-scene/methods.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
@@ -15,7 +13,6 @@ import { createEdgeKey } from "../state.js";
 
 const DEFAULT_NODE_WIDTH = 110;
 const DEFAULT_NODE_HEIGHT = 64;
-const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
 const SPAWN_OFFSETS = [
     { x: 0, y: 0 },
     { x: 24, y: 18 },
@@ -37,9 +34,17 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         offsets: SPAWN_OFFSETS,
         viewportElement: refs.mixZone
     });
+    const boardRender = createBoardRenderController({
+        boardScene,
+        mixZoneElement: refs.mixZone,
+        svgElement: refs.svg
+    });
     let resizeObserver = null;
     let resizeSyncFrame = null;
     let movingGroup = [];
+    let hasMovedDuringDrag = false;
+    let dragStartClientX = 0;
+    let dragStartClientY = 0;
 
     function init() {
         if (!isMounted()) {
@@ -243,10 +248,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        boardScene.sync();
-        syncNodeLayoutToCurrentMixZone();
-        syncConnectionsLayer(refs.svg, refs.mixZone);
-        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
+        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
     }
 
     function captureState() {
@@ -260,11 +262,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         board.savedNodes = boardState.getNodeValues().map(node => ({
             id: node.dataset.id,
-            localX: getNodeLocalX(node),
-            localY: getNodeLocalY(node),
+            localX: boardRender.getNodeLocalX(node),
+            localY: boardRender.getNodeLocalY(node),
             symbol: node.dataset.symbol,
-            x: getNodeLeft(node),
-            y: getNodeTop(node)
+            x: boardRender.getNodeLeft(node),
+            y: boardRender.getNodeTop(node)
         }));
         board.savedConnections = boardState.getConnections().map(connection => ({
             fromNodeId: connection.fromNodeId,
@@ -437,39 +439,22 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return null;
         }
 
-        const node = document.createElement("div");
-        const label = document.createElement("span");
         const requestedId = options.id ?? `node-${board.nodeIdCounter + 1}`;
         const id = requestedId;
         const position = options.positionSpace === "local"
-            ? localToPixelPosition(x, y)
+            ? boardRender.localToPixelPosition(x, y)
             : boardScene.clampPosition(x, y);
 
         board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
 
-        node.className = "node";
-        node.dataset.id = id;
-        node.dataset.symbol = symbol;
-        node.draggable = false;
-        setNodePosition(node, position.x, position.y);
-
-        label.className = "node-label";
-        label.textContent = symbol;
-        node.appendChild(label);
-
-        CONNECTOR_POSITIONS.forEach(connectorPosition => {
-            const connector = document.createElement("div");
-            connector.className = `connector ${connectorPosition}`;
-            connector.dataset.nodeId = id;
-            connector.dataset.position = connectorPosition;
-            connector.addEventListener("pointerdown", startConnection);
-            node.appendChild(connector);
+        const node = boardRender.createNode({
+            id,
+            onConnectorPointerDown: startConnection,
+            onNodeDragStart: preventNativeDrag,
+            onNodePointerDown: startMoveNode,
+            position,
+            symbol
         });
-
-        node.addEventListener("pointerdown", startMoveNode);
-        node.addEventListener("dragstart", preventNativeDrag);
-
-        refs.mixZone.appendChild(node);
         boardState.addNode(id, node);
 
         if (options.persist !== false) {
@@ -496,13 +481,13 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        const line = createSvgLine("var(--wire-solid)");
-        line.classList.add("connection-hitbox");
-        line.addEventListener("click", () => {
-            clearSelectedNodes();
-            removeConnectionByLine(line);
+        const line = boardRender.createConnection({
+            onClick: () => {
+                clearSelectedNodes();
+                removeConnectionByLine(line);
+            },
+            stroke: "var(--wire-solid)"
         });
-        refs.svg.appendChild(line);
 
         boardState.addConnection({
             fromNodeId: connection.fromNodeId,
@@ -553,6 +538,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         board.movingNode = event.currentTarget;
         board.movingPointerId = event.pointerId;
+        dragStartClientX = event.clientX;
+        dragStartClientY = event.clientY;
+        hasMovedDuringDrag = false;
         movingGroup = getMovingGroup(board.movingNode);
         movingGroup.forEach(item => {
             item.node.classList.add("dragging");
@@ -574,7 +562,15 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        if (isPointerOutsideViewport(event.clientX, event.clientY)) {
+        const travelDistance = Math.hypot(
+            event.clientX - dragStartClientX,
+            event.clientY - dragStartClientY
+        );
+        if (travelDistance > 1) {
+            hasMovedDuringDrag = true;
+        }
+
+        if (hasMovedDuringDrag && isPointerOutsideViewport(event.clientX, event.clientY)) {
             const removedNodeIds = movingGroup.map(item => item.node.dataset.id);
             cleanupMovingNode();
             removeNodes(removedNodeIds);
@@ -593,14 +589,14 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
                 y: anchorPosition.y + item.deltaY
             };
 
-            setNodePosition(item.node, position.x, position.y, { clamp: false });
+            boardRender.setNodePosition(item.node, position.x, position.y, { clamp: false });
             item.node.classList.toggle(
                 "outside-zone",
-                isNodeOutsideMixZone(getNodeLeft(item.node), getNodeTop(item.node))
+                isNodeOutsideMixZone(boardRender.getNodeLeft(item.node), boardRender.getNodeTop(item.node))
             );
         });
 
-        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
+        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
     }
 
     function stopMoveNode(event) {
@@ -608,8 +604,13 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
+        if (!hasMovedDuringDrag) {
+            cleanupMovingNode();
+            return;
+        }
+
         const releasedNodeIds = movingGroup
-            .filter(item => isNodeOutsideMixZone(getNodeLeft(item.node), getNodeTop(item.node)))
+            .filter(item => isNodeOutsideMixZone(boardRender.getNodeLeft(item.node), boardRender.getNodeTop(item.node)))
             .map(item => item.node.dataset.id);
         cleanupMovingNode();
 
@@ -636,6 +637,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         movingGroup = [];
         board.movingNode = null;
         board.movingPointerId = null;
+        hasMovedDuringDrag = false;
+        dragStartClientX = 0;
+        dragStartClientY = 0;
         document.body.classList.remove("dragging-element");
 
         document.removeEventListener("pointermove", moveNode);
@@ -726,13 +730,13 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        const line = createSvgLine("var(--wire-solid)");
-        line.classList.add("connection-hitbox");
-        line.addEventListener("click", () => {
-            clearSelectedNodes();
-            removeConnectionByLine(line);
+        const line = boardRender.createConnection({
+            onClick: () => {
+                clearSelectedNodes();
+                removeConnectionByLine(line);
+            },
+            stroke: "var(--wire-solid)"
         });
-        refs.svg.appendChild(line);
 
         boardState.addConnection({
             fromNodeId: startNodeId,
@@ -742,7 +746,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             line
         });
 
-        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
+        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
         removeTemporaryWire();
         captureState();
     }
@@ -905,39 +909,6 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function clampNodePosition(x, y) {
         return boardScene.clampPosition(x, y);
-    }
-
-    function syncNodeLayoutToCurrentMixZone() {
-        boardScene.sync();
-        boardState.getNodes().forEach(node => {
-            if (node === board.movingNode) {
-                return;
-            }
-
-            const position = localToPixelPosition(getNodeLocalX(node), getNodeLocalY(node));
-            node.style.left = `${position.x}px`;
-            node.style.top = `${position.y}px`;
-        });
-    }
-
-    function setNodePosition(node, x, y, options = {}) {
-        const { clamp = true } = options;
-        const renderedPosition = clamp ? boardScene.clampPosition(x, y) : { x, y };
-        const localAnchor = boardScene.clampPosition(x, y);
-        const localPosition = pixelToLocalPosition(localAnchor.x, localAnchor.y);
-
-        node.style.left = `${renderedPosition.x}px`;
-        node.style.top = `${renderedPosition.y}px`;
-        node.dataset.localX = String(localPosition.localX);
-        node.dataset.localY = String(localPosition.localY);
-    }
-
-    function pixelToLocalPosition(x, y) {
-        return boardScene.toLocal(x, y);
-    }
-
-    function localToPixelPosition(localX, localY) {
-        return boardScene.toPixel(localX, localY);
     }
 
     function removeConnectionByLine(line) {
@@ -1111,15 +1082,15 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const movingNodeIds = shouldMoveSelection
             ? getSelectedNodeIds()
             : [anchorNodeId];
-        const anchorLeft = getNodeLeft(anchorNode);
-        const anchorTop = getNodeTop(anchorNode);
+        const anchorLeft = boardRender.getNodeLeft(anchorNode);
+        const anchorTop = boardRender.getNodeTop(anchorNode);
 
         return movingNodeIds
             .map(nodeId => boardState.getNode(nodeId))
             .filter(Boolean)
             .map(node => ({
-                deltaX: getNodeLeft(node) - anchorLeft,
-                deltaY: getNodeTop(node) - anchorTop,
+                deltaX: boardRender.getNodeLeft(node) - anchorLeft,
+                deltaY: boardRender.getNodeTop(node) - anchorTop,
                 node
             }));
     }
@@ -1141,22 +1112,6 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         spawnElementAtClientPoint,
         sync
     };
-}
-
-function getNodeLeft(node) {
-    return Number.parseFloat(node.style.left || "0");
-}
-
-function getNodeTop(node) {
-    return Number.parseFloat(node.style.top || "0");
-}
-
-function getNodeLocalX(node) {
-    return clampBoardLocalCoordinate(Number.parseFloat(node.dataset.localX || "0"));
-}
-
-function getNodeLocalY(node) {
-    return clampBoardLocalCoordinate(Number.parseFloat(node.dataset.localY || "0"));
 }
 
 function parseNodeIndex(nodeId) {

@@ -65,7 +65,7 @@ export function createGameplayController({
         } = context;
 
         if (clearBoardSelection) {
-            clearBoardSelectionState();
+            boardActionsController.clearBoardSelectionState();
         }
 
         if (clearPaletteSelection) {
