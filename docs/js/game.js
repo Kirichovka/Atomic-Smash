@@ -1,4 +1,4 @@
-import { loadGameData, loadHotkeysConfig } from "./data.js";
+import { loadGameData, loadHotkeysConfig, loadLevelBriefsConfig, loadMenuMapConfig } from "./data.js";
 import { createEventBus } from "./app/event-bus.js";
 import { createHotkeysController } from "./app/hotkeys.js";
 import { createModalController } from "./app/modals.js";
@@ -16,6 +16,7 @@ import {
     getCurrentLevel,
     getCurrentTheme,
     getLevelsForTheme,
+    getMechanicById,
     hydrateState,
     isCurrentLevelTarget
 } from "./app/state.js";
@@ -43,9 +44,11 @@ const MIX_ZONE_MENU_ACTIONS = {
 };
 
 export async function initGame() {
-    const [gameData, hotkeysConfig] = await Promise.all([
+    const [gameData, hotkeysConfig, menuMapConfig, levelBriefsConfig] = await Promise.all([
         loadGameData(),
-        loadHotkeysConfig()
+        loadHotkeysConfig(),
+        loadMenuMapConfig(),
+        loadLevelBriefsConfig()
     ]);
     const refs = createRefs();
     const currentPage = document.body.dataset.page ?? "menu";
@@ -100,9 +103,11 @@ export async function initGame() {
     const modalController = createModalController({
         refs,
         state,
+        levelBriefsConfig,
         createHelpVisual: compound => getActiveMechanic().createHelpVisual(compound),
         onModalStateChanged: scheduleBasicTutorialSync,
-        onThemeCompleteClosed: () => navigationController.showThemeScreen()
+        onThemeCompleteClosed: () => openMainMenu(),
+        onStartLevelIntro: (theme) => startTheme(theme.id)
     });
     const paletteController = createPaletteController({
         refs,
@@ -113,9 +118,12 @@ export async function initGame() {
     navigationController = createNavigationController({
         refs,
         state,
+        menuMapConfig,
+        levelBriefsConfig,
         currentPage,
         onBeforeNavigate: persistCurrentState,
         onStartTheme: startTheme,
+        onPreviewLevelIntro: (theme, level, options) => modalController.openLevelIntroModal(theme, level, options),
         onSelectElement: selectElement,
         onOpenCompoundModal: modalController.openCompoundModal,
         onOpenElementModal: modalController.openElementModal,
@@ -1794,8 +1802,7 @@ export async function initGame() {
     }
 
     function openThemeSelection() {
-        navigationController.renderThemeList();
-        navigationController.showThemeScreen();
+        openMainMenu();
     }
 
     function openJournalScreen() {
@@ -1810,7 +1817,7 @@ export async function initGame() {
 
     function resumeCurrentTheme() {
         if (!getCurrentTheme(state)) {
-            openThemeSelection();
+            openMainMenu();
             return;
         }
 
@@ -1829,6 +1836,7 @@ export async function initGame() {
         }
 
         state.progress.currentThemeId = themeId;
+        state.ui.menuViewedThemeId = themeId;
         resetFailedAttempts();
         mechanicsRegistry.resetAll();
         if (refs.result) {
@@ -2011,9 +2019,13 @@ export async function initGame() {
         }
 
         const currentIndex = themeLevels.findIndex(level => level.id === currentLevel.id);
+        const targetCompound = getCompoundById(state, currentLevel.targetCompoundId);
+        const mechanic = getMechanicById(state, currentLevel.mechanicId);
         refs.levelIndicator.textContent = `${theme.name} | Task ${currentIndex + 1} of ${themeLevels.length}`;
-        refs.task.textContent = currentLevel.objective;
-        refs.hint.textContent = `Hint: ${currentLevel.hint}`;
+        refs.task.textContent = currentLevel.displayTitle ?? currentLevel.objective;
+        refs.hint.textContent =
+            `${mechanic?.name ?? "Mechanic"} | ` +
+            `${currentLevel.learningFocus ?? targetCompound?.formula ?? currentLevel.hint ?? "No target formula"}`;
     }
 
     function handleLevelComplete(compound) {

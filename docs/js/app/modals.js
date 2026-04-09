@@ -1,13 +1,22 @@
-import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme } from "./state.js";
+import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
 
 export function createModalController({
     refs,
     state,
+    levelBriefsConfig,
     createHelpVisual,
     onModalStateChanged,
-    onThemeCompleteClosed
+    onThemeCompleteClosed,
+    onStartLevelIntro
 }) {
     function bind() {
+        bindIfPresent(refs.levelIntroClose, "click", closeLevelIntroModal);
+        bindIfPresent(refs.levelIntroModal, "click", event => {
+            if (event.target.closest("[data-close-level-intro-modal='true']")) {
+                closeLevelIntroModal();
+            }
+        });
+
         bindIfPresent(refs.elementModalClose, "click", closeElementModal);
         bindIfPresent(refs.elementModal, "click", event => {
             if (event.target.closest("[data-close-modal='true']")) {
@@ -42,6 +51,80 @@ export function createModalController({
                 closeThemeCompleteModal();
             }
         });
+    }
+
+    function openLevelIntroModal(theme, level, options = {}) {
+        if (!theme || !level || !refs.levelIntroModal || !refs.levelIntroContent) {
+            return;
+        }
+
+        const briefing = getLevelBriefing(levelBriefsConfig, theme.id, level.id);
+        const compound = getCompoundById(state, level.targetCompoundId);
+        const mechanic = getMechanicById(state, level.mechanicId);
+        const themeOverview = levelBriefsConfig?.themes?.[theme.id]?.overview ?? theme.description;
+        const {
+            isCompleted = false,
+            isCurrent = false,
+            isUnlocked = false
+        } = options;
+
+        refs.levelIntroContent.replaceChildren();
+
+        const kicker = document.createElement("div");
+        const title = document.createElement("div");
+        const summary = document.createElement("div");
+        const overviewPanel = createLevelIntroPanel(
+            "Theme Context",
+            themeOverview ?? "This theme groups related beginner chemistry lessons into one route."
+        );
+        const theoryPanel = createLevelIntroPanel(
+            "Lesson Theory",
+            briefing?.theory ?? theme.description ?? "This lesson introduces a new chemistry concept for the current route."
+        );
+        const mechanicPanel = createLevelIntroPanel(
+            "Mechanic",
+            briefing?.mechanicSummary
+            ?? mechanic?.description
+            ?? "This lesson currently uses the Connection Lab mechanic."
+        );
+        const detailsPanel = createLevelIntroPanel(
+            "Level Goal",
+            compound
+                ? `${level.learningFocus ?? level.displayTitle ?? level.objective}. Target compound: ${compound.formula} (${compound.name}).`
+                : `${level.learningFocus ?? level.displayTitle ?? level.objective}.`
+        );
+        const actions = document.createElement("div");
+        const actionButton = document.createElement("button");
+
+        kicker.className = "level-intro-kicker";
+        title.className = "level-intro-title";
+        summary.className = "level-intro-summary";
+        actions.className = "level-intro-actions";
+        actionButton.className = "level-intro-action";
+
+        kicker.textContent = `${theme.name} | ${briefing?.mechanicName ?? mechanic?.name ?? "Mechanic briefing"}`;
+        title.id = "level-intro-title";
+        title.textContent = briefing?.introTitle ?? level.displayTitle ?? level.objective;
+        summary.textContent = compound
+            ? `Target outcome: ${compound.formula} (${compound.name}).`
+            : "This lesson opens a new concept in the current route.";
+
+        actionButton.textContent = getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked });
+        actionButton.disabled = !isUnlocked;
+        actionButton.addEventListener("click", () => {
+            closeLevelIntroModal();
+            onStartLevelIntro?.(theme, level, options);
+        });
+
+        actions.appendChild(actionButton);
+        refs.levelIntroContent.append(kicker, title, summary, overviewPanel, detailsPanel, theoryPanel, mechanicPanel, actions);
+        openModal(refs.levelIntroModal);
+        onModalStateChanged?.();
+    }
+
+    function closeLevelIntroModal() {
+        closeModal(refs.levelIntroModal);
+        onModalStateChanged?.();
     }
 
     function openElementModal(element) {
@@ -256,6 +339,11 @@ export function createModalController({
     }
 
     function closeActiveModal() {
+        if (isModalOpen(refs.levelIntroModal)) {
+            closeLevelIntroModal();
+            return true;
+        }
+
         if (isModalOpen(refs.themeCompleteModal)) {
             closeThemeCompleteModal();
             return true;
@@ -291,9 +379,46 @@ export function createModalController({
         openCompoundModal,
         openElementModal,
         openHelpModal,
+        openLevelIntroModal,
         openValencyModal,
         openThemeCompleteModal
     };
+}
+
+function createLevelIntroPanel(titleText, bodyText) {
+    const panel = document.createElement("section");
+    const title = document.createElement("div");
+    const body = document.createElement("div");
+
+    panel.className = "level-intro-panel";
+    title.className = "level-intro-panel-title";
+    body.className = "level-intro-panel-text";
+
+    title.textContent = titleText;
+    body.textContent = bodyText;
+
+    panel.append(title, body);
+    return panel;
+}
+
+function getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }) {
+    if (!isUnlocked) {
+        return "Locked";
+    }
+
+    if (isCurrent) {
+        return "Start Current Level";
+    }
+
+    if (isCompleted) {
+        return "Continue Theme";
+    }
+
+    return "Open Level";
+}
+
+function getLevelBriefing(levelBriefsConfig, themeId, levelId) {
+    return levelBriefsConfig?.themes?.[themeId]?.levels?.find(level => level.levelId === levelId) ?? null;
 }
 
 function createValencyPanel(titleText, bodyText) {

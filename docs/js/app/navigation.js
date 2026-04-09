@@ -1,9 +1,13 @@
 import {
     getAvailableElements,
     getCompletedCountForTheme,
+    getCurrentLevel,
     getCurrentTheme,
-    getLevelsForTheme
+    getLevelsForTheme,
+    getMechanicById
 } from "./state.js";
+import { createMenuSceneController } from "./menu-scene/controller.js";
+import { createHomeChromeController } from "./menu-scene/chrome.js";
 
 const PAGE_ROUTES = {
     game: "game.html",
@@ -11,13 +15,17 @@ const PAGE_ROUTES = {
     menu: "index.html",
     themes: "themes.html"
 };
+const MENU_SWIPE_THRESHOLD = 64;
 
 export function createNavigationController({
     refs,
     state,
+    menuMapConfig,
+    levelBriefsConfig,
     currentPage,
     onBeforeNavigate,
     onStartTheme,
+    onPreviewLevelIntro,
     onSelectElement,
     onOpenCompoundModal,
     onOpenElementModal,
@@ -26,37 +34,77 @@ export function createNavigationController({
     onOpenJournalScreen,
     onResumeCurrentTheme
 }) {
+    const homeChromeController = createHomeChromeController({ refs });
+    const menuSceneController = createMenuSceneController({
+        refs,
+        state,
+        menuMapConfig,
+        levelBriefsConfig,
+        onPreviewLevelIntro
+    });
+    let menuSwipeStartX = null;
+    let menuSwipeStartY = null;
+    let menuSwipePointerId = null;
+
     function bind() {
-        bindIfPresent(refs.menuThemesButton, "click", onOpenThemeSelection);
+        homeChromeController.renderScaffold();
+        refreshMenuChromeRefs();
         bindIfPresent(refs.menuJournalButton, "click", onOpenJournalScreen);
-        bindIfPresent(refs.menuContinueButton, "click", onResumeCurrentTheme);
+        bindIfPresent(refs.menuContinueButton, "click", resumeViewedTheme);
+        bindIfPresent(refs.menuPrevThemeButton, "click", () => cycleMenuTheme(-1));
+        bindIfPresent(refs.menuNextThemeButton, "click", () => cycleMenuTheme(1));
         bindIfPresent(refs.themeMenuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.themeJournalButton, "click", onOpenJournalScreen);
         bindIfPresent(refs.journalMenuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.journalThemesButton, "click", onOpenThemeSelection);
         bindIfPresent(refs.menuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.journalButton, "click", onOpenJournalScreen);
+        bindMenuSheetGestures();
+        menuSceneController.bind();
     }
 
     function renderMenu() {
-        if (!refs.menuThemeProgress || !refs.menuJournalProgress || !refs.menuCurrentTheme || !refs.menuContinueButton) {
-            return;
-        }
-
         const completedThemes = state.catalog.themes.filter(theme =>
             getCompletedCountForTheme(state, theme.id) >= getLevelsForTheme(state, theme.id).length
         ).length;
         const availableElements = getAvailableElements(state);
-        const currentTheme = getCurrentTheme(state);
+        const viewedTheme = getMenuViewedTheme();
+        const themeLevels = viewedTheme ? getLevelsForTheme(state, viewedTheme.id) : [];
+        const isThemeReady = Boolean(viewedTheme && themeLevels.length > 0 && menuMapConfig?.themes?.[viewedTheme.id]);
 
-        refs.menuThemeProgress.textContent = `${completedThemes}/${state.catalog.themes.length} themes complete`;
-        refs.menuJournalProgress.textContent =
-            `${state.progress.discoveryHistory.length} discovered compounds | ` +
-            `${availableElements.length}/${state.catalog.elements.length} unlocked elements`;
-        refs.menuCurrentTheme.textContent = currentTheme
-            ? `${currentTheme.name} is active`
-            : "No active theme yet";
-        refs.menuContinueButton.disabled = !currentTheme;
+        if (refs.menuThemeProgress) {
+            refs.menuThemeProgress.textContent = `${completedThemes}/${state.catalog.themes.length} themes complete`;
+        }
+
+        if (refs.menuJournalProgress) {
+            refs.menuJournalProgress.textContent =
+                `${state.progress.discoveryHistory.length} discovered compounds | ` +
+                `${availableElements.length}/${state.catalog.elements.length} unlocked elements`;
+        }
+
+        if (refs.menuCurrentTheme) {
+            refs.menuCurrentTheme.textContent = viewedTheme
+                ? `${viewedTheme.name} is active`
+                : "No active theme yet";
+        }
+
+        if (refs.menuContinueButton) {
+            refs.menuContinueButton.disabled = !isThemeReady;
+            refs.menuContinueButton.textContent = isThemeReady ? "Continue" : "Coming Soon";
+        }
+        homeChromeController.renderHeaderState({
+            routeName: viewedTheme?.name ?? "No route selected",
+            routeProgress: viewedTheme
+                ? `${getCompletedCountForTheme(state, viewedTheme.id)}/${themeLevels.length} complete`
+                : "Choose a theme to begin"
+        });
+
+        renderMenuSheetDots(viewedTheme?.id ?? null);
+        menuSceneController.render({
+            currentLevel: viewedTheme?.id === state.progress.currentThemeId ? getCurrentLevel(state) : null,
+            levels: themeLevels,
+            theme: viewedTheme
+        });
     }
 
     function renderJournal() {
@@ -189,37 +237,184 @@ export function createNavigationController({
         state.catalog.themes.forEach(theme => {
             const levels = getLevelsForTheme(state, theme.id);
             const completedCount = getCompletedCountForTheme(state, theme.id);
+            const mechanic = getMechanicById(state, theme.primaryMechanicId);
+            const isReady = theme.sheetStatus !== "planned" && levels.length > 0;
             const card = document.createElement("article");
+            const kicker = document.createElement("div");
             const name = document.createElement("div");
             const description = document.createElement("div");
             const progress = document.createElement("div");
             const meta = document.createElement("div");
             const button = document.createElement("button");
-            const metaParts = [`${levels.length} task${levels.length === 1 ? "" : "s"}`];
+            const metaParts = [
+                theme.schoolTopic ?? "Chemistry topic",
+                mechanic?.name ?? theme.primaryMechanicId ?? "Mechanic not assigned"
+            ];
 
             card.className = "theme-card";
             if (theme.id === state.progress.currentThemeId) {
                 card.classList.add("active");
                 metaParts.push("current theme");
             }
+            if (!isReady) {
+                card.classList.add("coming-soon");
+                metaParts.push("sheet in design");
+            }
 
+            kicker.className = "theme-card-kicker";
             name.className = "theme-card-name";
             description.className = "theme-card-description";
             progress.className = "theme-card-progress";
             meta.className = "theme-card-meta";
 
+            kicker.textContent = theme.schoolTopic ?? "Chemistry route";
             name.textContent = theme.name;
             description.textContent = theme.description;
-            progress.textContent = completedCount >= levels.length && levels.length > 0
-                ? "Theme complete"
-                : `${completedCount}/${levels.length} tasks complete`;
+            progress.textContent = isReady
+                ? (
+                    completedCount >= levels.length && levels.length > 0
+                        ? "Theme complete"
+                        : `${completedCount}/${levels.length} lessons complete`
+                )
+                : "Theme sheet coming soon";
             meta.textContent = metaParts.join(" | ");
-            button.textContent = getThemeActionLabel(theme.id, completedCount, levels.length, state.progress.currentThemeId);
-            button.addEventListener("click", () => onStartTheme(theme.id));
+            button.textContent = getThemeActionLabel(theme.id, completedCount, levels.length, state.progress.currentThemeId, isReady);
+            button.disabled = !isReady;
+            if (isReady) {
+                button.addEventListener("click", () => onStartTheme(theme.id));
+            }
 
-            card.append(name, description, progress, meta, button);
+            card.append(kicker, name, description, progress, meta, button);
             refs.themeList.appendChild(card);
         });
+    }
+
+    function renderMenuSheetDots(activeThemeId) {
+        if (!refs.menuSheetDots) {
+            return;
+        }
+
+        refs.menuSheetDots.replaceChildren();
+        refs.menuStageFrame?.style.setProperty("--sheet-count", String(state.catalog.themes.length));
+
+        state.catalog.themes.forEach((theme, index) => {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "home-sheet-dot";
+            if (theme.id === activeThemeId) {
+                dot.classList.add("active");
+            }
+            dot.setAttribute("aria-label", `Open ${theme.name} sheet`);
+            dot.title = `${index + 1}. ${theme.name}`;
+            dot.addEventListener("click", () => {
+                setMenuViewedTheme(theme.id);
+                menuSceneController.resetCamera();
+                renderMenu();
+            });
+            refs.menuSheetDots.appendChild(dot);
+        });
+    }
+
+    function bindMenuSheetGestures() {
+        if (!refs.menuStageFrame) {
+            return;
+        }
+
+        refs.menuStageFrame.addEventListener("pointerdown", event => {
+            if (event.pointerType === "mouse" && event.button !== 0) {
+                return;
+            }
+
+            if (event.target.closest("button, a")) {
+                return;
+            }
+
+            menuSwipePointerId = event.pointerId;
+            menuSwipeStartX = event.clientX;
+            menuSwipeStartY = event.clientY;
+        });
+
+        refs.menuStageFrame.addEventListener("pointerup", event => {
+            if (event.pointerId !== menuSwipePointerId) {
+                return;
+            }
+
+            const deltaX = event.clientX - menuSwipeStartX;
+            const deltaY = event.clientY - menuSwipeStartY;
+            resetMenuSwipeState();
+
+            if (Math.abs(deltaX) < MENU_SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                return;
+            }
+
+            cycleMenuTheme(deltaX < 0 ? 1 : -1);
+        });
+
+        refs.menuStageFrame.addEventListener("pointercancel", resetMenuSwipeState);
+    }
+
+    function cycleMenuTheme(direction) {
+        const themes = state.catalog.themes;
+        if (themes.length <= 1) {
+            return;
+        }
+
+        const currentTheme = getMenuViewedTheme();
+        const currentIndex = Math.max(themes.findIndex(theme => theme.id === currentTheme?.id), 0);
+        const nextIndex = (currentIndex + direction + themes.length) % themes.length;
+        setMenuViewedTheme(themes[nextIndex].id);
+        menuSceneController.resetCamera();
+        renderMenu();
+    }
+
+    function resumeViewedTheme() {
+        const viewedTheme = getMenuViewedTheme();
+        const themeMap = viewedTheme ? menuMapConfig?.themes?.[viewedTheme.id] : null;
+        const levels = viewedTheme ? getLevelsForTheme(state, viewedTheme.id) : [];
+
+        if (!viewedTheme || !themeMap || levels.length === 0) {
+            return;
+        }
+
+        onStartTheme(viewedTheme.id);
+    }
+
+    function getMenuViewedTheme() {
+        const themes = state.catalog.themes;
+        if (themes.length === 0) {
+            return null;
+        }
+
+        const preferredThemeId =
+            state.ui.menuViewedThemeId
+            ?? state.progress.currentThemeId
+            ?? themes[0].id;
+
+        return themes.find(theme => theme.id === preferredThemeId) ?? themes[0];
+    }
+
+    function setMenuViewedTheme(themeId) {
+        if (!state.catalog.themes.some(theme => theme.id === themeId)) {
+            return;
+        }
+
+        state.ui.menuViewedThemeId = themeId;
+    }
+
+    function resetMenuSwipeState() {
+        menuSwipePointerId = null;
+        menuSwipeStartX = null;
+        menuSwipeStartY = null;
+    }
+
+    function refreshMenuChromeRefs() {
+        refs.menuJournalButton = document.getElementById("menu-journal-btn");
+        refs.menuContinueButton = document.getElementById("menu-continue-btn");
+        refs.menuPrevThemeButton = document.getElementById("menu-prev-theme-btn");
+        refs.menuNextThemeButton = document.getElementById("menu-next-theme-btn");
+        refs.menuSheetDots = document.getElementById("menu-sheet-dots");
+        refs.menuRouteName = document.getElementById("menu-route-name");
+        refs.menuRouteProgress = document.getElementById("menu-route-progress");
     }
 
     function showMenuScreen() {
@@ -267,9 +462,9 @@ function bindIfPresent(element, eventName, handler) {
     }
 }
 
-function getThemeActionLabel(themeId, completedCount, totalCount, currentThemeId) {
-    if (totalCount === 0) {
-        return "Open Theme";
+function getThemeActionLabel(themeId, completedCount, totalCount, currentThemeId, isReady = true) {
+    if (!isReady || totalCount === 0) {
+        return "Coming Soon";
     }
 
     if (completedCount === 0) {

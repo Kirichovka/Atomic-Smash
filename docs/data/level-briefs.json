@@ -1,0 +1,106 @@
+{
+    "themes": {
+        "basic": {
+            "title": "Basic Chemistry",
+            "overview": "This route introduces the first families of compounds: water, carbon oxides, ammonia, salts, and simple metal or sulfur oxides.",
+            "levels": [
+                {
+                    "levelId": "level-1",
+                    "nodeTitle": "Water",
+                    "introTitle": "Water Foundations",
+                    "theory": "Water is one of the first stable molecules students meet. It shows how two hydrogens can connect around one oxygen to form a simple but essential structure.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Place atoms on the board, connect them with single bonds, and match the target molecule pattern."
+                },
+                {
+                    "levelId": "level-2",
+                    "nodeTitle": "CO",
+                    "introTitle": "Carbon And Oxygen",
+                    "theory": "Carbon and oxygen can join in different ratios. This lesson introduces the smallest carbon oxide and teaches that the same elements can build different substances.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use the same board-building mechanic, but now compare how one carbon behaves when combined with oxygen."
+                },
+                {
+                    "levelId": "level-3",
+                    "nodeTitle": "CO2",
+                    "introTitle": "Carbon Dioxide Pattern",
+                    "theory": "Carbon dioxide extends the previous idea by adding another oxygen. It helps learners notice how changing atom counts changes the final compound and its structure.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build the next carbon oxide by arranging one carbon with two oxygen atoms in the correct connection pattern."
+                },
+                {
+                    "levelId": "level-4",
+                    "nodeTitle": "Ammonia",
+                    "introTitle": "Nitrogen Basics",
+                    "theory": "Ammonia introduces nitrogen as a central atom that can connect to several hydrogens. It is a good first example of a different central-node pattern.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Continue using bond placement, but focus on a new center atom with a three-connection pattern."
+                },
+                {
+                    "levelId": "level-5",
+                    "nodeTitle": "Methane",
+                    "introTitle": "Methane Structure",
+                    "theory": "Methane is one of the simplest carbon-based molecules. It shows carbon as a strong central builder that can connect to multiple hydrogens.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Practice a hub-style structure where one carbon becomes the main anchor for the full molecule."
+                },
+                {
+                    "levelId": "level-6",
+                    "nodeTitle": "HCl",
+                    "introTitle": "Acids And Halogens",
+                    "theory": "Hydrochloric acid introduces chlorine as a halogen partner. This lesson expands the route from water and oxides into acid-like combinations.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use a simpler two-atom pattern and learn how a new element changes the chemistry route."
+                },
+                {
+                    "levelId": "level-7",
+                    "nodeTitle": "NaCl",
+                    "introTitle": "Ionic Salts",
+                    "theory": "Salt is one of the most recognizable compounds in beginner chemistry. It introduces the idea of metal and nonmetal combinations in a very familiar form.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a basic metal-nonmetal pair and compare it with the acid lesson before it."
+                },
+                {
+                    "levelId": "level-8",
+                    "nodeTitle": "CaO",
+                    "introTitle": "Calcium Oxides",
+                    "theory": "Calcium oxide moves the route into basic metal oxides. It helps learners compare how oxygen combines with a different type of element.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Keep using the same spatial bond mechanic, but now apply it to a metal oxide family."
+                },
+                {
+                    "levelId": "level-9",
+                    "nodeTitle": "FeO",
+                    "introTitle": "Iron Oxides I",
+                    "theory": "Iron oxide lessons introduce transition metals in a simplified form. This first step starts with the smaller oxide before moving to a more complex iron compound.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a compact oxide structure and prepare for a larger iron pattern in the next lesson."
+                },
+                {
+                    "levelId": "level-10",
+                    "nodeTitle": "Fe2O3",
+                    "introTitle": "Iron Oxides II",
+                    "theory": "Iron(III) oxide scales the same family into a larger structure. It shows that one chemistry topic can expand into more complex patterns without changing the mechanic.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use the same connection mechanic, but manage a denser structure with more atoms on the board."
+                },
+                {
+                    "levelId": "level-11",
+                    "nodeTitle": "SO2",
+                    "introTitle": "Sulfur Gases I",
+                    "theory": "Sulfur dioxide introduces sulfur oxides and reactive gas compounds. It is the first step in a small sulfur branch of the route.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a sulfur-centered structure and compare it with earlier oxygen-based compounds."
+                },
+                {
+                    "levelId": "level-12",
+                    "nodeTitle": "SO3",
+                    "introTitle": "Sulfur Gases II",
+                    "theory": "Sulfur trioxide extends the sulfur branch and closes the basic route with a larger oxide. It reinforces the idea that one topic can develop across multiple lessons.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Finish the route with a more advanced sulfur oxide that still uses the same core connection mechanic."
+                }
+            ]
+        }
+    }
+}

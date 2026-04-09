@@ -1150,7 +1150,50 @@
             {
                 "id": "basic",
                 "name": "Basic",
-                "description": "Learn the core compounds step by step. New elements unlock only when the previous task is complete."
+                "description": "Foundational molecules and the first routes through water, oxides, salts, and simple gases.",
+                "schoolTopic": "Introductory compounds",
+                "primaryMechanicId": "connection-lab",
+                "sheetStatus": "ready"
+            },
+            {
+                "id": "acids-bases",
+                "name": "Acids & Bases",
+                "description": "School chemistry around acids, bases, indicators, neutralization, and everyday examples.",
+                "schoolTopic": "Acids, bases, and pH",
+                "primaryMechanicId": "theory-quiz",
+                "sheetStatus": "planned"
+            },
+            {
+                "id": "salts-oxides",
+                "name": "Salts & Oxides",
+                "description": "Learn how metals and nonmetals form salts, oxides, and related mineral compounds.",
+                "schoolTopic": "Inorganic compound families",
+                "primaryMechanicId": "classification-lab",
+                "sheetStatus": "planned"
+            },
+            {
+                "id": "metals-reactivity",
+                "name": "Metals Reactivity",
+                "description": "Study metal activity, oxidation, displacement, corrosion, and common school experiments.",
+                "schoolTopic": "Metals and reactivity series",
+                "primaryMechanicId": "reaction-lab",
+                "sheetStatus": "planned"
+            },
+            {
+                "id": "organic-basics",
+                "name": "Organic Basics",
+                "description": "Start with hydrocarbons, functional groups, and the simplest organic molecule patterns.",
+                "schoolTopic": "Introductory organic chemistry",
+                "primaryMechanicId": "connection-lab",
+                "sheetStatus": "planned"
+            },
+            {
+                "id": "equations",
+                "name": "Equations",
+                "description": "Practice balancing formulas and understanding conservation in school reaction equations.",
+                "schoolTopic": "Chemical equations",
+                "primaryMechanicId": "balance-lab",
+                "sheetStatus": "planned"
             }
         ],
         "levels": [
@@ -1158,97 +1201,240 @@
                 "id": "level-1",
                 "themeId": "basic",
                 "targetCompoundId": "water",
-                "objective": "Build water",
-                "hint": "H2O",
-                "availableElementSymbols": ["H", "O"]
+                "objective": "Study water",
+                "hint": "Target compound: H2O",
+                "availableElementSymbols": [
+                    "H",
+                    "O"
+                ],
+                "displayTitle": "Water",
+                "learningFocus": "Introduction to water as a basic molecule",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-2",
                 "themeId": "basic",
                 "targetCompoundId": "carbon-monoxide",
-                "objective": "Build carbon monoxide",
-                "hint": "CO",
-                "availableElementSymbols": ["H", "O", "C"]
+                "objective": "Study carbon monoxide",
+                "hint": "Target compound: CO",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C"
+                ],
+                "displayTitle": "Carbon Monoxide",
+                "learningFocus": "First comparison between carbon and oxygen compounds",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-3",
                 "themeId": "basic",
                 "targetCompoundId": "carbon-dioxide",
-                "objective": "Build carbon dioxide",
-                "hint": "CO2",
-                "availableElementSymbols": ["H", "O", "C"]
+                "objective": "Study carbon dioxide",
+                "hint": "Target compound: CO2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C"
+                ],
+                "displayTitle": "Carbon Dioxide",
+                "learningFocus": "Observe how a second oxygen changes the compound",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-4",
                 "themeId": "basic",
                 "targetCompoundId": "ammonia",
-                "objective": "Build ammonia",
-                "hint": "NH3",
-                "availableElementSymbols": ["H", "O", "C", "N"]
+                "objective": "Study ammonia",
+                "hint": "Target compound: NH3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N"
+                ],
+                "displayTitle": "Ammonia",
+                "learningFocus": "Learn nitrogen-centered structures",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-5",
                 "themeId": "basic",
                 "targetCompoundId": "methane",
-                "objective": "Build methane",
-                "hint": "CH4",
-                "availableElementSymbols": ["H", "O", "C", "N"]
+                "objective": "Study methane",
+                "hint": "Target compound: CH4",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N"
+                ],
+                "displayTitle": "Methane",
+                "learningFocus": "See carbon as a central building atom",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-6",
                 "themeId": "basic",
                 "targetCompoundId": "hydrochloric-acid",
-                "objective": "Build hydrochloric acid",
-                "hint": "HCl",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl"]
+                "objective": "Study hydrochloric acid",
+                "hint": "Target compound: HCl",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl"
+                ],
+                "displayTitle": "Hydrochloric Acid",
+                "learningFocus": "Introduce a simple acid pattern",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-7",
                 "themeId": "basic",
                 "targetCompoundId": "salt",
-                "objective": "Build salt",
-                "hint": "NaCl",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na"]
+                "objective": "Study salt",
+                "hint": "Target compound: NaCl",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na"
+                ],
+                "displayTitle": "Salt",
+                "learningFocus": "Recognize a simple metal-nonmetal compound",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-8",
                 "themeId": "basic",
                 "targetCompoundId": "calcium-oxide",
-                "objective": "Build calcium oxide",
-                "hint": "CaO",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na", "Ca"]
+                "objective": "Study calcium oxide",
+                "hint": "Target compound: CaO",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na",
+                    "Ca"
+                ],
+                "displayTitle": "Calcium Oxide",
+                "learningFocus": "Introduce basic metal oxides",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-9",
                 "themeId": "basic",
                 "targetCompoundId": "iron-monoxide",
-                "objective": "Build iron(II) oxide",
-                "hint": "FeO",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na", "Ca", "Fe"]
+                "objective": "Study iron(II) oxide",
+                "hint": "Target compound: FeO",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na",
+                    "Ca",
+                    "Fe"
+                ],
+                "displayTitle": "Iron(II) Oxide",
+                "learningFocus": "Start the iron oxide branch",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-10",
                 "themeId": "basic",
                 "targetCompoundId": "iron-oxide",
-                "objective": "Build iron(III) oxide",
-                "hint": "Fe2O3",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na", "Ca", "Fe"]
+                "objective": "Study iron(III) oxide",
+                "hint": "Target compound: Fe2O3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na",
+                    "Ca",
+                    "Fe"
+                ],
+                "displayTitle": "Iron(III) Oxide",
+                "learningFocus": "Scale the iron topic into a denser structure",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-11",
                 "themeId": "basic",
                 "targetCompoundId": "sulfur-dioxide",
-                "objective": "Build sulfur dioxide",
-                "hint": "SO2",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na", "Ca", "Fe", "S"]
+                "objective": "Study sulfur dioxide",
+                "hint": "Target compound: SO2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na",
+                    "Ca",
+                    "Fe",
+                    "S"
+                ],
+                "displayTitle": "Sulfur Dioxide",
+                "learningFocus": "Start the sulfur oxide branch",
+                "mechanicId": "connection-lab"
             },
             {
                 "id": "level-12",
                 "themeId": "basic",
                 "targetCompoundId": "sulfur-trioxide",
-                "objective": "Build sulfur trioxide",
-                "hint": "SO3",
-                "availableElementSymbols": ["H", "O", "C", "N", "Cl", "Na", "Ca", "Fe", "S"]
+                "objective": "Study sulfur trioxide",
+                "hint": "Target compound: SO3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "C",
+                    "N",
+                    "Cl",
+                    "Na",
+                    "Ca",
+                    "Fe",
+                    "S"
+                ],
+                "displayTitle": "Sulfur Trioxide",
+                "learningFocus": "Finish the sulfur branch with a larger oxide",
+                "mechanicId": "connection-lab"
+            }
+        ],
+        "mechanics": [
+            {
+                "id": "connection-lab",
+                "name": "Connection Lab",
+                "description": "Place atoms on the board, connect them with bonds, and build the target structure for the lesson."
+            },
+            {
+                "id": "theory-quiz",
+                "name": "Theory Quiz",
+                "description": "Read the lesson context and answer short chemistry questions before or after practical tasks."
+            },
+            {
+                "id": "classification-lab",
+                "name": "Classification Lab",
+                "description": "Sort compounds or elements into the correct chemistry families and explain the rule behind them."
+            },
+            {
+                "id": "reaction-lab",
+                "name": "Reaction Lab",
+                "description": "Match reactants, products, and reaction types across guided school chemistry scenarios."
+            },
+            {
+                "id": "balance-lab",
+                "name": "Balance Lab",
+                "description": "Balance simple school-level equations and learn how atom counts stay conserved."
             }
         ]
     }

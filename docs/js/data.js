@@ -19,6 +19,26 @@ export async function loadHotkeysConfig() {
     return response.json();
 }
 
+export async function loadMenuMapConfig() {
+    const response = await fetch("./data/menu-map.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load menu map config: ${response.status}`);
+    }
+
+    return response.json();
+}
+
+export async function loadLevelBriefsConfig() {
+    const response = await fetch("./data/level-briefs.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load level briefs config: ${response.status}`);
+    }
+
+    return response.json();
+}
+
 const VALENCY_METADATA = {
     C: {
         valency: 4,
@@ -82,8 +102,14 @@ function normalizeGameData(rawGameData) {
         rawGameData.themes
         ?? rawGameData.tasks?.themes
         ?? [];
+    const mechanics =
+        rawGameData.mechanics
+        ?? rawGameData.tasks?.mechanics
+        ?? [];
     const levels = (rawGameData.levels ?? rawGameData.tasks?.levels ?? rawGameData.tasks?.items ?? [])
         .map(level => ({
+            displayTitle: level.displayTitle ?? level.title ?? level.objective ?? level.hint ?? level.id,
+            learningFocus: level.learningFocus ?? null,
             mechanicId: level.mechanicId ?? "connection-lab",
             ...level
         }));
@@ -93,6 +119,7 @@ function normalizeGameData(rawGameData) {
         compounds,
         elements,
         levels,
+        mechanics,
         themes
     };
 }
