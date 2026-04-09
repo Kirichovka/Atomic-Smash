@@ -21,7 +21,8 @@ export function createGameRuntime({
     hotkeysConfig,
     levelBriefsConfig,
     menuMapConfig,
-    menuSceneSchemaConfig
+    menuSceneSchemaConfig,
+    screenRuntimeSchemaConfig
 }) {
     const mechanicsRegistry = createMechanicsRegistry({
         refs,
@@ -66,6 +67,7 @@ export function createGameRuntime({
         homeChromeSchemaConfig,
         menuMapConfig,
         menuSceneSchemaConfig,
+        screenRuntimeSchemaConfig,
         levelBriefsConfig,
         actionRegistry: runtimeActions.registry,
         currentPage,

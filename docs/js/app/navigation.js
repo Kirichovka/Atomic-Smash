@@ -29,6 +29,7 @@ export function createNavigationController({
     homeChromeSchemaConfig,
     menuMapConfig,
     menuSceneSchemaConfig,
+    screenRuntimeSchemaConfig,
     levelBriefsConfig,
     actionRegistry,
     currentPage,
@@ -155,7 +156,8 @@ export function createNavigationController({
         renderJournalCompoundCards({
             compounds,
             container: refs.journalCompoundList,
-            onOpenCompoundModal
+            onOpenCompoundModal,
+            schemaConfig: screenRuntimeSchemaConfig
         });
     }
 
@@ -189,7 +191,8 @@ export function createNavigationController({
             container: refs.journalElementList,
             elements,
             onOpenElementModal,
-            onSelectElement
+            onSelectElement,
+            schemaConfig: screenRuntimeSchemaConfig
         });
     }
 
@@ -240,7 +243,8 @@ export function createNavigationController({
         renderThemeCards({
             container: refs.themeList,
             onStartTheme,
-            themes: themeCards
+            themes: themeCards,
+            schemaConfig: screenRuntimeSchemaConfig
         });
     }
 

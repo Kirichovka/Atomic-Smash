@@ -54,6 +54,17 @@ export async function loadMenuSceneSchemaConfig() {
     return validateSceneSchemaConfig(schema, "menu-scene.schema").definitions;
 }
 
+export async function loadScreenRuntimeSchemaConfig() {
+    const response = await fetch("./data/screen-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load screen runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "screen-runtime.schema").definitions;
+}
+
 export async function loadLevelBriefsConfig() {
     const response = await fetch("./data/level-briefs.json");
 

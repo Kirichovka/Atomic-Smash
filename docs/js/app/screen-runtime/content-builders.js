@@ -1,10 +1,11 @@
 import { createSceneUiFactory } from "../scene-ui/factory.js";
-import { compileSceneSchema, sceneButton, sceneContainer, sceneText } from "../scene-ui/schema.js";
+import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
 
 export function renderJournalCompoundCards({
     compounds,
     container,
-    onOpenCompoundModal
+    onOpenCompoundModal,
+    schemaConfig
 }) {
     if (!container) {
         return;
@@ -13,20 +14,23 @@ export function renderJournalCompoundCards({
     container.replaceChildren();
 
     if (!compounds.length) {
-        container.appendChild(createEmptyState("No compounds discovered yet."));
+        container.appendChild(
+            createSchemaElement(schemaConfig?.emptyState, {
+                message: "No compounds discovered yet."
+            })
+        );
         return;
     }
 
-    const factory = createSceneUiFactory();
     const fragment = document.createDocumentFragment();
-
     compounds.forEach(compound => {
         fragment.appendChild(
-            factory.createElement(
-                compileSceneSchema(
-                    createJournalCompoundCardSchema(compound, onOpenCompoundModal)
-                )
-            )
+            createSchemaElement(schemaConfig?.journalCompoundCard, {
+                compound,
+                handlers: {
+                    open: () => onOpenCompoundModal?.(compound.raw)
+                }
+            })
         );
     });
 
@@ -37,7 +41,8 @@ export function renderJournalElementCards({
     container,
     elements,
     onOpenElementModal,
-    onSelectElement
+    onSelectElement,
+    schemaConfig
 }) {
     if (!container) {
         return;
@@ -45,16 +50,23 @@ export function renderJournalElementCards({
 
     container.replaceChildren();
 
-    const factory = createSceneUiFactory();
     const fragment = document.createDocumentFragment();
-
     elements.forEach(element => {
         fragment.appendChild(
-            factory.createElement(
-                compileSceneSchema(
-                    createJournalElementCardSchema(element, onSelectElement, onOpenElementModal)
-                )
-            )
+            createSchemaElement(schemaConfig?.journalElementCard, {
+                element: {
+                    ...element,
+                    className: buildClassName("journal-card", element.locked ? ["locked"] : [])
+                },
+                handlers: {
+                    open: element.locked
+                        ? null
+                        : () => {
+                            onSelectElement?.(element.symbol);
+                            onOpenElementModal?.(element.raw);
+                        }
+                }
+            })
         );
     });
 
@@ -64,7 +76,8 @@ export function renderJournalElementCards({
 export function renderThemeCards({
     container,
     onStartTheme,
-    themes
+    themes,
+    schemaConfig
 }) {
     if (!container) {
         return;
@@ -73,156 +86,46 @@ export function renderThemeCards({
     container.replaceChildren();
 
     if (!themes.length) {
-        container.appendChild(createEmptyState("No themes available yet."));
+        container.appendChild(
+            createSchemaElement(schemaConfig?.emptyState, {
+                message: "No themes available yet."
+            })
+        );
         return;
     }
 
-    const factory = createSceneUiFactory();
     const fragment = document.createDocumentFragment();
-
     themes.forEach(theme => {
         fragment.appendChild(
-            factory.createElement(
-                compileSceneSchema(
-                    createThemeCardSchema(theme, onStartTheme)
-                )
-            )
+            createSchemaElement(schemaConfig?.themeCard, {
+                theme: {
+                    ...theme,
+                    className: buildClassName("theme-card", theme.classNames),
+                    disabled: !theme.isReady
+                },
+                handlers: {
+                    start: theme.isReady ? () => onStartTheme?.(theme.id) : null
+                }
+            })
         );
     });
 
     container.appendChild(fragment);
 }
 
-function createJournalCompoundCardSchema(compound, onOpenCompoundModal) {
-    return sceneButton({
-        className: "journal-card",
-        on: {
-            click: () => onOpenCompoundModal?.(compound.raw)
-        },
-        children: [
-            sceneText({
-                className: "journal-card-kicker",
-                tagName: "div",
-                text: "Discovered compound"
-            }),
-            sceneText({
-                className: "journal-card-title",
-                tagName: "div",
-                text: compound.formula
-            }),
-            sceneText({
-                className: "journal-card-subtitle",
-                tagName: "div",
-                text: compound.name
-            }),
-            sceneText({
-                className: "journal-card-description",
-                tagName: "div",
-                text: compound.description
-            }),
-            sceneText({
-                className: "journal-card-index",
-                tagName: "div",
-                text: compound.indexLabel
-            })
-        ]
-    });
-}
+function createSchemaElement(definition, bindings = {}) {
+    if (!definition) {
+        throw new Error("Screen runtime schema definition is missing.");
+    }
 
-function createJournalElementCardSchema(element, onSelectElement, onOpenElementModal) {
-    return sceneButton({
-        attrs: {
-            disabled: element.locked
-        },
-        classNames: ["journal-card", ...(element.locked ? ["locked"] : [])],
-        on: element.locked ? {} : {
-            click: () => {
-                onSelectElement?.(element.symbol);
-                onOpenElementModal?.(element.raw);
-            }
-        },
-        children: [
-            sceneText({
-                className: "journal-card-kicker",
-                tagName: "div",
-                text: element.kicker
-            }),
-            sceneText({
-                className: "journal-card-title",
-                tagName: "div",
-                text: element.title
-            }),
-            sceneText({
-                className: "journal-card-subtitle",
-                tagName: "div",
-                text: element.name
-            }),
-            sceneText({
-                className: "journal-card-description",
-                tagName: "div",
-                text: element.description
-            }),
-            sceneText({
-                className: "journal-card-index",
-                tagName: "div",
-                text: element.status
-            })
-        ]
-    });
-}
-
-function createThemeCardSchema(theme, onStartTheme) {
-    return sceneContainer({
-        classNames: ["theme-card", ...theme.classNames],
-        tagName: "article",
-        children: [
-            sceneText({
-                className: "theme-card-kicker",
-                tagName: "div",
-                text: theme.kicker
-            }),
-            sceneText({
-                className: "theme-card-name",
-                tagName: "div",
-                text: theme.name
-            }),
-            sceneText({
-                className: "theme-card-description",
-                tagName: "div",
-                text: theme.description
-            }),
-            sceneText({
-                className: "theme-card-progress",
-                tagName: "div",
-                text: theme.progress
-            }),
-            sceneText({
-                className: "theme-card-meta",
-                tagName: "div",
-                text: theme.meta
-            }),
-            sceneButton({
-                attrs: {
-                    disabled: !theme.isReady
-                },
-                on: theme.isReady ? {
-                    click: () => onStartTheme?.(theme.id)
-                } : {},
-                text: theme.actionLabel
-            })
-        ]
-    });
-}
-
-function createEmptyState(message) {
     const factory = createSceneUiFactory();
     return factory.createElement(
         compileSceneSchema(
-            sceneText({
-                className: "empty-state",
-                tagName: "div",
-                text: message
-            })
+            resolveSceneSchema(definition, bindings)
         )
     );
+}
+
+function buildClassName(baseClass, classNames = []) {
+    return [baseClass, ...(classNames ?? [])].filter(Boolean).join(" ");
 }

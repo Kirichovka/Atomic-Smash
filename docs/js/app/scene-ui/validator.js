@@ -78,7 +78,7 @@ function validateSceneNode(node, path, errors) {
     }
 
     validateOptionalString(node.id, `${path}.id`, errors);
-    validateOptionalString(node.className, `${path}.className`, errors);
+    validateOptionalString(node.className, `${path}.className`, errors, { allowToken: true });
     validateOptionalString(node.tagName, `${path}.tagName`, errors);
     validateOptionalString(node.text, `${path}.text`, errors, { allowToken: true });
     validateOptionalString(node.textContent, `${path}.textContent`, errors, { allowToken: true });
@@ -185,8 +185,8 @@ function validateListeners(listeners, path, errors) {
             return;
         }
 
-        if (!(typeof handler === "function" || isActionToken(handler))) {
-            errors.push(`${path}.${eventName} must be a function or action token.`);
+        if (!(typeof handler === "function" || isActionToken(handler) || isBindingToken(handler))) {
+            errors.push(`${path}.${eventName} must be a function, bind token, or action token.`);
         }
     });
 }
@@ -209,8 +209,8 @@ function validateListenersArray(listeners, path, errors) {
 
         validateOptionalString(listener.eventName, `${path}[${index}].eventName`, errors);
 
-        if (!(typeof listener.handler === "function" || isActionToken(listener.handler))) {
-            errors.push(`${path}[${index}].handler must be a function or action token.`);
+        if (!(typeof listener.handler === "function" || isActionToken(listener.handler) || isBindingToken(listener.handler))) {
+            errors.push(`${path}[${index}].handler must be a function, bind token, or action token.`);
         }
     });
 }

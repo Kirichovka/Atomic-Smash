@@ -4,7 +4,8 @@ import {
     loadHotkeysConfig,
     loadLevelBriefsConfig,
     loadMenuMapConfig,
-    loadMenuSceneSchemaConfig
+    loadMenuSceneSchemaConfig,
+    loadScreenRuntimeSchemaConfig
 } from "./data.js?v=20260409-scene-schema";
 import { createEventBus } from "./app/event-bus.js";
 import { createRefs } from "./app/refs.js";
@@ -19,14 +20,16 @@ export async function initGame() {
         menuMapConfig,
         levelBriefsConfig,
         homeChromeSchemaConfig,
-        menuSceneSchemaConfig
+        menuSceneSchemaConfig,
+        screenRuntimeSchemaConfig
     ] = await Promise.all([
         loadGameData(),
         loadHotkeysConfig(),
         loadMenuMapConfig(),
         loadLevelBriefsConfig(),
         loadHomeChromeSchemaConfig(),
-        loadMenuSceneSchemaConfig()
+        loadMenuSceneSchemaConfig(),
+        loadScreenRuntimeSchemaConfig()
     ]);
 
     const refs = createRefs();
@@ -46,7 +49,8 @@ export async function initGame() {
         hotkeysConfig,
         levelBriefsConfig,
         menuMapConfig,
-        menuSceneSchemaConfig
+        menuSceneSchemaConfig,
+        screenRuntimeSchemaConfig
     });
 
     runtime.init();
