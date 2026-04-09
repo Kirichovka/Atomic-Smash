@@ -1,5 +1,6 @@
 import { DEFAULT_MECHANIC_ID } from "../state.js";
 import { createConnectionLabMechanic } from "./connection-lab.js";
+import { createMechanicInstance } from "./factory.js";
 
 export function createMechanicsRegistry({ refs, state, bus }) {
     const mechanicFactories = {
@@ -32,12 +33,21 @@ export function createMechanicsRegistry({ refs, state, bus }) {
             : [];
 
         configuredMechanics.forEach(mechanicConfig => {
-            const createMechanic = mechanicFactories[mechanicConfig.id];
-            if (!createMechanic || mechanics.has(mechanicConfig.id)) {
+            if (!mechanicConfig?.id || mechanics.has(mechanicConfig.id)) {
                 return;
             }
 
-            mechanics.set(mechanicConfig.id, createMechanic({ refs, state, bus }));
+            const createMechanic = mechanicFactories[mechanicConfig.id];
+            if (!createMechanic) {
+                return;
+            }
+
+            const mechanic = createMechanicInstance({
+                config: mechanicConfig,
+                context: { refs, state, bus },
+                factory: createMechanic
+            });
+            mechanics.set(mechanicConfig.id, mechanic);
         });
     }
 
@@ -46,7 +56,17 @@ export function createMechanicsRegistry({ refs, state, bus }) {
             return;
         }
 
-        mechanics.set(DEFAULT_MECHANIC_ID, createConnectionLabMechanic({ refs, state, bus }));
+        mechanics.set(
+            DEFAULT_MECHANIC_ID,
+            createMechanicInstance({
+                config: {
+                    id: DEFAULT_MECHANIC_ID,
+                    name: "Connection Lab"
+                },
+                context: { refs, state, bus },
+                factory: createConnectionLabMechanic
+            })
+        );
     }
 
     return {
