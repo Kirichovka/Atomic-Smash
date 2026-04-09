@@ -1,4 +1,5 @@
 import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
+import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
 import {
     renderCompoundModalContent,
     renderElementModalContent,
@@ -77,7 +78,7 @@ export function createModalController({
             isCurrent = false,
             isUnlocked = false
         } = options;
-        const actionId = `start-level-intro:${theme.id}:${level.id}`;
+        const actionId = createStartLevelIntroActionId(theme.id, level.id);
 
         registerLevelIntroAction?.({
             actionId,

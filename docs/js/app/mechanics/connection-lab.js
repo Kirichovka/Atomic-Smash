@@ -4,6 +4,7 @@ import {
     redrawConnections,
     syncConnectionsLayer
 } from "../../svg.js";
+import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createEdgeKey } from "../state.js";
 
 const DEFAULT_NODE_WIDTH = 110;
@@ -72,7 +73,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             }
 
             clearSelectedNodes({ notify: false });
-            bus.publish("interaction:context-changed", {
+            bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "mix-zone-background",
                 zone: "mix-zone",
                 clearPaletteSelection: true,
@@ -103,7 +104,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             board.dragElementType = null;
 
             if (node) {
-                bus.publish("interaction:context-changed", {
+                bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                     source: "mix-zone-drop",
                     zone: "mix-zone",
                     clearPaletteSelection: true,
@@ -370,7 +371,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return null;
         }
 
-        bus.publish("interaction:context-changed", {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "mix-zone-drop",
             zone: "mix-zone",
             clearPaletteSelection: true,
@@ -537,7 +538,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             board.selectedNodeId = draggedNodeId;
         }
 
-        bus.publish("interaction:context-changed", {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "mix-zone-node",
             zone: "mix-zone",
             clearPaletteSelection: true,
@@ -650,7 +651,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         board.startConnector = event.currentTarget;
         const startNode = board.nodes.get(board.startConnector.dataset.nodeId) ?? null;
         selectSingleNode(board.startConnector.dataset.nodeId, { notify: false });
-        bus.publish("interaction:context-changed", {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "mix-zone-connector",
             zone: "mix-zone",
             clearPaletteSelection: true,
@@ -1112,7 +1113,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         if (primarySelectedNodeId && board.nodes.has(primarySelectedNodeId)) {
             const selectedNode = board.nodes.get(primarySelectedNodeId);
-            bus.publish("interaction:context-changed", {
+            bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "mix-zone-selection",
                 zone: "mix-zone",
                 clearPaletteSelection: true,
@@ -1122,7 +1123,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        bus.publish("interaction:context-changed", {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "mix-zone-selection-cleared",
             zone: "mix-zone",
             clearPaletteSelection: true,

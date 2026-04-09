@@ -2,6 +2,7 @@ import { createHotkeysController } from "../hotkeys.js";
 import { createModalController } from "../modals.js";
 import { createNavigationController } from "../navigation.js";
 import { createPaletteController } from "../palette.js";
+import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js";
 import { persistState } from "../storage.js";
 import { getActiveMechanicId } from "../state.js";
@@ -179,15 +180,15 @@ export function createGameRuntime({
     }
 
     function bindObservers() {
-        bus.subscribe("interaction:context-changed", context => {
+        bus.subscribe(RUNTIME_EVENT_IDS.interactionContextChanged, context => {
             gameplayController.applyInteractionContext(context);
         });
 
-        bus.subscribe("element:quick-add", ({ symbol }) => {
+        bus.subscribe(RUNTIME_EVENT_IDS.elementQuickAdd, ({ symbol }) => {
             gameplayController.addElementToBoard(symbol);
         });
 
-        bus.subscribe("element:drop-at-point", ({ clientX, clientY, symbol }) => {
+        bus.subscribe(RUNTIME_EVENT_IDS.elementDropAtPoint, ({ clientX, clientY, symbol }) => {
             gameplayController.addElementToBoardAtPoint(symbol, clientX, clientY);
         });
     }
@@ -203,7 +204,7 @@ export function createGameRuntime({
                 return;
             }
 
-            bus.publish("interaction:context-changed", {
+            bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "zone-pointer",
                 zone,
                 clearBoardSelection: true,

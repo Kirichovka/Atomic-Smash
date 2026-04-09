@@ -1,7 +1,10 @@
+import { assertKnownRuntimeEventId, validateRuntimeEventPayload } from "./contracts/event-contracts.js";
+
 export function createEventBus() {
     const listeners = new Map();
 
     function subscribe(eventName, listener) {
+        assertKnownRuntimeEventId(eventName);
         const eventListeners = listeners.get(eventName) ?? new Set();
         eventListeners.add(listener);
         listeners.set(eventName, eventListeners);
@@ -16,6 +19,8 @@ export function createEventBus() {
     }
 
     function publish(eventName, payload = {}) {
+        assertKnownRuntimeEventId(eventName);
+        validateRuntimeEventPayload(eventName, payload);
         const eventListeners = listeners.get(eventName);
         if (!eventListeners) {
             return;

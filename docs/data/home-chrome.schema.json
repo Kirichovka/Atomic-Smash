@@ -1,225 +1,229 @@
 {
-    "header": {
-        "kind": "container",
-        "children": [
-            {
-                "kind": "container",
-                "attrs": {
-                    "aria-hidden": "true"
-                },
-                "className": "home-header-bar"
-            },
-            {
-                "kind": "container",
-                "className": "home-header-row",
-                "layout": {
-                    "display": "flex",
-                    "alignItems": "center",
-                    "justifyContent": "space-between",
-                    "flexDirection": "row",
-                    "gap": 1.7
-                },
-                "children": [
-                    {
-                        "kind": "container",
-                        "className": "home-brand",
-                        "attrs": {
-                            "aria-label": "Atomic Smash home",
-                            "role": "link"
-                        },
-                        "children": [
-                            {
-                                "kind": "text",
-                                "className": "home-brand-mark",
-                                "text": "\u269B"
-                            },
-                            {
-                                "kind": "container",
-                                "className": "home-brand-copy",
-                                "children": [
-                                    {
-                                        "kind": "text",
-                                        "tagName": "strong",
-                                        "text": "Atomic Smash"
-                                    },
-                                    {
-                                        "kind": "text",
-                                        "tagName": "span",
-                                        "text": "Chemistry sandbox"
-                                    }
-                                ]
-                            }
-                        ]
+    "kind": "atomic-smash.scene-ui-config",
+    "version": 1,
+    "definitions": {
+        "header": {
+            "kind": "container",
+            "children": [
+                {
+                    "kind": "container",
+                    "attrs": {
+                        "aria-hidden": "true"
                     },
-                    {
-                        "kind": "container",
-                        "className": "home-header-actions",
-                        "layout": {
-                            "display": "flex",
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "gap": 1.05
-                        },
-                        "children": [
-                            {
-                                "kind": "button",
-                                "className": "home-icon-button",
-                                "attrs": {
-                                    "aria-label": "Settings"
-                                },
-                                "text": "\u2699"
-                            },
-                            {
-                                "kind": "button",
-                                "classNames": ["home-icon-button", "home-icon-button-profile"],
-                                "attrs": {
-                                    "aria-label": "Profile"
-                                },
-                                "text": "\u25CC"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "kind": "container",
-                "className": "home-header-strap",
-                "layout": {
-                    "display": "flex",
-                    "alignItems": "center",
-                    "justifyContent": "space-between",
-                    "flexDirection": "row",
-                    "gap": 1.35
+                    "className": "home-header-bar"
                 },
-                "styles": {
-                    "flexWrap": "wrap"
-                },
-                "children": [
-                    {
-                        "kind": "container",
-                        "className": "home-route-meta",
-                        "layout": {
-                            "display": "flex",
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "gap": 1.05
-                        },
-                        "styles": {
-                            "flexWrap": "wrap"
-                        },
-                        "children": [
-                            {
-                                "kind": "text",
-                                "className": "home-header-pill",
-                                "text": "Current Route"
-                            },
-                            {
-                                "kind": "container",
-                                "className": "home-route-copy",
-                                "children": [
-                                    {
-                                        "kind": "text",
-                                        "id": "menu-route-name",
-                                        "tagName": "strong",
-                                        "text": "Basic"
-                                    },
-                                    {
-                                        "kind": "text",
-                                        "id": "menu-route-progress",
-                                        "tagName": "span",
-                                        "text": "0/0 complete"
-                                    }
-                                ]
-                            }
-                        ]
+                {
+                    "kind": "container",
+                    "className": "home-header-row",
+                    "layout": {
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "space-between",
+                        "flexDirection": "row",
+                        "gap": 1.7
                     },
-                    {
-                        "kind": "container",
-                        "className": "home-header-nav",
-                        "layout": {
-                            "display": "flex",
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "gap": 0.85
-                        },
-                        "styles": {
-                            "flexWrap": "wrap"
-                        },
-                        "children": [
-                            {
-                                "kind": "button",
-                                "id": "menu-journal-btn",
-                                "className": "home-header-link",
-                                "on": {
-                                    "click": {
-                                        "action": "openJournalScreen"
-                                    }
-                                },
-                                "text": "Journal"
+                    "children": [
+                        {
+                            "kind": "container",
+                            "className": "home-brand",
+                            "attrs": {
+                                "aria-label": "Atomic Smash home",
+                                "role": "link"
                             },
-                            {
-                                "kind": "button",
-                                "id": "menu-continue-btn",
-                                "classNames": ["home-header-link", "home-header-link-primary"],
-                                "on": {
-                                    "click": {
-                                        "action": "resumeViewedTheme"
-                                    }
+                            "children": [
+                                {
+                                    "kind": "text",
+                                    "className": "home-brand-mark",
+                                    "text": "\u269B"
                                 },
-                                "text": "Continue"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    "toolbar": {
-        "kind": "container",
-        "layout": {
-            "display": "flex",
-            "alignItems": "center",
-            "justifyContent": "space-between",
-            "flexDirection": "row",
-            "gap": 1.2
-        },
-        "children": [
-            {
-                "kind": "button",
-                "id": "menu-prev-theme-btn",
-                "className": "home-sheet-arrow",
-                "attrs": {
-                    "aria-label": "Previous theme sheet"
+                                {
+                                    "kind": "container",
+                                    "className": "home-brand-copy",
+                                    "children": [
+                                        {
+                                            "kind": "text",
+                                            "tagName": "strong",
+                                            "text": "Atomic Smash"
+                                        },
+                                        {
+                                            "kind": "text",
+                                            "tagName": "span",
+                                            "text": "Chemistry sandbox"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "kind": "container",
+                            "className": "home-header-actions",
+                            "layout": {
+                                "display": "flex",
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "gap": 1.05
+                            },
+                            "children": [
+                                {
+                                    "kind": "button",
+                                    "className": "home-icon-button",
+                                    "attrs": {
+                                        "aria-label": "Settings"
+                                    },
+                                    "text": "\u2699"
+                                },
+                                {
+                                    "kind": "button",
+                                    "classNames": ["home-icon-button", "home-icon-button-profile"],
+                                    "attrs": {
+                                        "aria-label": "Profile"
+                                    },
+                                    "text": "\u25CC"
+                                }
+                            ]
+                        }
+                    ]
                 },
-                "on": {
-                    "click": {
-                        "action": "previousThemeSheet"
-                    }
-                },
-                "text": "<"
-            },
-            {
-                "kind": "container",
-                "id": "menu-sheet-dots",
-                "className": "home-sheet-dots",
-                "attrs": {
-                    "aria-label": "Theme sheets"
+                {
+                    "kind": "container",
+                    "className": "home-header-strap",
+                    "layout": {
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "space-between",
+                        "flexDirection": "row",
+                        "gap": 1.35
+                    },
+                    "styles": {
+                        "flexWrap": "wrap"
+                    },
+                    "children": [
+                        {
+                            "kind": "container",
+                            "className": "home-route-meta",
+                            "layout": {
+                                "display": "flex",
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "gap": 1.05
+                            },
+                            "styles": {
+                                "flexWrap": "wrap"
+                            },
+                            "children": [
+                                {
+                                    "kind": "text",
+                                    "className": "home-header-pill",
+                                    "text": "Current Route"
+                                },
+                                {
+                                    "kind": "container",
+                                    "className": "home-route-copy",
+                                    "children": [
+                                        {
+                                            "kind": "text",
+                                            "id": "menu-route-name",
+                                            "tagName": "strong",
+                                            "text": "Basic"
+                                        },
+                                        {
+                                            "kind": "text",
+                                            "id": "menu-route-progress",
+                                            "tagName": "span",
+                                            "text": "0/0 complete"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "kind": "container",
+                            "className": "home-header-nav",
+                            "layout": {
+                                "display": "flex",
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "gap": 0.85
+                            },
+                            "styles": {
+                                "flexWrap": "wrap"
+                            },
+                            "children": [
+                                {
+                                    "kind": "button",
+                                    "id": "menu-journal-btn",
+                                    "className": "home-header-link",
+                                    "on": {
+                                        "click": {
+                                            "action": "openJournalScreen"
+                                        }
+                                    },
+                                    "text": "Journal"
+                                },
+                                {
+                                    "kind": "button",
+                                    "id": "menu-continue-btn",
+                                    "classNames": ["home-header-link", "home-header-link-primary"],
+                                    "on": {
+                                        "click": {
+                                            "action": "resumeViewedTheme"
+                                        }
+                                    },
+                                    "text": "Continue"
+                                }
+                            ]
+                        }
+                    ]
                 }
+            ]
+        },
+        "toolbar": {
+            "kind": "container",
+            "layout": {
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "flexDirection": "row",
+                "gap": 1.2
             },
-            {
-                "kind": "button",
-                "id": "menu-next-theme-btn",
-                "className": "home-sheet-arrow",
-                "attrs": {
-                    "aria-label": "Next theme sheet"
+            "children": [
+                {
+                    "kind": "button",
+                    "id": "menu-prev-theme-btn",
+                    "className": "home-sheet-arrow",
+                    "attrs": {
+                        "aria-label": "Previous theme sheet"
+                    },
+                    "on": {
+                        "click": {
+                            "action": "previousThemeSheet"
+                        }
+                    },
+                    "text": "<"
                 },
-                "on": {
-                    "click": {
-                        "action": "nextThemeSheet"
+                {
+                    "kind": "container",
+                    "id": "menu-sheet-dots",
+                    "className": "home-sheet-dots",
+                    "attrs": {
+                        "aria-label": "Theme sheets"
                     }
                 },
-                "text": ">"
-            }
-        ]
+                {
+                    "kind": "button",
+                    "id": "menu-next-theme-btn",
+                    "className": "home-sheet-arrow",
+                    "attrs": {
+                        "aria-label": "Next theme sheet"
+                    },
+                    "on": {
+                        "click": {
+                            "action": "nextThemeSheet"
+                        }
+                    },
+                    "text": ">"
+                }
+            ]
+        }
     }
 }

@@ -1,6 +1,7 @@
 import { createInlineLayoutRule } from "./layout-rules.js";
 import { SceneUiButton, SceneUiContainer, SceneUiText } from "./elements.js";
 import { validateSceneSchemaDefinition } from "./validator.js";
+import { assertKnownActionId } from "../contracts/action-ids.js";
 
 export function sceneContainer(definition = {}) {
     return {
@@ -201,13 +202,15 @@ function readBinding(bindings, path) {
 }
 
 function resolveActionToken(token, actionSource) {
+    assertKnownActionId(token.action, "scene schema action");
+
     if (actionSource?.resolve && typeof actionSource.resolve === "function") {
         return actionSource.resolve(token.action, token.args);
     }
 
     const handler = actionSource?.[token.action];
     if (typeof handler !== "function") {
-        return undefined;
+        throw new Error(`No handler available for scene schema action: ${token.action}`);
     }
 
     if (token.args === undefined) {

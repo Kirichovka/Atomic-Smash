@@ -1,4 +1,5 @@
 import { getAvailableElements, getInspectedElement, getPaletteSelectedElement } from "./state.js";
+import { RUNTIME_EVENT_IDS } from "./contracts/event-contracts.js";
 
 const PALETTE_DRAG_THRESHOLD = 6;
 
@@ -40,7 +41,7 @@ export function createPaletteController({
             }
 
             const symbol = template.dataset.element || null;
-            bus.publish("interaction:context-changed", {
+            bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "palette-click",
                 zone: "palette",
                 clearBoardSelection: true,
@@ -50,7 +51,7 @@ export function createPaletteController({
             });
 
             if (prefersCoarsePointer && symbol) {
-                bus.publish("element:quick-add", {
+                bus.publish(RUNTIME_EVENT_IDS.elementQuickAdd, {
                     source: "palette-click",
                     symbol
                 });
@@ -116,7 +117,7 @@ export function createPaletteController({
         }
 
         if (dragState.isDragging && dragState.symbol) {
-            bus.publish("element:drop-at-point", {
+            bus.publish(RUNTIME_EVENT_IDS.elementDropAtPoint, {
                 clientX: event.clientX,
                 clientY: event.clientY,
                 symbol: dragState.symbol
@@ -140,7 +141,7 @@ export function createPaletteController({
         state.board.dragElementType = symbol;
         document.body.classList.add("dragging-element");
 
-        bus.publish("interaction:context-changed", {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "palette-drag",
             zone: "palette",
             clearBoardSelection: true,

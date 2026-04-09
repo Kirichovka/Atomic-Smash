@@ -4,6 +4,7 @@ import { getMenuStageOverflow, projectNodeToViewport, createSceneEdgePath } from
 import { MenuSceneViewport } from "./view.js";
 import { createSceneUiFactory } from "../scene-ui/factory.js";
 import { compileSceneSchema, resolveSceneSchema, sceneButton, sceneContainer, sceneText } from "../scene-ui/schema.js";
+import { SCENE_ACTION_IDS, createPreviewLevelIntroActionId } from "../contracts/action-ids.js";
 
 export function createMenuSceneController({
     refs,
@@ -193,7 +194,7 @@ export function createMenuSceneController({
 
     function createNodeActionRegistry(node) {
         if (actionRegistry?.register && typeof actionRegistry.register === "function") {
-            const actionId = `previewLevelIntro:${node.levelId}`;
+            const actionId = createPreviewLevelIntroActionId(node.levelId);
             if (!actionRegistry.has?.(actionId)) {
                 actionRegistry.register(actionId, () => {
                     onPreviewLevelIntro?.(node.theme, node.level, node.options);
@@ -202,7 +203,7 @@ export function createMenuSceneController({
 
             return {
                 resolve(requestedActionId, args) {
-                    if (requestedActionId === "previewLevelIntro") {
+                    if (requestedActionId === SCENE_ACTION_IDS.previewLevelIntro) {
                         return actionRegistry.resolve(actionId, args);
                     }
 
@@ -212,7 +213,7 @@ export function createMenuSceneController({
         }
 
         return {
-            previewLevelIntro: () => {
+            [SCENE_ACTION_IDS.previewLevelIntro]: () => {
                 onPreviewLevelIntro?.(node.theme, node.level, node.options);
             }
         };
@@ -262,7 +263,7 @@ function createNodeSchema(node) {
         },
         on: {
             click: {
-                action: "previewLevelIntro"
+                action: SCENE_ACTION_IDS.previewLevelIntro
             }
         },
         children: [

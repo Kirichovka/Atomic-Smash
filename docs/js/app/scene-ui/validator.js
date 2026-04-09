@@ -1,3 +1,6 @@
+import { isKnownActionId } from "../contracts/action-ids.js";
+import { SCENE_SCHEMA_CONFIG_KIND, SCENE_SCHEMA_CONFIG_VERSION } from "./schema-contract.js";
+
 const VALID_KINDS = new Set(["button", "container", "text"]);
 const VALID_LAYOUT_KEYS = new Set([
     "alignItems",
@@ -23,8 +26,27 @@ export function validateSceneSchemaConfig(config, label = "scene-schema") {
         throw createSceneSchemaValidationError(label, errors);
     }
 
-    Object.entries(config).forEach(([key, definition]) => {
-        validateSceneSchemaDefinition(definition, `${label}.${key}`, errors);
+    const allowedKeys = new Set(["definitions", "kind", "version"]);
+    Object.keys(config).forEach(key => {
+        if (!allowedKeys.has(key)) {
+            errors.push(`${label}.${key} is not a supported schema config key.`);
+        }
+    });
+
+    if (config.kind !== SCENE_SCHEMA_CONFIG_KIND) {
+        errors.push(`${label}.kind must be ${SCENE_SCHEMA_CONFIG_KIND}.`);
+    }
+
+    if (config.version !== SCENE_SCHEMA_CONFIG_VERSION) {
+        errors.push(`${label}.version must be ${SCENE_SCHEMA_CONFIG_VERSION}.`);
+    }
+
+    if (!isPlainObject(config.definitions)) {
+        errors.push(`${label}.definitions must be a plain object.`);
+    }
+
+    Object.entries(config.definitions ?? {}).forEach(([key, definition]) => {
+        validateSceneSchemaDefinition(definition, `${label}.definitions.${key}`, errors);
     });
 
     if (errors.length > 0) {
@@ -277,7 +299,7 @@ function isBindingToken(value) {
 }
 
 function isActionToken(value) {
-    return typeof value?.action === "string";
+    return typeof value?.action === "string" && isKnownActionId(value.action);
 }
 
 function isPrimitiveLayoutValue(value) {

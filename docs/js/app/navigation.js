@@ -6,6 +6,7 @@ import {
     getLevelsForTheme,
     getMechanicById
 } from "./state.js";
+import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
 import { createMenuSceneController } from "./menu-scene/controller.js";
 import { createHomeChromeController } from "./menu-scene/chrome.js";
 import {
@@ -43,10 +44,10 @@ export function createNavigationController({
     onResumeCurrentTheme
 }) {
     actionRegistry?.registerMany?.({
-        nextThemeSheet: () => cycleMenuTheme(1),
-        openJournalScreen: () => onOpenJournalScreen?.(),
-        previousThemeSheet: () => cycleMenuTheme(-1),
-        resumeViewedTheme: () => resumeViewedTheme()
+        [SCENE_ACTION_IDS.nextThemeSheet]: () => cycleMenuTheme(1),
+        [SCENE_ACTION_IDS.openJournalScreen]: () => onOpenJournalScreen?.(),
+        [SCENE_ACTION_IDS.previousThemeSheet]: () => cycleMenuTheme(-1),
+        [SCENE_ACTION_IDS.resumeViewedTheme]: () => resumeViewedTheme()
     });
     const homeChromeController = createHomeChromeController({
         refs,

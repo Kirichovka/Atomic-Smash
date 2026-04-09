@@ -1,3 +1,4 @@
+import { validateHotkeysConfig } from "./app/hotkeys-validator.js";
 import { validateSceneSchemaConfig } from "./app/scene-ui/validator.js";
 
 export async function loadGameData() {
@@ -18,7 +19,7 @@ export async function loadHotkeysConfig() {
         throw new Error(`Failed to load hotkeys config: ${response.status}`);
     }
 
-    return response.json();
+    return validateHotkeysConfig(await response.json());
 }
 
 export async function loadMenuMapConfig() {
@@ -39,7 +40,7 @@ export async function loadHomeChromeSchemaConfig() {
     }
 
     const schema = await response.json();
-    return validateSceneSchemaConfig(schema, "home-chrome.schema");
+    return validateSceneSchemaConfig(schema, "home-chrome.schema").definitions;
 }
 
 export async function loadMenuSceneSchemaConfig() {
@@ -50,7 +51,7 @@ export async function loadMenuSceneSchemaConfig() {
     }
 
     const schema = await response.json();
-    return validateSceneSchemaConfig(schema, "menu-scene.schema");
+    return validateSceneSchemaConfig(schema, "menu-scene.schema").definitions;
 }
 
 export async function loadLevelBriefsConfig() {

@@ -1,13 +1,16 @@
+import { assertKnownActionId } from "../contracts/action-ids.js";
+
 export function createSceneActionRegistry(initialActions = {}) {
     const handlers = new Map();
 
     registerMany(initialActions);
 
     function register(actionId, handler) {
-        if (typeof actionId !== "string" || !actionId.trim() || typeof handler !== "function") {
+        if (typeof handler !== "function") {
             return;
         }
 
+        assertKnownActionId(actionId, "scene action");
         handlers.set(actionId, handler);
     }
 
@@ -18,17 +21,20 @@ export function createSceneActionRegistry(initialActions = {}) {
     }
 
     function get(actionId) {
+        assertKnownActionId(actionId, "scene action");
         return handlers.get(actionId) ?? null;
     }
 
     function has(actionId) {
+        assertKnownActionId(actionId, "scene action");
         return handlers.has(actionId);
     }
 
     function resolve(actionId, args) {
+        assertKnownActionId(actionId, "scene action");
         const handler = get(actionId);
         if (typeof handler !== "function") {
-            return undefined;
+            throw new Error(`No handler registered for scene action: ${actionId}`);
         }
 
         if (args === undefined) {

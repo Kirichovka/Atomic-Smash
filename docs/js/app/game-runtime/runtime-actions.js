@@ -1,4 +1,5 @@
 import { createSceneActionRegistry } from "../scene-ui/action-registry.js";
+import { assertKnownActionId } from "../contracts/action-ids.js";
 
 export function createRuntimeActionRegistry() {
     const registry = createSceneActionRegistry();
@@ -8,6 +9,7 @@ export function createRuntimeActionRegistry() {
     }
 
     function registerLevelIntroAction({ actionId, handler }) {
+        assertKnownActionId(actionId, "runtime action");
         registry.register(actionId, handler);
     }
 
