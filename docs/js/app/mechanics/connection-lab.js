@@ -5,6 +5,7 @@ import {
     syncConnectionsLayer
 } from "../../svg.js";
 import { createBoardSceneController } from "../board-scene/controller.js";
+import { createBoardStateController } from "../board-scene/state-controller.js";
 import {
     clampBoardLocalCoordinate,
     getBoardNodeMetrics
@@ -28,6 +29,7 @@ const SPAWN_OFFSETS = [
 
 export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
+    const boardState = createBoardStateController(board);
     const elementsBySymbol = new Map(state.catalog.elements.map(element => [element.symbol, element]));
     const boardScene = createBoardSceneController({
         defaultNodeHeight: DEFAULT_NODE_HEIGHT,
@@ -131,7 +133,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return { status: "unknown" };
         }
 
-        const nodeEntries = [...board.nodes.entries()].map(([id, node]) => ({
+        const nodeEntries = boardState.getNodeEntries().map(([id, node]) => ({
             id,
             symbol: node.dataset.symbol
         }));
@@ -161,16 +163,16 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     function validateValency() {
         const degreeByNodeId = new Map();
 
-        board.nodes.forEach((_, nodeId) => {
+        boardState.getNodes().forEach((_, nodeId) => {
             degreeByNodeId.set(nodeId, 0);
         });
 
-        board.connections.forEach(connection => {
+        boardState.getConnections().forEach(connection => {
             degreeByNodeId.set(connection.fromNodeId, (degreeByNodeId.get(connection.fromNodeId) ?? 0) + 1);
             degreeByNodeId.set(connection.toNodeId, (degreeByNodeId.get(connection.toNodeId) ?? 0) + 1);
         });
 
-        const issues = [...board.nodes.entries()]
+        const issues = boardState.getNodeEntries()
             .map(([nodeId, node]) => {
                 const element = elementsBySymbol.get(node.dataset.symbol);
                 const allowedBonds = Number(element?.valency);
@@ -226,11 +228,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function clearRuntimeBoard() {
         clearSelectedNodes();
-        [...board.nodes.values()].forEach(node => node.remove());
-        board.nodes.clear();
+        boardState.getNodeValues().forEach(node => node.remove());
+        boardState.clearNodes();
 
-        board.connections.forEach(connection => connection.line.remove());
-        board.connections.length = 0;
+        boardState.getConnections().forEach(connection => connection.line.remove());
+        boardState.clearConnections();
 
         removeTemporaryWire();
         sync();
@@ -244,7 +246,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         boardScene.sync();
         syncNodeLayoutToCurrentMixZone();
         syncConnectionsLayer(refs.svg, refs.mixZone);
-        redrawConnections(board.connections, board.nodes, refs.svg);
+        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
     }
 
     function captureState() {
@@ -256,7 +258,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             };
         }
 
-        board.savedNodes = [...board.nodes.values()].map(node => ({
+        board.savedNodes = boardState.getNodeValues().map(node => ({
             id: node.dataset.id,
             localX: getNodeLocalX(node),
             localY: getNodeLocalY(node),
@@ -264,7 +266,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             x: getNodeLeft(node),
             y: getNodeTop(node)
         }));
-        board.savedConnections = board.connections.map(connection => ({
+        board.savedConnections = boardState.getConnections().map(connection => ({
             fromNodeId: connection.fromNodeId,
             fromPosition: connection.fromPosition,
             toNodeId: connection.toNodeId,
@@ -395,14 +397,14 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function getSuggestedSpawnPosition() {
-        return boardScene.createSpawnPosition(board.nodes.size);
+        return boardScene.createSpawnPosition(boardState.getNodes().size);
     }
 
     function createBoardGraph() {
         const edgeSet = new Set();
         const adjacency = new Map();
 
-        board.connections.forEach(connection => {
+        boardState.getConnections().forEach(connection => {
             const key = createEdgeKey(connection.fromNodeId, connection.toNodeId);
             edgeSet.add(key);
 
@@ -468,7 +470,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         node.addEventListener("dragstart", preventNativeDrag);
 
         refs.mixZone.appendChild(node);
-        board.nodes.set(id, node);
+        boardState.addNode(id, node);
 
         if (options.persist !== false) {
             captureState();
@@ -482,8 +484,8 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
-        const fromNode = board.nodes.get(connection.fromNodeId);
-        const toNode = board.nodes.get(connection.toNodeId);
+        const fromNode = boardState.getNode(connection.fromNodeId);
+        const toNode = boardState.getNode(connection.toNodeId);
         if (!fromNode || !toNode) {
             return;
         }
@@ -502,7 +504,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         });
         refs.svg.appendChild(line);
 
-        board.connections.push({
+        boardState.addConnection({
             fromNodeId: connection.fromNodeId,
             fromPosition: connection.fromPosition,
             toNodeId: connection.toNodeId,
@@ -538,7 +540,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         if (!shouldPreserveMultiSelection) {
             selectSingleNode(draggedNodeId, { notify: false });
         } else {
-            board.selectedNodeId = draggedNodeId;
+            boardState.replaceSelectedNodeId(draggedNodeId);
         }
 
         bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
@@ -598,7 +600,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             );
         });
 
-        redrawConnections(board.connections, board.nodes, refs.svg);
+        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
     }
 
     function stopMoveNode(event) {
@@ -652,7 +654,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         removeTemporaryWire();
 
         board.startConnector = event.currentTarget;
-        const startNode = board.nodes.get(board.startConnector.dataset.nodeId) ?? null;
+        const startNode = boardState.getNode(board.startConnector.dataset.nodeId) ?? null;
         selectSingleNode(board.startConnector.dataset.nodeId, { notify: false });
         bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
             source: "mix-zone-connector",
@@ -732,7 +734,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         });
         refs.svg.appendChild(line);
 
-        board.connections.push({
+        boardState.addConnection({
             fromNodeId: startNodeId,
             fromPosition: board.startConnector.dataset.position,
             toNodeId: endNodeId,
@@ -740,7 +742,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             line
         });
 
-        redrawConnections(board.connections, board.nodes, refs.svg);
+        redrawConnections(boardState.getConnections(), boardState.getNodes(), refs.svg);
         removeTemporaryWire();
         captureState();
     }
@@ -895,20 +897,19 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function connectionExists(startNodeId, endNodeId) {
-        return board.connections.some(connection =>
+        return boardState.getConnections().some(connection =>
             (connection.fromNodeId === startNodeId && connection.toNodeId === endNodeId) ||
             (connection.fromNodeId === endNodeId && connection.toNodeId === startNodeId)
         );
     }
 
     function clampNodePosition(x, y) {
-        const nodeMetrics = getNodeMetrics(refs.mixZone);
         return boardScene.clampPosition(x, y);
     }
 
     function syncNodeLayoutToCurrentMixZone() {
         boardScene.sync();
-        board.nodes.forEach(node => {
+        boardState.getNodes().forEach(node => {
             if (node === board.movingNode) {
                 return;
             }
@@ -940,39 +941,38 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function removeConnectionByLine(line) {
-        const index = board.connections.findIndex(connection => connection.line === line);
+        const index = boardState.getConnections().findIndex(connection => connection.line === line);
         if (index === -1) {
             return;
         }
 
-        board.connections[index].line.remove();
-        board.connections.splice(index, 1);
+        boardState.getConnections()[index].line.remove();
+        boardState.removeConnectionAt(index);
         captureState();
     }
 
     function removeNode(nodeId, options = {}) {
         const { notifySelection = true } = options;
-        const node = board.nodes.get(nodeId);
+        const node = boardState.getNode(nodeId);
         if (!node) {
             return;
         }
 
         let selectionChanged = false;
-        if (board.selectedNodeIds.has(nodeId)) {
-            board.selectedNodeIds.delete(nodeId);
-            node.classList.remove("selected");
-            board.selectedNodeId = getPrimarySelectedNodeId();
+        if (boardState.hasSelectedNode(nodeId)) {
+            boardState.deleteSelectedNode(nodeId);
+            boardState.syncPrimarySelectedNodeId();
             selectionChanged = true;
         }
 
         node.remove();
-        board.nodes.delete(nodeId);
+        boardState.deleteNode(nodeId);
 
-        for (let index = board.connections.length - 1; index >= 0; index -= 1) {
-            const connection = board.connections[index];
+        for (let index = boardState.getConnections().length - 1; index >= 0; index -= 1) {
+            const connection = boardState.getConnections()[index];
             if (connection.fromNodeId === nodeId || connection.toNodeId === nodeId) {
                 connection.line.remove();
-                board.connections.splice(index, 1);
+                boardState.removeConnectionAt(index);
             }
         }
 
@@ -1026,24 +1026,20 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const { notify = true } = options;
         const nextNodeId = nodeId ?? null;
 
-        if (nextNodeId && board.selectedNodeIds.size === 1 && board.selectedNodeIds.has(nextNodeId)) {
+        if (nextNodeId && board.selectedNodeIds.size === 1 && boardState.hasSelectedNode(nextNodeId)) {
             if (notify) {
                 notifySelectionState();
             }
             return;
         }
 
-        board.selectedNodeIds.forEach(selectedNodeId => {
-            board.nodes.get(selectedNodeId)?.classList.remove("selected");
-        });
-        board.selectedNodeIds.clear();
+        boardState.clearSelection();
 
-        if (nextNodeId && board.nodes.has(nextNodeId)) {
-            board.selectedNodeIds.add(nextNodeId);
-            board.nodes.get(nextNodeId)?.classList.add("selected");
+        if (nextNodeId && boardState.hasNode(nextNodeId)) {
+            boardState.addSelectedNode(nextNodeId);
         }
 
-        board.selectedNodeId = nextNodeId && board.nodes.has(nextNodeId) ? nextNodeId : null;
+        boardState.replaceSelectedNodeId(nextNodeId && boardState.hasNode(nextNodeId) ? nextNodeId : null);
 
         if (notify) {
             notifySelectionState();
@@ -1052,19 +1048,17 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function toggleNodeSelection(nodeId, options = {}) {
         const { notify = true } = options;
-        if (!nodeId || !board.nodes.has(nodeId)) {
+        if (!nodeId || !boardState.hasNode(nodeId)) {
             return;
         }
 
-        if (board.selectedNodeIds.has(nodeId)) {
-            board.selectedNodeIds.delete(nodeId);
-            board.nodes.get(nodeId)?.classList.remove("selected");
+        if (boardState.hasSelectedNode(nodeId)) {
+            boardState.deleteSelectedNode(nodeId);
         } else {
-            board.selectedNodeIds.add(nodeId);
-            board.nodes.get(nodeId)?.classList.add("selected");
+            boardState.addSelectedNode(nodeId);
         }
 
-        board.selectedNodeId = getPrimarySelectedNodeId();
+        boardState.syncPrimarySelectedNodeId();
 
         if (notify) {
             notifySelectionState();
@@ -1073,12 +1067,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function clearSelectedNodes(options = {}) {
         const { notify = true } = options;
-
-        board.selectedNodeIds.forEach(selectedNodeId => {
-            board.nodes.get(selectedNodeId)?.classList.remove("selected");
-        });
-        board.selectedNodeIds.clear();
-        board.selectedNodeId = null;
+        boardState.clearSelection();
 
         if (notify) {
             notifySelectionState();
@@ -1086,11 +1075,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function notifySelectionState() {
-        const primarySelectedNodeId = getPrimarySelectedNodeId();
-        board.selectedNodeId = primarySelectedNodeId;
+        const primarySelectedNodeId = boardState.getPrimarySelectedNodeId();
+        boardState.replaceSelectedNodeId(primarySelectedNodeId);
 
-        if (primarySelectedNodeId && board.nodes.has(primarySelectedNodeId)) {
-            const selectedNode = board.nodes.get(primarySelectedNodeId);
+        if (primarySelectedNodeId && boardState.hasNode(primarySelectedNodeId)) {
+            const selectedNode = boardState.getNode(primarySelectedNodeId);
             bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "mix-zone-selection",
                 zone: "mix-zone",
@@ -1110,18 +1099,8 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         });
     }
 
-    function getPrimarySelectedNodeId() {
-        for (const nodeId of board.selectedNodeIds) {
-            if (board.nodes.has(nodeId)) {
-                return nodeId;
-            }
-        }
-
-        return null;
-    }
-
     function getSelectedNodeIds() {
-        return [...board.selectedNodeIds].filter(nodeId => board.nodes.has(nodeId));
+        return boardState.getSelectedNodeIds();
     }
 
     function getMovingGroup(anchorNode) {
@@ -1136,7 +1115,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const anchorTop = getNodeTop(anchorNode);
 
         return movingNodeIds
-            .map(nodeId => board.nodes.get(nodeId))
+            .map(nodeId => boardState.getNode(nodeId))
             .filter(Boolean)
             .map(node => ({
                 deltaX: getNodeLeft(node) - anchorLeft,
