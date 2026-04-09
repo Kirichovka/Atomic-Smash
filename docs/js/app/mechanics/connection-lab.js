@@ -4,6 +4,11 @@ import {
     redrawConnections,
     syncConnectionsLayer
 } from "../../svg.js";
+import { createBoardSceneController } from "../board-scene/controller.js";
+import {
+    clampBoardLocalCoordinate,
+    getBoardNodeMetrics
+} from "../board-scene/methods.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createEdgeKey } from "../state.js";
 
@@ -24,6 +29,12 @@ const SPAWN_OFFSETS = [
 export function createConnectionLabMechanic({ refs, state, bus }) {
     const board = state.board;
     const elementsBySymbol = new Map(state.catalog.elements.map(element => [element.symbol, element]));
+    const boardScene = createBoardSceneController({
+        defaultNodeHeight: DEFAULT_NODE_HEIGHT,
+        defaultNodeWidth: DEFAULT_NODE_WIDTH,
+        offsets: SPAWN_OFFSETS,
+        viewportElement: refs.mixZone
+    });
     let resizeObserver = null;
     let resizeSyncFrame = null;
     let movingGroup = [];
@@ -230,6 +241,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return;
         }
 
+        boardScene.sync();
         syncNodeLayoutToCurrentMixZone();
         syncConnectionsLayer(refs.svg, refs.mixZone);
         redrawConnections(board.connections, board.nodes, refs.svg);
@@ -383,16 +395,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function getSuggestedSpawnPosition() {
-        const nodeMetrics = getNodeMetrics(refs.mixZone);
-        const rawPosition = getSuggestedSpawnPositionForCount(
-            board.nodes.size,
-            refs.mixZone.clientWidth,
-            refs.mixZone.clientHeight,
-            nodeMetrics.width,
-            nodeMetrics.height
-        );
-
-        return clampNodePosition(rawPosition.x, rawPosition.y);
+        return boardScene.createSpawnPosition(board.nodes.size);
     }
 
     function createBoardGraph() {
@@ -438,7 +441,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         const id = requestedId;
         const position = options.positionSpace === "local"
             ? localToPixelPosition(x, y)
-            : clampNodePosition(x, y);
+            : boardScene.clampPosition(x, y);
 
         board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
 
@@ -900,16 +903,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function clampNodePosition(x, y) {
         const nodeMetrics = getNodeMetrics(refs.mixZone);
-        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
-        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
-
-        return {
-            x: Math.min(Math.max(x, 0), maxX),
-            y: Math.min(Math.max(y, 0), maxY)
-        };
+        return boardScene.clampPosition(x, y);
     }
 
     function syncNodeLayoutToCurrentMixZone() {
+        boardScene.sync();
         board.nodes.forEach(node => {
             if (node === board.movingNode) {
                 return;
@@ -923,8 +921,8 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
     function setNodePosition(node, x, y, options = {}) {
         const { clamp = true } = options;
-        const renderedPosition = clamp ? clampNodePosition(x, y) : { x, y };
-        const localAnchor = clampNodePosition(x, y);
+        const renderedPosition = clamp ? boardScene.clampPosition(x, y) : { x, y };
+        const localAnchor = boardScene.clampPosition(x, y);
         const localPosition = pixelToLocalPosition(localAnchor.x, localAnchor.y);
 
         node.style.left = `${renderedPosition.x}px`;
@@ -934,25 +932,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function pixelToLocalPosition(x, y) {
-        const nodeMetrics = getNodeMetrics(refs.mixZone);
-        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
-        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
-
-        return {
-            localX: maxX > 0 ? x / maxX : 0,
-            localY: maxY > 0 ? y / maxY : 0
-        };
+        return boardScene.toLocal(x, y);
     }
 
     function localToPixelPosition(localX, localY) {
-        const nodeMetrics = getNodeMetrics(refs.mixZone);
-        const maxX = Math.max(refs.mixZone.clientWidth - nodeMetrics.width, 0);
-        const maxY = Math.max(refs.mixZone.clientHeight - nodeMetrics.height, 0);
-
-        return clampNodePosition(
-            maxX * clampLocalCoordinate(localX),
-            maxY * clampLocalCoordinate(localY)
-        );
+        return boardScene.toPixel(localX, localY);
     }
 
     function removeConnectionByLine(line) {
@@ -1016,13 +1000,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function isNodeOutsideMixZone(x, y) {
-        const nodeMetrics = getNodeMetrics(refs.mixZone);
-        return (
-            x < 0 ||
-            y < 0 ||
-            x + nodeMetrics.width > refs.mixZone.clientWidth ||
-            y + nodeMetrics.height > refs.mixZone.clientHeight
-        );
+        return boardScene.isNodeOutside(x, y);
     }
 
     function preventNativeDrag(event) {
@@ -1195,24 +1173,16 @@ function getNodeTop(node) {
 }
 
 function getNodeLocalX(node) {
-    return clampLocalCoordinate(Number.parseFloat(node.dataset.localX || "0"));
+    return clampBoardLocalCoordinate(Number.parseFloat(node.dataset.localX || "0"));
 }
 
 function getNodeLocalY(node) {
-    return clampLocalCoordinate(Number.parseFloat(node.dataset.localY || "0"));
+    return clampBoardLocalCoordinate(Number.parseFloat(node.dataset.localY || "0"));
 }
 
 function parseNodeIndex(nodeId) {
     const match = /^node-(\d+)$/.exec(nodeId ?? "");
     return match ? Number(match[1]) : 0;
-}
-
-function clampLocalCoordinate(value) {
-    if (!Number.isFinite(value)) {
-        return 0;
-    }
-
-    return Math.min(Math.max(value, 0), 1);
 }
 
 function isPointerOutsideViewport(clientX, clientY) {
@@ -1284,34 +1254,11 @@ function isPointInsideRect(x, y, width, height) {
     return x >= 0 && x <= width && y >= 0 && y <= height;
 }
 
-function getSuggestedSpawnPositionForCount(count, width, height, nodeWidth, nodeHeight) {
-    const centerX = (width / 2) - (nodeWidth / 2);
-    const centerY = (height / 2) - (nodeHeight / 2);
-    const offset = SPAWN_OFFSETS[count % SPAWN_OFFSETS.length];
-    const ring = Math.floor(count / SPAWN_OFFSETS.length);
-
-    return {
-        x: centerX + offset.x + (ring * 14),
-        y: centerY + offset.y + (ring * 12)
-    };
-}
-
 function getNodeMetrics(mixZone) {
-    if (!(mixZone instanceof Element)) {
-        return {
-            height: DEFAULT_NODE_HEIGHT,
-            width: DEFAULT_NODE_WIDTH
-        };
-    }
-
-    const styles = window.getComputedStyle(mixZone);
-    const width = Number.parseFloat(styles.getPropertyValue("--mix-node-width"));
-    const height = Number.parseFloat(styles.getPropertyValue("--mix-node-height"));
-
-    return {
-        height: Number.isFinite(height) ? height : DEFAULT_NODE_HEIGHT,
-        width: Number.isFinite(width) ? width : DEFAULT_NODE_WIDTH
-    };
+    return getBoardNodeMetrics(mixZone, {
+        height: DEFAULT_NODE_HEIGHT,
+        width: DEFAULT_NODE_WIDTH
+    });
 }
 
 function getMaxNodeId(nodes) {
