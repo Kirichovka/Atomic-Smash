@@ -7,69 +7,42 @@
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="menu">
-    <div id="splash-screen" class="splash-screen">
-        <div class="splash-flask-container">
-            <svg class="chemistry-flask" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                <path class="flask-glass" d="M 40 10 L 60 10 L 60 40 L 85 90 C 95 110, 80 115, 50 115 C 20 115, 5 110, 15 90 L 40 40 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
-                <path class="flask-liquid" d="M 33 55 L 67 55 L 82 85 C 88 98, 75 110, 50 110 C 25 110, 12 98, 18 85 Z" fill="#00ff80" />
-                <path d="M 23 85 C 19 95, 25 102, 35 105" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" />
-                <path d="M 43 15 L 43 35" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round" />
-            </svg>
-            <div class="bubbles">
-                <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-            </div>
-            <div class="splash-instruction">Tap to start the reaction</div>
-        </div>
-        <div class="splash-flash"></div>
-    </div>
-
     <section id="menu-screen" class="app-screen">
-        <div class="menu-dynamic-bg pattern-bg"></div>
-        <div class="screen-shell">
-            <div class="screen-hero">
-                <div class="theme-kicker">Atomic Smash</div>
-                <h1 class="comic-title">Main Menu</h1>
-                <p class="comic-subtitle">Choose your experiment path! Complete missions or check your lab journal.</p>
+        <div class="menu-dynamic-bg pattern-bg" aria-hidden="true"></div>
+
+        <header class="home-header">
+            <a href="index.html" class="home-brand" aria-label="Atomic Smash home">
+                <span class="home-brand-mark">&#9883;</span>
+                <span class="home-brand-copy">
+                    <strong>Atomic Smash</strong>
+                    <span>Chemistry sandbox</span>
+                </span>
+            </a>
+
+            <div class="home-header-actions" aria-label="Header actions">
+                <button class="home-icon-button" type="button" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3.75a2.1 2.1 0 0 1 2.06 1.67l.18.83a6.7 6.7 0 0 1 1.38.58l.74-.42a2.1 2.1 0 0 1 2.58.33l.72.72a2.1 2.1 0 0 1 .33 2.58l-.42.74c.23.44.43.9.58 1.38l.83.18A2.1 2.1 0 0 1 20.25 12a2.1 2.1 0 0 1-1.67 2.06l-.83.18a6.7 6.7 0 0 1-.58 1.38l.42.74a2.1 2.1 0 0 1-.33 2.58l-.72.72a2.1 2.1 0 0 1-2.58.33l-.74-.42a6.7 6.7 0 0 1-1.38.58l-.18.83A2.1 2.1 0 0 1 12 20.25a2.1 2.1 0 0 1-2.06-1.67l-.18-.83a6.7 6.7 0 0 1-1.38-.58l-.74.42a2.1 2.1 0 0 1-2.58-.33l-.72-.72a2.1 2.1 0 0 1-.33-2.58l.42-.74a6.7 6.7 0 0 1-.58-1.38l-.83-.18A2.1 2.1 0 0 1 3.75 12a2.1 2.1 0 0 1 1.67-2.06l.83-.18c.15-.48.35-.94.58-1.38l-.42-.74a2.1 2.1 0 0 1 .33-2.58l.72-.72a2.1 2.1 0 0 1 2.58-.33l.74.42c.44-.23.9-.43 1.38-.58l.18-.83A2.1 2.1 0 0 1 12 3.75Z" />
+                        <circle cx="12" cy="12" r="2.85" />
+                    </svg>
+                </button>
+
+                <button class="home-icon-button home-icon-button-profile" type="button" aria-label="Profile">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z" />
+                        <path d="M4.5 19.25a7.5 7.5 0 0 1 15 0" />
+                    </svg>
+                </button>
             </div>
+        </header>
 
-            <div class="menu-grid">
-                <article class="menu-card card-play">
-                    <div class="menu-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    </div>
-                    <div class="menu-card-kicker">Play</div>
-                    <div class="menu-card-title">Theme Missions</div>
-                    <div class="menu-card-description">Pick a chemistry topic like Basic or Oxides and solve its task chain.</div>
-                    <div id="menu-theme-progress" class="menu-card-meta"></div>
-                    <button id="menu-themes-btn" type="button">Open Themes</button>
-                </article>
-
-                <article class="menu-card card-archive">
-                    <div class="menu-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                    </div>
-                    <div class="menu-card-kicker">Archive</div>
-                    <div class="menu-card-title">Lab Journal</div>
-                    <div class="menu-card-description">Reopen discovered compounds and read every unlocked element again.</div>
-                    <div id="menu-journal-progress" class="menu-card-meta"></div>
-                    <button id="menu-journal-btn" type="button">Open Journal</button>
-                </article>
-
-                <article class="menu-card card-resume">
-                    <div class="menu-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
-                    </div>
-                    <div class="menu-card-kicker">Resume</div>
-                    <div class="menu-card-title">Current Theme</div>
-                    <div class="menu-card-description">Jump straight back into the active board and continue your current theme.</div>
-                    <div id="menu-current-theme" class="menu-card-meta"></div>
-                    <button id="menu-continue-btn" type="button">Continue Playing</button>
-                </article>
+        <div class="home-stage">
+            <div class="home-stage-frame">
+                <div class="home-stage-grid" aria-hidden="true"></div>
             </div>
         </div>
     </section>
 
     <script type="module" src="./js/main.js"></script>
-    <script type="module" src="./js/splash.js"></script>
 </body>
 </html>
