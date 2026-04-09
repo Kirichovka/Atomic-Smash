@@ -105,9 +105,11 @@ export function createBoardRenderController({
         getNodeLocalY,
         getNodeTop,
         localToPixelPosition,
+        mixZoneElement,
         pixelToLocalPosition,
         setNodePosition,
         sync,
+        svgElement,
         syncNodeLayout
     };
 }

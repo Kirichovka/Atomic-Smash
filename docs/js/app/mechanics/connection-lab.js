@@ -1,8 +1,6 @@
-import {
-    createSvgLine,
-    getConnectorCenter,
-} from "../../svg.js";
+import { createBoardConnectionSessionController } from "../board-scene/connection-session-controller.js";
 import { createBoardSceneController } from "../board-scene/controller.js";
+import { createBoardDragSessionController } from "../board-scene/drag-session-controller.js";
 import { createBoardRenderController } from "../board-scene/render-controller.js";
 import { createBoardSelectionController } from "../board-scene/selection-controller.js";
 import { createBoardStateController } from "../board-scene/state-controller.js";
@@ -47,10 +45,31 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     });
     let resizeObserver = null;
     let resizeSyncFrame = null;
-    let movingGroup = [];
-    let hasMovedDuringDrag = false;
-    let dragStartClientX = 0;
-    let dragStartClientY = 0;
+    const publishInteractionContext = payload => {
+        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, payload);
+    };
+    const boardDragSession = createBoardDragSessionController({
+        board,
+        boardRender,
+        boardSelection,
+        boardState,
+        captureState,
+        isNodeOutsideMixZone,
+        isPointerOutsideViewport,
+        publishInteractionContext,
+        removeNodes
+    });
+    const boardConnectionSession = createBoardConnectionSessionController({
+        board,
+        boardRender,
+        boardSelection,
+        boardState,
+        captureState,
+        connectionExists,
+        getConnectionTargetAtPoint,
+        publishInteractionContext,
+        removeConnectionByLine
+    });
 
     function init() {
         if (!isMounted()) {
@@ -245,7 +264,7 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         boardState.getConnections().forEach(connection => connection.line.remove());
         boardState.clearConnections();
 
-        removeTemporaryWire();
+        boardConnectionSession.removeTemporaryWire();
         sync();
     }
 
@@ -455,9 +474,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
 
         const node = boardRender.createNode({
             id,
-            onConnectorPointerDown: startConnection,
+            onConnectorPointerDown: boardConnectionSession.startConnection,
             onNodeDragStart: preventNativeDrag,
-            onNodePointerDown: startMoveNode,
+            onNodePointerDown: boardDragSession.startMoveNode,
             position,
             symbol
         });
@@ -502,263 +521,6 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             toPosition: connection.toPosition,
             line
         });
-    }
-
-    function startMoveNode(event) {
-        if (board.currentWire || board.startConnector) {
-            return;
-        }
-
-        if (event.pointerType === "mouse" && event.button !== 0) {
-            return;
-        }
-
-        if (event.target.closest(".connector")) {
-            return;
-        }
-
-        event.preventDefault();
-        const draggedNodeId = event.currentTarget.dataset.id;
-        if (event.ctrlKey) {
-            boardSelection.toggleNodeSelection(draggedNodeId);
-            return;
-        }
-
-        const shouldPreserveMultiSelection =
-            board.selectedNodeIds.has(draggedNodeId)
-            && board.selectedNodeIds.size > 1;
-
-        if (!shouldPreserveMultiSelection) {
-            boardSelection.selectSingleNode(draggedNodeId, { notify: false });
-        } else {
-            boardState.replaceSelectedNodeId(draggedNodeId);
-        }
-
-        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
-            source: "mix-zone-node",
-            zone: "mix-zone",
-            clearPaletteSelection: true,
-            inspectedSymbol: event.currentTarget.dataset.symbol,
-            persist: false
-        });
-
-        board.movingNode = event.currentTarget;
-        board.movingPointerId = event.pointerId;
-        dragStartClientX = event.clientX;
-        dragStartClientY = event.clientY;
-        hasMovedDuringDrag = false;
-        movingGroup = boardSelection.getMovingGroup(
-            board.movingNode,
-            boardRender.getNodeLeft,
-            boardRender.getNodeTop
-        );
-        movingGroup.forEach(item => {
-            item.node.classList.add("dragging");
-        });
-        document.body.classList.add("dragging-element");
-        board.movingNode.setPointerCapture(event.pointerId);
-
-        const rect = board.movingNode.getBoundingClientRect();
-        board.moveOffsetX = event.clientX - rect.left;
-        board.moveOffsetY = event.clientY - rect.top;
-
-        document.addEventListener("pointermove", moveNode);
-        document.addEventListener("pointerup", stopMoveNode);
-        document.addEventListener("pointercancel", stopMoveNode);
-    }
-
-    function moveNode(event) {
-        if (!board.movingNode || event.pointerId !== board.movingPointerId) {
-            return;
-        }
-
-        const travelDistance = Math.hypot(
-            event.clientX - dragStartClientX,
-            event.clientY - dragStartClientY
-        );
-        if (travelDistance > 1) {
-            hasMovedDuringDrag = true;
-        }
-
-        if (hasMovedDuringDrag && isPointerOutsideViewport(event.clientX, event.clientY)) {
-            const removedNodeIds = movingGroup.map(item => item.node.dataset.id);
-            cleanupMovingNode();
-            removeNodes(removedNodeIds);
-            return;
-        }
-
-        const zoneRect = refs.mixZone.getBoundingClientRect();
-        const anchorPosition = {
-            x: event.clientX - zoneRect.left - board.moveOffsetX,
-            y: event.clientY - zoneRect.top - board.moveOffsetY
-        };
-
-        movingGroup.forEach(item => {
-            const position = {
-                x: anchorPosition.x + item.deltaX,
-                y: anchorPosition.y + item.deltaY
-            };
-
-            boardRender.setNodePosition(item.node, position.x, position.y, { clamp: false });
-            item.node.classList.toggle(
-                "outside-zone",
-                isNodeOutsideMixZone(boardRender.getNodeLeft(item.node), boardRender.getNodeTop(item.node))
-            );
-        });
-
-        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
-    }
-
-    function stopMoveNode(event) {
-        if (event && event.pointerId !== board.movingPointerId) {
-            return;
-        }
-
-        if (!hasMovedDuringDrag) {
-            cleanupMovingNode();
-            return;
-        }
-
-        const releasedNodeIds = movingGroup
-            .filter(item => isNodeOutsideMixZone(boardRender.getNodeLeft(item.node), boardRender.getNodeTop(item.node)))
-            .map(item => item.node.dataset.id);
-        cleanupMovingNode();
-
-        if (releasedNodeIds.length > 0) {
-            removeNodes(releasedNodeIds);
-            return;
-        }
-
-        captureState();
-    }
-
-    function cleanupMovingNode() {
-        movingGroup.forEach(item => {
-            item.node.classList.remove("dragging");
-            item.node.classList.remove("outside-zone");
-        });
-
-        if (board.movingNode) {
-            if (board.movingPointerId !== null && board.movingNode.hasPointerCapture(board.movingPointerId)) {
-                board.movingNode.releasePointerCapture(board.movingPointerId);
-            }
-        }
-
-        movingGroup = [];
-        board.movingNode = null;
-        board.movingPointerId = null;
-        hasMovedDuringDrag = false;
-        dragStartClientX = 0;
-        dragStartClientY = 0;
-        document.body.classList.remove("dragging-element");
-
-        document.removeEventListener("pointermove", moveNode);
-        document.removeEventListener("pointerup", stopMoveNode);
-        document.removeEventListener("pointercancel", stopMoveNode);
-    }
-
-    function startConnection(event) {
-        if (event.pointerType === "mouse" && event.button !== 0) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        removeTemporaryWire();
-
-        board.startConnector = event.currentTarget;
-        const startNode = boardState.getNode(board.startConnector.dataset.nodeId) ?? null;
-        boardSelection.selectSingleNode(board.startConnector.dataset.nodeId, { notify: false });
-        bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
-            source: "mix-zone-connector",
-            zone: "mix-zone",
-            clearPaletteSelection: true,
-            inspectedSymbol: startNode?.dataset.symbol ?? null,
-            persist: false
-        });
-        board.connectionPointerId = event.pointerId;
-        board.startConnector.setPointerCapture(event.pointerId);
-
-        sync();
-
-        const startPoint = getConnectorCenter(board.startConnector, refs.svg);
-        board.currentWire = createSvgLine("var(--wire-temp)", true);
-        board.currentWire.setAttribute("x1", startPoint.x);
-        board.currentWire.setAttribute("y1", startPoint.y);
-        board.currentWire.setAttribute("x2", startPoint.x);
-        board.currentWire.setAttribute("y2", startPoint.y);
-
-        refs.svg.appendChild(board.currentWire);
-
-        document.addEventListener("pointermove", drawTemporaryWire);
-        document.addEventListener("pointerup", finishConnection);
-        document.addEventListener("pointercancel", removeTemporaryWire);
-    }
-
-    function drawTemporaryWire(event) {
-        if (!board.currentWire || !board.startConnector || event.pointerId !== board.connectionPointerId) {
-            return;
-        }
-
-        const layerRect = refs.svg.getBoundingClientRect();
-        const pointerPoint = {
-            x: event.clientX - layerRect.left,
-            y: event.clientY - layerRect.top
-        };
-        const startPoint = {
-            x: Number(board.currentWire.getAttribute("x1")),
-            y: Number(board.currentWire.getAttribute("y1"))
-        };
-        const endPoint = getWireEndPointWithinLayer(
-            startPoint,
-            pointerPoint,
-            refs.svg.clientWidth,
-            refs.svg.clientHeight
-        );
-
-        board.currentWire.setAttribute("x2", endPoint.x);
-        board.currentWire.setAttribute("y2", endPoint.y);
-    }
-
-    function finishConnection(event) {
-        if (!board.startConnector || !board.currentWire || event.pointerId !== board.connectionPointerId) {
-            return;
-        }
-
-        const endConnector = getConnectionTargetAtPoint(event.clientX, event.clientY);
-        if (!endConnector) {
-            removeTemporaryWire();
-            return;
-        }
-
-        const startNodeId = board.startConnector.dataset.nodeId;
-        const endNodeId = endConnector.dataset.nodeId;
-
-        if (startNodeId === endNodeId || connectionExists(startNodeId, endNodeId)) {
-            removeTemporaryWire();
-            return;
-        }
-
-        const line = boardRender.createConnection({
-            onClick: () => {
-                boardSelection.clearSelectedNodes();
-                removeConnectionByLine(line);
-            },
-            stroke: "var(--wire-solid)"
-        });
-
-        boardState.addConnection({
-            fromNodeId: startNodeId,
-            fromPosition: board.startConnector.dataset.position,
-            toNodeId: endNodeId,
-            toPosition: endConnector.dataset.position,
-            line
-        });
-
-        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
-        removeTemporaryWire();
-        captureState();
     }
 
     function getConnectionTargetAtPoint(clientX, clientY) {
@@ -882,32 +644,6 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         }
 
         return true;
-    }
-
-    function removeTemporaryWire(event) {
-        if (event && board.connectionPointerId !== null && event.pointerId !== board.connectionPointerId) {
-            return;
-        }
-
-        if (board.currentWire) {
-            board.currentWire.remove();
-        }
-
-        if (
-            board.startConnector &&
-            board.connectionPointerId !== null &&
-            board.startConnector.hasPointerCapture(board.connectionPointerId)
-        ) {
-            board.startConnector.releasePointerCapture(board.connectionPointerId);
-        }
-
-        board.currentWire = null;
-        board.startConnector = null;
-        board.connectionPointerId = null;
-
-        document.removeEventListener("pointermove", drawTemporaryWire);
-        document.removeEventListener("pointerup", finishConnection);
-        document.removeEventListener("pointercancel", removeTemporaryWire);
     }
 
     function connectionExists(startNodeId, endNodeId) {
@@ -1034,66 +770,6 @@ function isPointerOutsideViewport(clientX, clientY) {
         clientX > document.documentElement.clientWidth ||
         clientY > document.documentElement.clientHeight
     );
-}
-
-function clampSvgCoordinate(value, size) {
-    return Math.min(Math.max(value, 0), Math.max(size, 0));
-}
-
-function getWireEndPointWithinLayer(startPoint, pointerPoint, width, height) {
-    if (isPointInsideRect(pointerPoint.x, pointerPoint.y, width, height)) {
-        return {
-            x: pointerPoint.x,
-            y: pointerPoint.y
-        };
-    }
-
-    const deltaX = pointerPoint.x - startPoint.x;
-    const deltaY = pointerPoint.y - startPoint.y;
-    const intersections = [];
-
-    if (deltaX !== 0) {
-        const leftT = (0 - startPoint.x) / deltaX;
-        const rightT = (width - startPoint.x) / deltaX;
-
-        intersections.push({ t: leftT, x: 0, y: startPoint.y + (deltaY * leftT) });
-        intersections.push({ t: rightT, x: width, y: startPoint.y + (deltaY * rightT) });
-    }
-
-    if (deltaY !== 0) {
-        const topT = (0 - startPoint.y) / deltaY;
-        const bottomT = (height - startPoint.y) / deltaY;
-
-        intersections.push({ t: topT, x: startPoint.x + (deltaX * topT), y: 0 });
-        intersections.push({ t: bottomT, x: startPoint.x + (deltaX * bottomT), y: height });
-    }
-
-    const validIntersection = intersections
-        .filter(point =>
-            point.t >= 0 &&
-            point.t <= 1 &&
-            point.x >= 0 &&
-            point.x <= width &&
-            point.y >= 0 &&
-            point.y <= height
-        )
-        .sort((left, right) => left.t - right.t)[0];
-
-    if (validIntersection) {
-        return {
-            x: validIntersection.x,
-            y: validIntersection.y
-        };
-    }
-
-    return {
-        x: clampSvgCoordinate(pointerPoint.x, width),
-        y: clampSvgCoordinate(pointerPoint.y, height)
-    };
-}
-
-function isPointInsideRect(x, y, width, height) {
-    return x >= 0 && x <= width && y >= 0 && y <= height;
 }
 
 function getNodeMetrics(mixZone) {
