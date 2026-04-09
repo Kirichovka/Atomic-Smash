@@ -1,5 +1,5 @@
 import { SceneObject, SCENE_OBJECT_ROLE } from "../scene-object.js";
-import { SCENE_UI_DEFAULT_TAGS, SCENE_UI_ELEMENT_KIND } from "./contracts.js";
+import { assertSceneUiElementContract, SCENE_UI_DEFAULT_TAGS, SCENE_UI_ELEMENT_KIND } from "./contracts.js";
 
 export class SceneUiElement extends SceneObject {
     constructor({
@@ -15,6 +15,14 @@ export class SceneUiElement extends SceneObject {
         textContent = "",
         listeners = []
     }) {
+        assertSceneUiElementContract({
+            children,
+            kind,
+            listeners,
+            tagName: tagName ?? SCENE_UI_DEFAULT_TAGS[kind],
+            textContent
+        });
+
         super({
             id,
             kind,

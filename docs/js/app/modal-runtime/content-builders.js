@@ -1,7 +1,18 @@
 import { createSceneUiFactory } from "../scene-ui/factory.js";
-import { compileSceneSchema, resolveSceneSchema, sceneButton, sceneContainer, sceneText } from "../scene-ui/schema.js";
+import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
 
-export function renderLevelIntroContent({
+export function createModalRuntimeContentBuilder() {
+    return {
+        renderCompoundModalContent,
+        renderElementModalContent,
+        renderHelpModalContent,
+        renderLevelIntroContent,
+        renderThemeCompleteContent,
+        renderValencyModalContent
+    };
+}
+
+function renderLevelIntroContent({
     actionId,
     actionLabel,
     actionRegistry,
@@ -11,170 +22,172 @@ export function renderLevelIntroContent({
     level,
     mechanic,
     theme,
-    themeOverview
+    themeOverview,
+    schemaConfig
 }) {
     if (!container) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createLevelIntroSchema(actionId),
-        {
-            intro: {
-                actionLabel,
-                disabled: actionLabel === "Locked",
-                kicker: `${theme.name} | ${briefing?.mechanicName ?? mechanic?.name ?? "Mechanic briefing"}`,
-                summary: compound
-                    ? `Target outcome: ${compound.formula} (${compound.name}).`
-                    : "This lesson opens a new concept in the current route.",
-                title: briefing?.introTitle ?? level.displayTitle ?? level.objective
-            },
-            panels: {
-                detailsBody: compound
-                    ? `${level.learningFocus ?? level.displayTitle ?? level.objective}. Target compound: ${compound.formula} (${compound.name}).`
-                    : `${level.learningFocus ?? level.displayTitle ?? level.objective}.`,
-                mechanicBody: briefing?.mechanicSummary
-                    ?? mechanic?.description
-                    ?? "This lesson currently uses the Connection Lab mechanic.",
-                overviewBody: themeOverview ?? "This theme groups related beginner chemistry lessons into one route.",
-                theoryBody: briefing?.theory
-                    ?? theme.description
-                    ?? "This lesson introduces a new chemistry concept for the current route."
+    const root = createSchemaElement(schemaConfig?.levelIntro, {
+        handlers: {
+            start: {
+                action: actionId
             }
         },
-        actionRegistry
-    );
+        intro: {
+            actionLabel,
+            disabled: actionLabel === "Locked",
+            kicker: `${theme.name} | ${briefing?.mechanicName ?? mechanic?.name ?? "Mechanic briefing"}`,
+            summary: compound
+                ? `Target outcome: ${compound.formula} (${compound.name}).`
+                : "This lesson opens a new concept in the current route.",
+            title: briefing?.introTitle ?? level.displayTitle ?? level.objective
+        }
+    }, actionRegistry);
 
-    container.replaceChildren(
-        factory.createElement(
-            compileSceneSchema(definition)
-        )
-    );
+    const panelsSlot = root.querySelector("[data-level-intro-panels-slot='true']");
+    if (panelsSlot) {
+        [
+            {
+                body: themeOverview ?? "This theme groups related beginner chemistry lessons into one route.",
+                title: "Theme Context"
+            },
+            {
+                body: compound
+                    ? `${level.learningFocus ?? level.displayTitle ?? level.objective}. Target compound: ${compound.formula} (${compound.name}).`
+                    : `${level.learningFocus ?? level.displayTitle ?? level.objective}.`,
+                title: "Level Goal"
+            },
+            {
+                body: briefing?.theory
+                    ?? theme.description
+                    ?? "This lesson introduces a new chemistry concept for the current route.",
+                title: "Lesson Theory"
+            },
+            {
+                body: briefing?.mechanicSummary
+                    ?? mechanic?.description
+                    ?? "This lesson currently uses the Connection Lab mechanic.",
+                title: "Mechanic"
+            }
+        ].forEach(panel => {
+            panelsSlot.appendChild(
+                createSchemaElement(schemaConfig?.levelIntroPanel, {
+                    panel
+                })
+            );
+        });
+    }
+
+    container.replaceChildren(root);
 }
 
-export function renderElementModalContent({
+function renderElementModalContent({
     container,
-    element
+    element,
+    schemaConfig
 }) {
     if (!container || !element) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createElementModalSchema(),
-        {
+    container.replaceChildren(
+        createSchemaElement(schemaConfig?.elementModal, {
             element: {
                 description: element.description,
                 meta: "Available element | Drag into the mix zone to use",
                 name: element.name,
                 symbol: element.symbol
             }
-        }
-    );
-
-    container.replaceChildren(
-        factory.createElement(
-            compileSceneSchema(definition)
-        )
+        })
     );
 }
 
-export function renderCompoundModalContent({
+function renderCompoundModalContent({
     compound,
-    container
+    container,
+    schemaConfig
 }) {
     if (!container || !compound) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createCompoundModalSchema(),
-        {
+    container.replaceChildren(
+        createSchemaElement(schemaConfig?.compoundModal, {
             compound: {
                 description: compound.description ?? `${compound.name} is now added to your discovered compounds list.`,
                 formula: compound.formula,
                 kicker: "Congratulations, you discovered",
                 name: compound.name
             }
-        }
-    );
-
-    container.replaceChildren(
-        factory.createElement(
-            compileSceneSchema(definition)
-        )
+        })
     );
 }
 
-export function renderThemeCompleteContent({
+function renderThemeCompleteContent({
     bonusUnlockMessage,
     container,
     learnedLabels,
     theme,
-    elementLabels
+    elementLabels,
+    schemaConfig
 }) {
     if (!container || !theme) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createThemeCompleteSchema({
-            hasNote: Boolean(bonusUnlockMessage),
-            elementLabels,
-            learnedLabels
-        }),
-        {
-            note: bonusUnlockMessage ?? null,
-            theme: {
-                description:
-                    `You cleared every task in the ${theme.name} section. ` +
-                    "Your next step is to choose another theme and keep building new compounds.",
-                elementsBody: "These are the elements you worked with while clearing this theme.",
-                learnedBody: `You completed the ${theme.name} section and practiced the main compounds from this topic.`,
-                learnedLabels,
-                elementLabels,
-                kicker: "Section complete",
-                title: `Congratulations! You finished ${theme.name}`
-            }
+    const root = createSchemaElement(schemaConfig?.themeComplete, {
+        note: bonusUnlockMessage ?? "",
+        theme: {
+            description:
+                `You cleared every task in the ${theme.name} section. ` +
+                "Your next step is to choose another theme and keep building new compounds.",
+            kicker: "Section complete",
+            title: `Congratulations! You finished ${theme.name}`
         }
-    );
+    });
 
-    container.replaceChildren(
-        factory.createElement(
-            compileSceneSchema(definition)
-        )
-    );
+    const panelsSlot = root.querySelector("[data-theme-complete-panels-slot='true']");
+    if (panelsSlot) {
+        appendThemeCompletePanel({
+            body: `You completed the ${theme.name} section and practiced the main compounds from this topic.`,
+            container: panelsSlot,
+            labels: learnedLabels,
+            schemaConfig,
+            title: "What You Learned"
+        });
+        appendThemeCompletePanel({
+            body: "These are the elements you worked with while clearing this theme.",
+            container: panelsSlot,
+            labels: elementLabels,
+            schemaConfig,
+            title: "Elements In This Section"
+        });
+    }
+
+    container.replaceChildren(root);
 }
 
-export function renderHelpModalContent({
+function renderHelpModalContent({
     compound,
     container,
-    helpVisual
+    helpVisual,
+    schemaConfig
 }) {
     if (!container || !compound) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createHelpModalSchema(),
-        {
-            help: {
-                description:
-                    "Follow the animated path: start from one highlighted atom and drag through the glowing connection order.",
-                kicker: "Help is here",
-                title: `Build ${compound.formula} the right way`
-            }
+    const root = createSchemaElement(schemaConfig?.helpModal, {
+        help: {
+            description:
+                "Follow the animated path: start from one highlighted atom and drag through the glowing connection order.",
+            kicker: "Help is here",
+            title: `Build ${compound.formula} the right way`
         }
-    );
+    });
 
-    const root = factory.createElement(
-        compileSceneSchema(definition)
-    );
     const visualContainer = root.querySelector("[data-help-visual-slot='true']");
     if (visualContainer && helpVisual) {
         visualContainer.appendChild(helpVisual);
@@ -183,355 +196,131 @@ export function renderHelpModalContent({
     container.replaceChildren(root);
 }
 
-export function renderValencyModalContent({
+function renderValencyModalContent({
     container,
-    validation
+    validation,
+    schemaConfig
 }) {
     if (!container || !validation) {
         return;
     }
 
-    const factory = createSceneUiFactory();
-    const definition = resolveSceneSchema(
-        createValencyModalSchema({
-            elements: validation.elements ?? [],
-            issues: validation.issues ?? []
-        }),
-        {
-            valency: {
-                description:
-                    "The atoms can stay on the board, but this mix cannot be evaluated until each element follows its allowed number of single connections.",
-                issueBody:
-                    "These atoms currently have more single connections than the simplified lab rules allow.",
-                issueTitle: "What is wrong",
-                kicker: "Valency check failed",
-                theoryBody:
-                    "In this lab each line counts as one bond. Compare the current number of links with the allowed valency for each element below.",
-                theoryTitle: "Valency theory",
-                title: "This structure breaks valency rules"
-            }
+    const root = createSchemaElement(schemaConfig?.valencyModal, {
+        valency: {
+            description:
+                "The atoms can stay on the board, but this mix cannot be evaluated until each element follows its allowed number of single connections.",
+            kicker: "Valency check failed",
+            title: "This structure breaks valency rules"
         }
-    );
-
-    container.replaceChildren(
-        factory.createElement(
-            compileSceneSchema(definition)
-        )
-    );
-}
-
-function createLevelIntroSchema(actionId) {
-    return sceneContainer({
-        children: [
-            sceneText({
-                className: "level-intro-kicker",
-                tagName: "div",
-                text: { bind: "intro.kicker" }
-            }),
-            sceneText({
-                className: "level-intro-title",
-                id: "level-intro-title",
-                tagName: "div",
-                text: { bind: "intro.title" }
-            }),
-            sceneText({
-                className: "level-intro-summary",
-                tagName: "div",
-                text: { bind: "intro.summary" }
-            }),
-            createIntroPanelSchema("Theme Context", { bind: "panels.overviewBody" }),
-            createIntroPanelSchema("Level Goal", { bind: "panels.detailsBody" }),
-            createIntroPanelSchema("Lesson Theory", { bind: "panels.theoryBody" }),
-            createIntroPanelSchema("Mechanic", { bind: "panels.mechanicBody" }),
-            sceneContainer({
-                className: "level-intro-actions",
-                children: [
-                    sceneButton({
-                        className: "level-intro-action",
-                        attrs: {
-                            disabled: { bind: "intro.disabled" }
-                        },
-                        on: {
-                            click: {
-                                action: actionId
-                            }
-                        },
-                        text: { bind: "intro.actionLabel" }
-                    })
-                ]
-            })
-        ]
     });
-}
 
-function createIntroPanelSchema(title, bodyBinding) {
-    return sceneContainer({
-        className: "level-intro-panel",
-        tagName: "section",
-        children: [
-            sceneText({
-                className: "level-intro-panel-title",
-                tagName: "div",
-                text: title
-            }),
-            sceneText({
-                className: "level-intro-panel-text",
-                tagName: "div",
-                text: bodyBinding
-            })
-        ]
-    });
-}
-
-function createElementModalSchema() {
-    return sceneContainer({
-        children: [
-            sceneText({
-                className: "element-modal-symbol",
-                id: "element-modal-title",
-                tagName: "div",
-                text: { bind: "element.symbol" }
-            }),
-            sceneText({
-                className: "element-modal-name",
-                tagName: "div",
-                text: { bind: "element.name" }
-            }),
-            sceneText({
-                className: "element-modal-meta",
-                tagName: "div",
-                text: { bind: "element.meta" }
-            }),
-            sceneText({
-                className: "element-modal-description",
-                tagName: "div",
-                text: { bind: "element.description" }
-            })
-        ]
-    });
-}
-
-function createCompoundModalSchema() {
-    return sceneContainer({
-        children: [
-            sceneText({
-                className: "compound-modal-kicker",
-                tagName: "div",
-                text: { bind: "compound.kicker" }
-            }),
-            sceneText({
-                className: "compound-modal-title",
-                id: "compound-modal-title",
-                tagName: "div",
-                text: { bind: "compound.name" }
-            }),
-            sceneText({
-                className: "compound-modal-formula",
-                tagName: "div",
-                text: { bind: "compound.formula" }
-            }),
-            sceneText({
-                className: "compound-modal-description",
-                tagName: "div",
-                text: { bind: "compound.description" }
-            })
-        ]
-    });
-}
-
-function createThemeCompleteSchema({ learnedLabels = [], elementLabels = [], hasNote = false } = {}) {
-    const children = [
-            sceneText({
-                className: "theme-complete-kicker",
-                tagName: "div",
-                text: { bind: "theme.kicker" }
-            }),
-            sceneText({
-                className: "theme-complete-title",
-                id: "theme-complete-title",
-                tagName: "div",
-                text: { bind: "theme.title" }
-            }),
-            sceneText({
-                className: "theme-complete-description",
-                tagName: "div",
-                text: { bind: "theme.description" }
-            }),
-            createCompletePanelSchema("What You Learned", { bind: "theme.learnedBody" }, learnedLabels),
-            createCompletePanelSchema("Elements In This Section", { bind: "theme.elementsBody" }, elementLabels)
-    ];
-
-    if (hasNote) {
-        children.push(
-            sceneText({
-                className: "theme-complete-note",
-                tagName: "div",
-                text: { bind: "note" }
-            })
-        );
+    const panelsSlot = root.querySelector("[data-valency-panels-slot='true']");
+    if (panelsSlot) {
+        appendValencyPanel({
+            body: "These atoms currently have more single connections than the simplified lab rules allow.",
+            container: panelsSlot,
+            items: validation.issues ?? [],
+            listClassName: "valency-issue-list",
+            mode: "issue",
+            schemaConfig,
+            title: "What is wrong"
+        });
+        appendValencyPanel({
+            body: "In this lab each line counts as one bond. Compare the current number of links with the allowed valency for each element below.",
+            container: panelsSlot,
+            items: validation.elements ?? [],
+            listClassName: "valency-theory-list",
+            mode: "theory",
+            schemaConfig,
+            title: "Valency theory"
+        });
     }
 
-    return sceneContainer({
-        children
-    });
+    container.replaceChildren(root);
 }
 
-function createHelpModalSchema() {
-    return sceneContainer({
-        children: [
-            sceneText({
-                className: "help-modal-kicker",
-                tagName: "div",
-                text: { bind: "help.kicker" }
-            }),
-            sceneText({
-                className: "help-modal-title",
-                id: "help-modal-title",
-                tagName: "div",
-                text: { bind: "help.title" }
-            }),
-            sceneText({
-                className: "help-modal-description",
-                tagName: "div",
-                text: { bind: "help.description" }
-            }),
-            sceneContainer({
-                className: "help-visual",
-                data: {
-                    helpVisualSlot: "true"
+function appendThemeCompletePanel({
+    body,
+    container,
+    labels,
+    schemaConfig,
+    title
+}) {
+    const panel = createSchemaElement(schemaConfig?.themeCompletePanel, {
+        panel: {
+            body,
+            title
+        }
+    });
+    const pillsSlot = panel.querySelector("[data-theme-complete-pills-slot='true']");
+    labels.forEach(label => {
+        pillsSlot?.appendChild(
+            createSchemaElement(schemaConfig?.themeCompletePill, {
+                pill: {
+                    label
                 }
             })
-        ]
+        );
     });
+    container.appendChild(panel);
 }
 
-function createValencyModalSchema({ issues = [], elements = [] } = {}) {
-    return sceneContainer({
-        children: [
-            sceneText({
-                className: "valency-modal-kicker",
-                tagName: "div",
-                text: { bind: "valency.kicker" }
-            }),
-            sceneText({
-                className: "valency-modal-title",
-                id: "valency-modal-title",
-                tagName: "div",
-                text: { bind: "valency.title" }
-            }),
-            sceneText({
-                className: "valency-modal-description",
-                tagName: "div",
-                text: { bind: "valency.description" }
-            }),
-            createValencyPanelSchema("issue", issues),
-            createValencyPanelSchema("theory", elements)
-        ]
+function appendValencyPanel({
+    body,
+    container,
+    items,
+    listClassName,
+    mode,
+    schemaConfig,
+    title
+}) {
+    const panel = createSchemaElement(schemaConfig?.valencyPanel, {
+        panel: {
+            body,
+            listClassName,
+            title
+        }
     });
+    const itemsSlot = panel.querySelector("[data-valency-panel-items-slot='true']");
+
+    if (mode === "issue") {
+        items.forEach(issue => {
+            itemsSlot?.appendChild(
+                createSchemaElement(schemaConfig?.valencyIssueItem, {
+                    issue: {
+                        body: `Node ${issue.nodeId} exceeds the allowed valency by ${issue.actualBonds - issue.allowedBonds}. Remove or rearrange some links before mixing.`,
+                        symbol: issue.symbol,
+                        title: `${issue.elementName} has ${issue.actualBonds} connections, but only ${issue.allowedBonds} are allowed`
+                    }
+                })
+            );
+        });
+    } else {
+        items.forEach(element => {
+            itemsSlot?.appendChild(
+                createSchemaElement(schemaConfig?.valencyTheoryCard, {
+                    element: {
+                        body: element.valencyTheory ?? `${element.name} is limited to ${element.valency} single connections in this lab.`,
+                        header: `${element.symbol} | valency ${element.valency}`,
+                        title: element.name
+                    }
+                })
+            );
+        });
+    }
+
+    container.appendChild(panel);
 }
 
-function createCompletePanelSchema(title, bodyBinding, labels = []) {
-    return sceneContainer({
-        className: "theme-complete-panel",
-        tagName: "section",
-        children: [
-            sceneText({
-                className: "theme-complete-panel-title",
-                tagName: "div",
-                text: title
-            }),
-            sceneText({
-                className: "theme-complete-panel-text",
-                tagName: "div",
-                text: bodyBinding
-            }),
-            sceneContainer({
-                className: "theme-complete-pill-list",
-                children: labels.map(label => createPillSchema(label))
-            })
-        ]
-    });
-}
+function createSchemaElement(definition, bindings = {}, actionRegistry = {}) {
+    if (!definition) {
+        throw new Error("Modal runtime schema definition is missing.");
+    }
 
-function createPillSchema(label) {
-    return sceneText({
-        className: "theme-complete-pill",
-        tagName: "div",
-        text: label
-    });
-}
-
-function createValencyPanelSchema(type, items = []) {
-    const titleBinding = type === "issue" ? { bind: "valency.issueTitle" } : { bind: "valency.theoryTitle" };
-    const bodyBinding = type === "issue" ? { bind: "valency.issueBody" } : { bind: "valency.theoryBody" };
-
-    return sceneContainer({
-        className: "valency-panel",
-        tagName: "section",
-        children: [
-            sceneText({
-                className: "valency-panel-title",
-                tagName: "div",
-                text: titleBinding
-            }),
-            sceneText({
-                className: "valency-panel-text",
-                tagName: "div",
-                text: bodyBinding
-            }),
-            sceneContainer({
-                className: type === "issue" ? "valency-issue-list" : "valency-theory-list",
-                children: type === "issue"
-                    ? items.map(issue => createValencyIssueSchema(issue))
-                    : items.map(element => createValencyTheorySchema(element))
-            })
-        ]
-    });
-}
-
-function createValencyIssueSchema(issue) {
-    return sceneContainer({
-        className: "valency-issue-item",
-        children: [
-            sceneText({
-                className: "valency-issue-symbol",
-                tagName: "div",
-                text: issue.symbol
-            }),
-            sceneText({
-                className: "valency-issue-title",
-                tagName: "div",
-                text: `${issue.elementName} has ${issue.actualBonds} connections, but only ${issue.allowedBonds} are allowed`
-            }),
-            sceneText({
-                className: "valency-issue-body",
-                tagName: "div",
-                text: `Node ${issue.nodeId} exceeds the allowed valency by ${issue.actualBonds - issue.allowedBonds}. Remove or rearrange some links before mixing.`
-            })
-        ]
-    });
-}
-
-function createValencyTheorySchema(element) {
-    return sceneContainer({
-        className: "valency-theory-card",
-        tagName: "article",
-        children: [
-            sceneText({
-                className: "valency-theory-header",
-                tagName: "div",
-                text: `${element.symbol} | valency ${element.valency}`
-            }),
-            sceneText({
-                className: "valency-theory-title",
-                tagName: "div",
-                text: element.name
-            }),
-            sceneText({
-                className: "valency-theory-body",
-                tagName: "div",
-                text: element.valencyTheory ?? `${element.name} is limited to ${element.valency} single connections in this lab.`
-            })
-        ]
-    });
+    const factory = createSceneUiFactory();
+    return factory.createElement(
+        compileSceneSchema(
+            resolveSceneSchema(definition, bindings, actionRegistry)
+        )
+    );
 }

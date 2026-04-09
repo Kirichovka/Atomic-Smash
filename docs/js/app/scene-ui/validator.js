@@ -1,7 +1,8 @@
 import { isKnownActionId } from "../contracts/action-ids.js";
+import { getSceneUiElementSpec, SCENE_UI_ELEMENT_KIND } from "./contracts.js";
 import { SCENE_SCHEMA_CONFIG_KIND, SCENE_SCHEMA_CONFIG_VERSION } from "./schema-contract.js";
 
-const VALID_KINDS = new Set(["button", "container", "text"]);
+const VALID_KINDS = new Set(Object.values(SCENE_UI_ELEMENT_KIND));
 const VALID_LAYOUT_KEYS = new Set([
     "alignItems",
     "display",
@@ -75,7 +76,10 @@ function validateSceneNode(node, path, errors) {
 
     if (!VALID_KINDS.has(node.kind)) {
         errors.push(`${path}.kind must be one of: button, container, text.`);
+        return;
     }
+
+    const spec = getSceneUiElementSpec(node.kind);
 
     validateOptionalString(node.id, `${path}.id`, errors);
     validateOptionalString(node.className, `${path}.className`, errors, { allowToken: true });
@@ -93,9 +97,22 @@ function validateSceneNode(node, path, errors) {
     validateListenersArray(node.listeners, `${path}.listeners`, errors);
     validateLayout(node.layout, `${path}.layout`, errors);
 
+    if (typeof node.tagName === "string" && Array.isArray(spec.supportedTagNames) && !spec.supportedTagNames.includes(node.tagName)) {
+        errors.push(
+            `${path}.tagName "${node.tagName}" is not supported for ${node.kind}. ` +
+            `Supported tags: ${spec.supportedTagNames.join(", ")}.`
+        );
+    }
+
+    if (!spec.allowsListeners && hasListeners(node)) {
+        errors.push(`${path} (${node.kind}) does not support listeners.`);
+    }
+
     if (node.children !== undefined) {
         if (!Array.isArray(node.children)) {
             errors.push(`${path}.children must be an array.`);
+        } else if (!spec.allowsChildren && node.children.length > 0) {
+            errors.push(`${path} (${node.kind}) does not support children.`);
         } else {
             node.children.forEach((child, index) => {
                 validateSceneNode(child, `${path}.children[${index}]`, errors);
@@ -312,5 +329,12 @@ function isPrimitiveRecordValue(value) {
         || typeof value === "number"
         || typeof value === "boolean"
         || value === null
+    );
+}
+
+function hasListeners(node) {
+    return Boolean(
+        (node.on && Object.keys(node.on).length > 0)
+        || (Array.isArray(node.listeners) && node.listeners.length > 0)
     );
 }

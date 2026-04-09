@@ -65,6 +65,72 @@ export async function loadScreenRuntimeSchemaConfig() {
     return validateSceneSchemaConfig(schema, "screen-runtime.schema").definitions;
 }
 
+export async function loadPaletteRuntimeSchemaConfig() {
+    const response = await fetch("./data/palette-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load palette runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "palette-runtime.schema").definitions;
+}
+
+export async function loadMixZoneContextRuntimeSchemaConfig() {
+    const response = await fetch("./data/mix-zone-context-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load mix zone context runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "mix-zone-context-runtime.schema").definitions;
+}
+
+export async function loadProgressionRuntimeSchemaConfig() {
+    const response = await fetch("./data/progression-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load progression runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "progression-runtime.schema").definitions;
+}
+
+export async function loadGameShellRuntimeSchemaConfig() {
+    const response = await fetch("./data/game-shell-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load game shell runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "game-shell-runtime.schema").definitions;
+}
+
+export async function loadNavigationRuntimeSchemaConfig() {
+    const response = await fetch("./data/navigation-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load navigation runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "navigation-runtime.schema").definitions;
+}
+
+export async function loadModalRuntimeSchemaConfig() {
+    const response = await fetch("./data/modal-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load modal runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "modal-runtime.schema").definitions;
+}
+
 export async function loadLevelBriefsConfig() {
     const response = await fetch("./data/level-briefs.json");
 

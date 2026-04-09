@@ -9,10 +9,11 @@ import {
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
 import { createMenuSceneController } from "./menu-scene/controller.js";
 import { createHomeChromeController } from "./menu-scene/chrome.js";
+import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
+import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js";
+import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 import {
-    renderJournalCompoundCards,
-    renderJournalElementCards,
-    renderThemeCards
 } from "./screen-runtime/content-builders.js";
 
 const PAGE_ROUTES = {
@@ -29,6 +30,7 @@ export function createNavigationController({
     homeChromeSchemaConfig,
     menuMapConfig,
     menuSceneSchemaConfig,
+    navigationRuntimeSchemaConfig,
     screenRuntimeSchemaConfig,
     levelBriefsConfig,
     actionRegistry,
@@ -54,6 +56,14 @@ export function createNavigationController({
         refs,
         schemaConfig: homeChromeSchemaConfig,
         actionRegistry
+    });
+    const navigationContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.navigation,
+        factory: createNavigationRuntimeContentBuilder
+    });
+    const screenContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.screen,
+        factory: createScreenRuntimeContentBuilder
     });
     const menuSceneController = createMenuSceneController({
         refs,
@@ -153,7 +163,7 @@ export function createNavigationController({
             })
             .filter(Boolean);
 
-        renderJournalCompoundCards({
+        screenContentBuilder.renderJournalCompoundCards({
             compounds,
             container: refs.journalCompoundList,
             onOpenCompoundModal,
@@ -187,7 +197,7 @@ export function createNavigationController({
             };
         });
 
-        renderJournalElementCards({
+        screenContentBuilder.renderJournalElementCards({
             container: refs.journalElementList,
             elements,
             onOpenElementModal,
@@ -240,7 +250,7 @@ export function createNavigationController({
             };
         });
 
-        renderThemeCards({
+        screenContentBuilder.renderThemeCards({
             container: refs.themeList,
             onStartTheme,
             themes: themeCards,
@@ -253,24 +263,17 @@ export function createNavigationController({
             return;
         }
 
-        refs.menuSheetDots.replaceChildren();
         refs.menuStageFrame?.style.setProperty("--sheet-count", String(state.catalog.themes.length));
-
-        state.catalog.themes.forEach((theme, index) => {
-            const dot = document.createElement("button");
-            dot.type = "button";
-            dot.className = "home-sheet-dot";
-            if (theme.id === activeThemeId) {
-                dot.classList.add("active");
-            }
-            dot.setAttribute("aria-label", `Open ${theme.name} sheet`);
-            dot.title = `${index + 1}. ${theme.name}`;
-            dot.addEventListener("click", () => {
-                setMenuViewedTheme(theme.id);
+        navigationContentBuilder.renderMenuSheetDots({
+            activeThemeId,
+            container: refs.menuSheetDots,
+            onOpenThemeSheet: themeId => {
+                setMenuViewedTheme(themeId);
                 menuSceneController.resetCamera();
                 renderMenu();
-            });
-            refs.menuSheetDots.appendChild(dot);
+            },
+            schemaConfig: navigationRuntimeSchemaConfig,
+            themes: state.catalog.themes
         });
     }
 

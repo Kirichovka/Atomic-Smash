@@ -1,0 +1,61 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "contextAction": {
+      "kind": "button",
+      "className": {
+        "bind": "action.className"
+      },
+      "attrs": {
+        "role": "menuitem",
+        "type": "button"
+      },
+      "data": {
+        "mixZoneAction": {
+          "bind": "action.id"
+        }
+      },
+      "text": {
+        "bind": "action.label"
+      }
+    },
+    "pickerOption": {
+      "kind": "button",
+      "className": {
+        "bind": "option.className"
+      },
+      "attrs": {
+        "role": "menuitem",
+        "title": {
+          "bind": "option.title"
+        },
+        "type": "button"
+      },
+      "data": {
+        "pickerIndex": {
+          "bind": "option.index"
+        },
+        "symbol": {
+          "bind": "option.symbol"
+        }
+      },
+      "children": [
+        {
+          "kind": "container",
+          "className": "mix-zone-picker-symbol",
+          "text": {
+            "bind": "option.symbol"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "mix-zone-picker-name",
+          "text": {
+            "bind": "option.name"
+          }
+        }
+      ]
+    }
+  }
+}

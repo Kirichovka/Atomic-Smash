@@ -1,18 +1,14 @@
 import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
 import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
-import {
-    renderCompoundModalContent,
-    renderElementModalContent,
-    renderHelpModalContent,
-    renderLevelIntroContent,
-    renderThemeCompleteContent,
-    renderValencyModalContent
-} from "./modal-runtime/content-builders.js";
+import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js";
+import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 
 export function createModalController({
     refs,
     state,
     levelBriefsConfig,
+    schemaConfig,
     actionRegistry,
     registerLevelIntroAction,
     createHelpVisual,
@@ -20,6 +16,10 @@ export function createModalController({
     onThemeCompleteClosed,
     onStartLevelIntro
 }) {
+    const modalContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.modal,
+        factory: createModalRuntimeContentBuilder
+    });
     function bind() {
         bindIfPresent(refs.levelIntroClose, "click", closeLevelIntroModal);
         bindIfPresent(refs.levelIntroModal, "click", event => {
@@ -92,7 +92,7 @@ export function createModalController({
             }
         });
 
-        renderLevelIntroContent({
+        modalContentBuilder.renderLevelIntroContent({
             actionId,
             actionLabel: getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }),
             actionRegistry,
@@ -101,6 +101,7 @@ export function createModalController({
             container: refs.levelIntroContent,
             level,
             mechanic,
+            schemaConfig,
             theme,
             themeOverview
         });
@@ -119,9 +120,10 @@ export function createModalController({
             return;
         }
 
-        renderElementModalContent({
+        modalContentBuilder.renderElementModalContent({
             container: refs.elementModalContent,
-            element
+            element,
+            schemaConfig
         });
         openModal(refs.elementModal);
         onModalStateChanged?.();
@@ -137,9 +139,10 @@ export function createModalController({
             return;
         }
 
-        renderCompoundModalContent({
+        modalContentBuilder.renderCompoundModalContent({
             compound,
-            container: refs.compoundModalContent
+            container: refs.compoundModalContent,
+            schemaConfig
         });
         openModal(refs.compoundModal);
         onModalStateChanged?.();
@@ -161,10 +164,11 @@ export function createModalController({
             return;
         }
 
-        renderHelpModalContent({
+        modalContentBuilder.renderHelpModalContent({
             compound: targetCompound,
             container: refs.helpModalContent,
-            helpVisual: createHelpVisual(targetCompound)
+            helpVisual: createHelpVisual(targetCompound),
+            schemaConfig
         });
         openModal(refs.helpModal);
         onModalStateChanged?.();
@@ -180,9 +184,10 @@ export function createModalController({
             return;
         }
 
-        renderValencyModalContent({
+        modalContentBuilder.renderValencyModalContent({
             container: refs.valencyModalContent,
-            validation
+            validation,
+            schemaConfig
         });
         openModal(refs.valencyModal);
         onModalStateChanged?.();
@@ -209,12 +214,13 @@ export function createModalController({
             return element ? `${element.symbol} - ${element.name}` : symbol;
         });
 
-        renderThemeCompleteContent({
+        modalContentBuilder.renderThemeCompleteContent({
             bonusUnlockMessage: options.bonusUnlockMessage,
             container: refs.themeCompleteContent,
             elementLabels,
             learnedLabels,
-            theme
+            theme,
+            schemaConfig
         });
 
         openModal(refs.themeCompleteModal);

@@ -6,6 +6,9 @@ import {
     getLevelsForTheme,
     getMechanicById
 } from "../state.js";
+import { createProgressionRuntimeContentBuilder } from "../progression-runtime/content-builders.js";
+import { createRuntimeContentBuilder } from "../runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "../runtime-content/contracts.js";
 
 const BASIC_TUTORIAL_THEME_ID = "basic";
 const BASIC_TUTORIAL_FIRST_LEVEL_ID = "level-1";
@@ -17,12 +20,17 @@ export function createProgressionController({
     navigationController,
     paletteController,
     modalController,
+    schemaConfig,
     getActiveMechanic,
     onPersistState,
     onTutorialLevelCompleted,
     onTutorialReset,
     onTutorialSync
 }) {
+    const progressionContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.progression,
+        factory: createProgressionRuntimeContentBuilder
+    });
     function refreshAllViews() {
         navigationController.renderMenu();
         navigationController.renderThemeList();
@@ -109,43 +117,15 @@ export function createProgressionController({
     }
 
     function renderDiscoveredCompounds() {
-        if (!refs.compoundList) {
-            return;
-        }
+        const compounds = state.progress.discoveryHistory
+            .map(compoundId => getCompoundById(state, compoundId))
+            .filter(Boolean);
 
-        refs.compoundList.replaceChildren();
-
-        if (state.progress.discoveredCompounds.size === 0) {
-            const emptyState = document.createElement("div");
-            emptyState.className = "empty-state";
-            emptyState.textContent = "No compounds discovered yet";
-            refs.compoundList.appendChild(emptyState);
-            return;
-        }
-
-        state.progress.discoveryHistory.forEach(compoundId => {
-            const compound = getCompoundById(state, compoundId);
-            if (!compound) {
-                return;
-            }
-
-            const card = document.createElement("button");
-            const formula = document.createElement("div");
-            const name = document.createElement("div");
-
-            card.type = "button";
-            card.className = "compound-card clickable";
-            formula.className = "compound-formula";
-            name.className = "compound-name";
-
-            formula.textContent = compound.formula;
-            name.textContent = compound.name;
-            card.addEventListener("click", () => {
-                modalController.openCompoundModal(compound);
-            });
-
-            card.append(formula, name);
-            refs.compoundList.appendChild(card);
+        progressionContentBuilder.renderDiscoveredCompoundCards({
+            compounds,
+            container: refs.compoundList,
+            onOpenCompoundModal: compound => modalController.openCompoundModal(compound),
+            schemaConfig
         });
     }
 

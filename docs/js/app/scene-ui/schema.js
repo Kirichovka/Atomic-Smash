@@ -163,7 +163,13 @@ function resolveSchemaValue(value, bindings, actionSource) {
 
     if (isBindingToken(value)) {
         const resolved = readBinding(bindings, value.bind);
-        return resolved ?? value.fallback;
+        const bindingValue = resolved ?? value.fallback;
+
+        if (isActionToken(bindingValue)) {
+            return resolveActionToken(bindingValue, actionSource);
+        }
+
+        return bindingValue;
     }
 
     const resolvedObject = {};

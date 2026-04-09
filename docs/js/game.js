@@ -1,12 +1,21 @@
 import {
     loadGameData,
+    loadGameShellRuntimeSchemaConfig,
     loadHomeChromeSchemaConfig,
     loadHotkeysConfig,
     loadLevelBriefsConfig,
     loadMenuMapConfig,
     loadMenuSceneSchemaConfig,
+    loadMixZoneContextRuntimeSchemaConfig,
+    loadModalRuntimeSchemaConfig,
+    loadNavigationRuntimeSchemaConfig,
+    loadPaletteRuntimeSchemaConfig,
+    loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
 } from "./data.js?v=20260409-scene-schema";
+import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
+import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createEventBus } from "./app/event-bus.js";
 import { createRefs } from "./app/refs.js";
 import { createGameRuntime } from "./app/game-runtime/runtime.js";
@@ -20,7 +29,13 @@ export async function initGame() {
         menuMapConfig,
         levelBriefsConfig,
         homeChromeSchemaConfig,
+        gameShellRuntimeSchemaConfig,
         menuSceneSchemaConfig,
+        mixZoneContextRuntimeSchemaConfig,
+        modalRuntimeSchemaConfig,
+        navigationRuntimeSchemaConfig,
+        paletteRuntimeSchemaConfig,
+        progressionRuntimeSchemaConfig,
         screenRuntimeSchemaConfig
     ] = await Promise.all([
         loadGameData(),
@@ -28,12 +43,25 @@ export async function initGame() {
         loadMenuMapConfig(),
         loadLevelBriefsConfig(),
         loadHomeChromeSchemaConfig(),
+        loadGameShellRuntimeSchemaConfig(),
         loadMenuSceneSchemaConfig(),
+        loadMixZoneContextRuntimeSchemaConfig(),
+        loadModalRuntimeSchemaConfig(),
+        loadNavigationRuntimeSchemaConfig(),
+        loadPaletteRuntimeSchemaConfig(),
+        loadProgressionRuntimeSchemaConfig(),
         loadScreenRuntimeSchemaConfig()
     ]);
 
-    const refs = createRefs();
     const currentPage = document.body.dataset.page ?? "menu";
+    const gameShellContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.gameShell,
+        factory: createGameShellRuntimeContentBuilder
+    });
+    gameShellContentBuilder.renderGameShellBootstrap({
+        schemaConfig: gameShellRuntimeSchemaConfig
+    });
+    const refs = createRefs();
     const state = createState(gameData);
     const bus = createEventBus();
 
@@ -45,11 +73,17 @@ export async function initGame() {
         state,
         bus,
         currentPage,
+        gameShellRuntimeSchemaConfig,
         homeChromeSchemaConfig,
         hotkeysConfig,
         levelBriefsConfig,
         menuMapConfig,
         menuSceneSchemaConfig,
+        mixZoneContextRuntimeSchemaConfig,
+        modalRuntimeSchemaConfig,
+        navigationRuntimeSchemaConfig,
+        paletteRuntimeSchemaConfig,
+        progressionRuntimeSchemaConfig,
         screenRuntimeSchemaConfig
     });
 

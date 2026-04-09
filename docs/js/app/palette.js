@@ -1,13 +1,21 @@
 import { getAvailableElements, getInspectedElement, getPaletteSelectedElement } from "./state.js";
 import { RUNTIME_EVENT_IDS } from "./contracts/event-contracts.js";
+import { createPaletteRuntimeContentBuilder } from "./palette-runtime/content-builders.js";
+import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 
 const PALETTE_DRAG_THRESHOLD = 6;
 
 export function createPaletteController({
     refs,
     state,
-    bus
+    bus,
+    schemaConfig
 }) {
+    const paletteContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.palette,
+        factory: createPaletteRuntimeContentBuilder
+    });
     const prefersCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
     const dragState = {
         ghost: null,
@@ -250,24 +258,17 @@ export function createPaletteController({
         }
 
         const availableElements = getAvailableElements(state);
-        refs.elementList.replaceChildren();
 
         if (!availableElements.some(element => element.symbol === state.ui.paletteSelectedElementSymbol)) {
             state.ui.paletteSelectedElementSymbol = null;
         }
 
-        availableElements.forEach(element => {
-            const template = document.createElement("div");
-            template.className = "element-template";
-            template.draggable = false;
-            template.dataset.element = element.symbol;
-            template.title = element.name;
-            template.textContent = element.symbol;
-
-            refs.elementList.appendChild(template);
+        paletteContentBuilder.renderPaletteTiles({
+            container: refs.elementList,
+            elements: availableElements,
+            schemaConfig,
+            selectedSymbol: state.ui.paletteSelectedElementSymbol
         });
-
-        syncSelectedElementHighlight();
     }
 
     function syncSelectedElementHighlight() {
@@ -282,37 +283,12 @@ export function createPaletteController({
     }
 
     function renderSelectedElementCard() {
-        if (!refs.elementCard) {
-            return;
-        }
-
-        refs.elementCard.replaceChildren();
-
         const element = getInspectedElement(state);
-        if (!element) {
-            const emptyState = document.createElement("div");
-            emptyState.className = "empty-state";
-            emptyState.textContent = "Select an element to see its description.";
-            refs.elementCard.appendChild(emptyState);
-            return;
-        }
-
-        const symbol = document.createElement("div");
-        const name = document.createElement("div");
-        const meta = document.createElement("div");
-        const description = document.createElement("div");
-
-        symbol.className = "element-card-symbol";
-        name.className = "element-card-name";
-        meta.className = "element-card-meta";
-        description.className = "element-card-description";
-
-        symbol.textContent = element.symbol;
-        name.textContent = element.name;
-        meta.textContent = "Available element in the current task progression";
-        description.textContent = element.description;
-
-        refs.elementCard.append(symbol, name, meta, description);
+        paletteContentBuilder.renderPaletteElementCard({
+            container: refs.elementCard,
+            element,
+            schemaConfig
+        });
     }
 
     function renderAddButton() {

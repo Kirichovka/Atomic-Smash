@@ -1,4 +1,7 @@
 import { getAvailableElements } from "../state.js";
+import { createMixZoneContextRuntimeContentBuilder } from "../mix-zone-context-runtime/content-builders.js";
+import { createRuntimeContentBuilder } from "../runtime-content/factory.js";
+import { RUNTIME_CONTENT_BUILDER_KIND } from "../runtime-content/contracts.js";
 
 const MIX_ZONE_DOUBLE_TAP_MS = 320;
 const MIX_ZONE_LONG_PRESS_MS = 420;
@@ -20,6 +23,7 @@ const MIX_ZONE_MENU_ACTIONS = {
 export function createMixZoneContextController({
     refs,
     state,
+    schemaConfig,
     getActiveMechanic,
     onAddElementToBoard,
     onApplyInteractionContext,
@@ -29,6 +33,10 @@ export function createMixZoneContextController({
     onRemoveBoardNode,
     onRemoveSelectedBoardNodes
 }) {
+    const mixZoneContextContentBuilder = createRuntimeContentBuilder({
+        kind: RUNTIME_CONTENT_BUILDER_KIND.mixZoneContext,
+        factory: createMixZoneContextRuntimeContentBuilder
+    });
     const context = {
         anchorX: 0,
         anchorY: 0,
@@ -545,29 +553,11 @@ export function createMixZoneContextController({
         }
 
         const availableElements = getAvailableElements(state);
-        refs.mixZonePickerList.replaceChildren();
-
-        availableElements.forEach((element, index) => {
-            const option = document.createElement("button");
-            const symbol = document.createElement("span");
-            const name = document.createElement("span");
-
-            option.type = "button";
-            option.className = "mix-zone-picker-option";
-            option.dataset.pickerIndex = String(index);
-            option.dataset.symbol = element.symbol;
-            option.title = element.name;
-            option.setAttribute("role", "menuitem");
-            option.classList.toggle("active", index === context.pickerIndex);
-
-            symbol.className = "mix-zone-picker-symbol";
-            symbol.textContent = element.symbol;
-
-            name.className = "mix-zone-picker-name";
-            name.textContent = element.name;
-
-            option.append(symbol, name);
-            refs.mixZonePickerList.appendChild(option);
+        mixZoneContextContentBuilder.renderMixZonePickerOptions({
+            activeIndex: context.pickerIndex,
+            container: refs.mixZonePickerList,
+            elements: availableElements,
+            schemaConfig
         });
 
         const activeOption = refs.mixZonePickerList.querySelector(".mix-zone-picker-option.active");
@@ -581,24 +571,16 @@ export function createMixZoneContextController({
         }
 
         const actions = getMenuActions();
-        refs.mixZoneContextMenu.replaceChildren();
-        refs.mixZoneContextMenu.setAttribute(
-            "aria-label",
-            context.menuMode === "selection"
+        mixZoneContextContentBuilder.renderMixZoneContextActions({
+            actions,
+            activeIndex: context.menuIndex,
+            container: refs.mixZoneContextMenu,
+            menuLabel: context.menuMode === "selection"
                 ? "Selected element actions"
                 : context.menuMode === "node"
                     ? "Element actions"
-                    : "Mix zone actions"
-        );
-
-        actions.forEach(action => {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "mix-zone-context-action";
-            button.dataset.mixZoneAction = action.id;
-            button.setAttribute("role", "menuitem");
-            button.textContent = action.label;
-            refs.mixZoneContextMenu.appendChild(button);
+                    : "Mix zone actions",
+            schemaConfig
         });
     }
 

@@ -1,7 +1,15 @@
 import { createSceneUiFactory } from "../scene-ui/factory.js";
 import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
 
-export function renderJournalCompoundCards({
+export function createScreenRuntimeContentBuilder() {
+    return {
+        renderJournalCompoundCards,
+        renderJournalElementCards,
+        renderThemeCards
+    };
+}
+
+function renderJournalCompoundCards({
     compounds,
     container,
     onOpenCompoundModal,
@@ -37,7 +45,7 @@ export function renderJournalCompoundCards({
     container.appendChild(fragment);
 }
 
-export function renderJournalElementCards({
+function renderJournalElementCards({
     container,
     elements,
     onOpenElementModal,
@@ -73,7 +81,7 @@ export function renderJournalElementCards({
     container.appendChild(fragment);
 }
 
-export function renderThemeCards({
+function renderThemeCards({
     container,
     onStartTheme,
     themes,

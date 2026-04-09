@@ -9,6 +9,8 @@ import { getActiveMechanicId } from "../state.js";
 import { createBasicTutorialController } from "./basic-tutorial-controller.js";
 import { createGameplayController } from "./gameplay-controller.js";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
+import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";
+import { createRuntimeController } from "./controller-factory.js";
 import { createRuntimeActionRegistry } from "./runtime-actions.js";
 import { createSidebarController } from "./sidebar-controller.js";
 
@@ -17,11 +19,17 @@ export function createGameRuntime({
     state,
     bus,
     currentPage,
+    gameShellRuntimeSchemaConfig,
     homeChromeSchemaConfig,
     hotkeysConfig,
     levelBriefsConfig,
     menuMapConfig,
     menuSceneSchemaConfig,
+    mixZoneContextRuntimeSchemaConfig,
+    modalRuntimeSchemaConfig,
+    navigationRuntimeSchemaConfig,
+    paletteRuntimeSchemaConfig,
+    progressionRuntimeSchemaConfig,
     screenRuntimeSchemaConfig
 }) {
     const mechanicsRegistry = createMechanicsRegistry({
@@ -44,92 +52,125 @@ export function createGameRuntime({
         tutorialController?.scheduleSync();
     };
 
-    const modalController = createModalController({
-        refs,
-        state,
-        levelBriefsConfig,
-        actionRegistry: runtimeActions.registry,
-        registerLevelIntroAction: runtimeActions.registerLevelIntroAction,
-        createHelpVisual: compound => getActiveMechanic().createHelpVisual(compound),
-        onModalStateChanged: scheduleBasicTutorialSync,
-        onThemeCompleteClosed: () => gameplayController?.openMainMenu(),
-        onStartLevelIntro: theme => gameplayController?.startTheme(theme.id)
+    const modalController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.modal,
+        factory: createModalController,
+        context: {
+            refs,
+            state,
+            levelBriefsConfig,
+            schemaConfig: modalRuntimeSchemaConfig,
+            actionRegistry: runtimeActions.registry,
+            registerLevelIntroAction: runtimeActions.registerLevelIntroAction,
+            createHelpVisual: compound => getActiveMechanic().createHelpVisual(compound),
+            onModalStateChanged: scheduleBasicTutorialSync,
+            onThemeCompleteClosed: () => gameplayController?.openMainMenu(),
+            onStartLevelIntro: theme => gameplayController?.startTheme(theme.id)
+        }
     });
-    const paletteController = createPaletteController({
-        refs,
-        state,
-        bus
-    });
-
-    const navigationController = createNavigationController({
-        refs,
-        state,
-        homeChromeSchemaConfig,
-        menuMapConfig,
-        menuSceneSchemaConfig,
-        screenRuntimeSchemaConfig,
-        levelBriefsConfig,
-        actionRegistry: runtimeActions.registry,
-        currentPage,
-        onBeforeNavigate: persistCurrentState,
-        onStartTheme: themeId => gameplayController?.startTheme(themeId),
-        onPreviewLevelIntro: (theme, level, options) => modalController.openLevelIntroModal(theme, level, options),
-        onSelectElement: (symbol, options) => gameplayController?.selectElement(symbol, options),
-        onOpenCompoundModal: modalController.openCompoundModal,
-        onOpenElementModal: modalController.openElementModal,
-        onOpenMainMenu: () => gameplayController?.openMainMenu(),
-        onOpenThemeSelection: () => gameplayController?.openThemeSelection(),
-        onOpenJournalScreen: () => gameplayController?.openJournalScreen(),
-        onResumeCurrentTheme: () => gameplayController?.resumeCurrentTheme()
+    const paletteController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.palette,
+        factory: createPaletteController,
+        context: {
+            refs,
+            state,
+            bus,
+            schemaConfig: paletteRuntimeSchemaConfig
+        }
     });
 
-    tutorialController = createBasicTutorialController({
-        refs,
-        state,
-        currentPage,
-        isOverlayBlocked: () =>
-            mixZoneContextController?.isOpen()
-            || isModalVisible(refs.compoundModal)
-            || isModalVisible(refs.elementModal)
-            || isModalVisible(refs.helpModal)
-            || isModalVisible(refs.themeCompleteModal)
-            || isModalVisible(refs.valencyModal),
-        onPersist: persistCurrentState
+    const navigationController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.navigation,
+        factory: createNavigationController,
+        context: {
+            refs,
+            state,
+            homeChromeSchemaConfig,
+            menuMapConfig,
+            menuSceneSchemaConfig,
+            navigationRuntimeSchemaConfig,
+            screenRuntimeSchemaConfig,
+            levelBriefsConfig,
+            actionRegistry: runtimeActions.registry,
+            currentPage,
+            onBeforeNavigate: persistCurrentState,
+            onStartTheme: themeId => gameplayController?.startTheme(themeId),
+            onPreviewLevelIntro: (theme, level, options) => modalController.openLevelIntroModal(theme, level, options),
+            onSelectElement: (symbol, options) => gameplayController?.selectElement(symbol, options),
+            onOpenCompoundModal: modalController.openCompoundModal,
+            onOpenElementModal: modalController.openElementModal,
+            onOpenMainMenu: () => gameplayController?.openMainMenu(),
+            onOpenThemeSelection: () => gameplayController?.openThemeSelection(),
+            onOpenJournalScreen: () => gameplayController?.openJournalScreen(),
+            onResumeCurrentTheme: () => gameplayController?.resumeCurrentTheme()
+        }
     });
 
-    gameplayController = createGameplayController({
-        refs,
-        state,
-        getActiveMechanic,
-        mechanicsRegistry,
-        navigationController,
-        paletteController,
-        modalController,
-        onBeforeBoardReset: () => mixZoneContextController?.closeContextMenu({ restorePreview: false }),
-        onPersistState: persistCurrentState,
-        onTutorialLevelCompleted: stageId => tutorialController?.setPostLevelStage(stageId),
-        onTutorialReset: () => tutorialController?.resetProgress(),
-        onTutorialSync: scheduleBasicTutorialSync
+    tutorialController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.tutorial,
+        factory: createBasicTutorialController,
+        context: {
+            refs,
+            state,
+            currentPage,
+            isOverlayBlocked: () =>
+                mixZoneContextController?.isOpen()
+                || isModalVisible(refs.compoundModal)
+                || isModalVisible(refs.elementModal)
+                || isModalVisible(refs.helpModal)
+                || isModalVisible(refs.themeCompleteModal)
+                || isModalVisible(refs.valencyModal),
+            onPersist: persistCurrentState
+        }
     });
 
-    mixZoneContextController = createMixZoneContextController({
-        refs,
-        state,
-        getActiveMechanic,
-        onAddElementToBoard: symbol => gameplayController.addElementToBoard(symbol),
-        onApplyInteractionContext: context => gameplayController.applyInteractionContext(context),
-        onClearBoard: () => gameplayController.clearBoard(),
-        onMixAttempt: () => gameplayController.handleMixAttempt(),
-        onOverlayStateChanged: scheduleBasicTutorialSync,
-        onRemoveBoardNode: nodeId => gameplayController.removeBoardNode(nodeId),
-        onRemoveSelectedBoardNodes: () => gameplayController.removeSelectedBoardNodes()
+    gameplayController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.gameplay,
+        factory: createGameplayController,
+        context: {
+            refs,
+            state,
+            getActiveMechanic,
+            mechanicsRegistry,
+            navigationController,
+            paletteController,
+            modalController,
+            progressionSchemaConfig: progressionRuntimeSchemaConfig,
+            onBeforeBoardReset: () => mixZoneContextController?.closeContextMenu({ restorePreview: false }),
+            onPersistState: persistCurrentState,
+            onTutorialLevelCompleted: stageId => tutorialController?.setPostLevelStage(stageId),
+            onTutorialReset: () => tutorialController?.resetProgress(),
+            onTutorialSync: scheduleBasicTutorialSync
+        }
     });
 
-    const sidebarController = createSidebarController({
-        refs,
-        state,
-        getActiveMechanic,
-        onPersist: persistCurrentState
+    mixZoneContextController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.mixZoneContext,
+        factory: createMixZoneContextController,
+        context: {
+            refs,
+            state,
+            schemaConfig: mixZoneContextRuntimeSchemaConfig,
+            getActiveMechanic,
+            onAddElementToBoard: symbol => gameplayController.addElementToBoard(symbol),
+            onApplyInteractionContext: context => gameplayController.applyInteractionContext(context),
+            onClearBoard: () => gameplayController.clearBoard(),
+            onMixAttempt: () => gameplayController.handleMixAttempt(),
+            onOverlayStateChanged: scheduleBasicTutorialSync,
+            onRemoveBoardNode: nodeId => gameplayController.removeBoardNode(nodeId),
+            onRemoveSelectedBoardNodes: () => gameplayController.removeSelectedBoardNodes()
+        }
+    });
+
+    const sidebarController = createRuntimeController({
+        kind: RUNTIME_CONTROLLER_KIND.sidebar,
+        factory: createSidebarController,
+        context: {
+            refs,
+            state,
+            getActiveMechanic,
+            onPersist: persistCurrentState
+        }
     });
 
     const hotkeysController = createHotkeysController({
