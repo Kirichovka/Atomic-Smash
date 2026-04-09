@@ -1,4 +1,8 @@
+import { createSceneUiFactory } from "../scene-ui/factory.js";
+import { compileSceneSchema, resolveSceneSchema, sceneContainer, sceneText } from "../scene-ui/schema.js";
+
 const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
+const sceneUiFactory = createSceneUiFactory();
 
 export function createBoardNodeView({
     id,
@@ -7,31 +11,24 @@ export function createBoardNodeView({
     onNodePointerDown,
     onNodeDragStart
 }) {
-    const node = document.createElement("div");
-    const label = document.createElement("span");
-
-    node.className = "node";
-    node.dataset.id = id;
-    node.dataset.symbol = symbol;
-    node.draggable = false;
-
-    label.className = "node-label";
-    label.textContent = symbol;
-    node.appendChild(label);
-
-    CONNECTOR_POSITIONS.forEach(position => {
-        const connector = document.createElement("div");
-        connector.className = `connector ${position}`;
-        connector.dataset.nodeId = id;
-        connector.dataset.position = position;
-        connector.addEventListener("pointerdown", onConnectorPointerDown);
-        node.appendChild(connector);
-    });
-
-    node.addEventListener("pointerdown", onNodePointerDown);
-    node.addEventListener("dragstart", onNodeDragStart);
-
-    return node;
+    return sceneUiFactory.createElement(
+        compileSceneSchema(
+            resolveSceneSchema(
+                createBoardNodeSchema(),
+                {
+                    handlers: {
+                        connectorPointerDown: onConnectorPointerDown,
+                        nodeDragStart: onNodeDragStart,
+                        nodePointerDown: onNodePointerDown
+                    },
+                    node: {
+                        id,
+                        symbol
+                    }
+                }
+            )
+        )
+    );
 }
 
 export function createBoardConnectionView({
@@ -43,4 +40,40 @@ export function createBoardConnectionView({
     line.classList.add("connection-hitbox");
     line.addEventListener("click", onClick);
     return line;
+}
+
+function createBoardNodeSchema() {
+    return sceneContainer({
+        className: "node",
+        attrs: {
+            draggable: "false"
+        },
+        data: {
+            id: { bind: "node.id" },
+            symbol: { bind: "node.symbol" }
+        },
+        on: {
+            dragstart: { bind: "handlers.nodeDragStart" },
+            pointerdown: { bind: "handlers.nodePointerDown" }
+        },
+        children: [
+            sceneText({
+                className: "node-label",
+                tagName: "span",
+                text: { bind: "node.symbol" }
+            }),
+            ...CONNECTOR_POSITIONS.map(position =>
+                sceneContainer({
+                    className: `connector ${position}`,
+                    data: {
+                        nodeId: { bind: "node.id" },
+                        position
+                    },
+                    on: {
+                        pointerdown: { bind: "handlers.connectorPointerDown" }
+                    }
+                })
+            )
+        ]
+    });
 }
