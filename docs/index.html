@@ -39,6 +39,48 @@
         <div class="home-stage">
             <div class="home-stage-frame">
                 <div class="home-stage-grid" aria-hidden="true"></div>
+                <div class="home-stage-rule" aria-hidden="true"></div>
+
+                <svg class="home-map-lines" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M500 118 C465 160 405 197 336 234" />
+                    <path d="M336 282 C302 337 280 392 254 456" />
+                    <path d="M336 282 C368 338 404 394 438 452" />
+                    <path d="M500 118 C554 172 602 218 646 276" />
+                    <path d="M646 314 C684 372 720 428 756 468" />
+                </svg>
+
+                <div class="home-map">
+                    <button id="menu-themes-btn" class="home-node home-node-root" type="button">
+                        <span class="home-node-label">Enter Lab</span>
+                        <span class="home-node-title">Theme Missions</span>
+                    </button>
+
+                    <div class="home-node home-node-status home-node-theme">
+                        <span class="home-node-label">Theme progress</span>
+                        <span id="menu-theme-progress" class="home-node-meta">0/0 themes complete</span>
+                    </div>
+
+                    <div class="home-node home-node-note home-node-route">
+                        <span class="home-node-label">Current route</span>
+                        <span class="home-node-title">Basic path</span>
+                    </div>
+
+                    <button id="menu-journal-btn" class="home-node home-node-action home-node-journal" type="button">
+                        <span class="home-node-label">Archive</span>
+                        <span class="home-node-title">Journal</span>
+                        <span id="menu-journal-progress" class="home-node-meta">0 discovered compounds</span>
+                    </button>
+
+                    <button id="menu-continue-btn" class="home-node home-node-action home-node-continue" type="button">
+                        <span class="home-node-label">Resume</span>
+                        <span class="home-node-title">Continue</span>
+                    </button>
+
+                    <div class="home-node home-node-status home-node-current">
+                        <span class="home-node-label">Current theme</span>
+                        <span id="menu-current-theme" class="home-node-meta">No active theme yet</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

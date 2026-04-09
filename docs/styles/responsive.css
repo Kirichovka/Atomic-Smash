@@ -20,6 +20,23 @@
         min-height: calc(100dvh - 138px);
     }
 
+    .home-map-lines {
+        inset: 92px 5% 46px;
+        width: 90%;
+    }
+
+    .home-node-theme {
+        left: 108px;
+    }
+
+    .home-node-route {
+        right: 196px;
+    }
+
+    .home-node-current {
+        right: 64px;
+    }
+
     .screen-hero h1,
     .theme-hero h1 {
         font-size: 36px;
@@ -213,12 +230,54 @@
 
     .home-stage {
         margin-top: 18px;
-        min-height: calc(100vh - 126px);
-        min-height: calc(100dvh - 126px);
+        min-height: auto;
     }
 
     .home-stage-frame {
+        min-height: 0;
         border-radius: 24px;
+        padding: 84px 16px 20px;
+    }
+
+    .home-stage-rule {
+        top: 22px;
+    }
+
+    .home-map-lines {
+        display: none;
+    }
+
+    .home-map {
+        min-height: 0;
+        display: grid;
+        gap: 16px;
+    }
+
+    .home-node {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        min-height: 0;
+        transform: none;
+        border-radius: 28px;
+        pointer-events: auto;
+    }
+
+    .home-node-status,
+    .home-node-note {
+        pointer-events: auto;
+    }
+
+    .home-node-root,
+    .home-node-theme,
+    .home-node-route,
+    .home-node-journal,
+    .home-node-continue,
+    .home-node-current {
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
     }
 
     .screen-hero h1,
