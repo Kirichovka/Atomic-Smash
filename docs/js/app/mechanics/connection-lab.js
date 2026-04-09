@@ -1,6 +1,7 @@
 import { createBoardConnectionSessionController } from "../board-scene/connection-session-controller.js";
 import { createBoardSceneController } from "../board-scene/controller.js";
 import { createBoardDragSessionController } from "../board-scene/drag-session-controller.js";
+import { createBoardMutationController } from "../board-scene/mutation-controller.js";
 import { createBoardRenderController } from "../board-scene/render-controller.js";
 import { createBoardSelectionController } from "../board-scene/selection-controller.js";
 import { createBoardStateController } from "../board-scene/state-controller.js";
@@ -64,11 +65,23 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         boardRender,
         boardSelection,
         boardState,
-        captureState,
+        captureState: () => boardMutation.captureState(),
         connectionExists,
         getConnectionTargetAtPoint,
         publishInteractionContext,
-        removeConnectionByLine
+        removeConnectionByLine: line => boardMutation.removeConnectionByLine(line)
+    });
+    const boardMutation = createBoardMutationController({
+        board,
+        boardConnectionSession,
+        boardRender,
+        boardScene,
+        boardSelection,
+        boardState,
+        getMaxNodeId,
+        isMounted,
+        parseNodeIndex,
+        sync
     });
 
     function init() {
@@ -247,25 +260,13 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     function reset(options = {}) {
         const { preserveSavedState = false } = options;
 
-        clearRuntimeBoard();
+        boardMutation.clearRuntimeBoard();
 
         if (!preserveSavedState) {
             board.savedNodes = [];
             board.savedConnections = [];
             board.nodeIdCounter = 0;
         }
-    }
-
-    function clearRuntimeBoard() {
-        boardSelection.clearSelectedNodes();
-        boardState.getNodeValues().forEach(node => node.remove());
-        boardState.clearNodes();
-
-        boardState.getConnections().forEach(connection => connection.line.remove());
-        boardState.clearConnections();
-
-        boardConnectionSession.removeTemporaryWire();
-        sync();
     }
 
     function sync() {
@@ -277,70 +278,15 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function captureState() {
-        if (!isMounted()) {
-            return {
-                nodeIdCounter: board.nodeIdCounter,
-                savedConnections: board.savedConnections,
-                savedNodes: board.savedNodes
-            };
-        }
-
-        board.savedNodes = boardState.getNodeValues().map(node => ({
-            id: node.dataset.id,
-            localX: boardRender.getNodeLocalX(node),
-            localY: boardRender.getNodeLocalY(node),
-            symbol: node.dataset.symbol,
-            x: boardRender.getNodeLeft(node),
-            y: boardRender.getNodeTop(node)
-        }));
-        board.savedConnections = boardState.getConnections().map(connection => ({
-            fromNodeId: connection.fromNodeId,
-            fromPosition: connection.fromPosition,
-            toNodeId: connection.toNodeId,
-            toPosition: connection.toPosition
-        }));
-
-        return {
-            nodeIdCounter: board.nodeIdCounter,
-            savedConnections: board.savedConnections,
-            savedNodes: board.savedNodes
-        };
+        return boardMutation.captureState();
     }
 
     function restore(snapshot = null) {
-        if (!isMounted()) {
-            return;
-        }
-
-        const boardSnapshot = snapshot ?? {
-            nodeIdCounter: board.nodeIdCounter,
-            savedConnections: board.savedConnections,
-            savedNodes: board.savedNodes
-        };
-
-        clearRuntimeBoard();
-        board.nodeIdCounter = Math.max(boardSnapshot.nodeIdCounter ?? 0, getMaxNodeId(boardSnapshot.savedNodes ?? []));
-
-        (boardSnapshot.savedNodes ?? []).forEach(node => {
-            const hasLocalPosition = Number.isFinite(node.localX) && Number.isFinite(node.localY);
-            createNode(
-                node.symbol,
-                hasLocalPosition ? node.localX : node.x,
-                hasLocalPosition ? node.localY : node.y,
-                {
-                    id: node.id,
-                    persist: false,
-                    positionSpace: hasLocalPosition ? "local" : "pixel"
-                }
-            );
-        });
-
-        (boardSnapshot.savedConnections ?? []).forEach(connection => {
-            restoreConnection(connection);
-        });
-
-        captureState();
-        sync();
+        boardMutation.restore(
+            snapshot,
+            (symbol, x, y, options) => createNode(symbol, x, y, options),
+            connection => restoreConnection(connection)
+        );
     }
 
     function createHelpVisual(compound) {
@@ -460,66 +406,16 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
     }
 
     function createNode(symbol, x, y, options = {}) {
-        if (!isMounted()) {
-            return null;
-        }
-
-        const requestedId = options.id ?? `node-${board.nodeIdCounter + 1}`;
-        const id = requestedId;
-        const position = options.positionSpace === "local"
-            ? boardRender.localToPixelPosition(x, y)
-            : boardScene.clampPosition(x, y);
-
-        board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
-
-        const node = boardRender.createNode({
-            id,
-            onConnectorPointerDown: boardConnectionSession.startConnection,
-            onNodeDragStart: preventNativeDrag,
-            onNodePointerDown: boardDragSession.startMoveNode,
-            position,
-            symbol
+        return boardMutation.createNode(symbol, x, y, {
+            ...options,
+            onNodePointerDown: boardDragSession.startMoveNode
         });
-        boardState.addNode(id, node);
-
-        if (options.persist !== false) {
-            captureState();
-        }
-
-        return node;
     }
 
     function restoreConnection(connection) {
-        if (!isMounted()) {
-            return;
-        }
-
-        const fromNode = boardState.getNode(connection.fromNodeId);
-        const toNode = boardState.getNode(connection.toNodeId);
-        if (!fromNode || !toNode) {
-            return;
-        }
-
-        const fromConnector = fromNode.querySelector(`.connector.${connection.fromPosition}`);
-        const toConnector = toNode.querySelector(`.connector.${connection.toPosition}`);
-        if (!fromConnector || !toConnector) {
-            return;
-        }
-
-        const line = boardRender.createConnection({
-            onClick: () => {
-                boardSelection.clearSelectedNodes();
-                removeConnectionByLine(line);
-            },
-            stroke: "var(--wire-solid)"
-        });
-
-        boardState.addConnection({
-            fromNodeId: connection.fromNodeId,
-            fromPosition: connection.fromPosition,
-            toNodeId: connection.toNodeId,
-            toPosition: connection.toPosition,
-            line
+        boardMutation.restoreConnection(connection, line => {
+            boardSelection.clearSelectedNodes();
+            boardMutation.removeConnectionByLine(line);
         });
     }
 
@@ -657,63 +553,12 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
         return boardScene.clampPosition(x, y);
     }
 
-    function removeConnectionByLine(line) {
-        const index = boardState.getConnections().findIndex(connection => connection.line === line);
-        if (index === -1) {
-            return;
-        }
-
-        boardState.getConnections()[index].line.remove();
-        boardState.removeConnectionAt(index);
-        captureState();
-    }
-
     function removeNode(nodeId, options = {}) {
-        const { notifySelection = true } = options;
-        const node = boardState.getNode(nodeId);
-        if (!node) {
-            return;
-        }
-
-        let selectionChanged = false;
-        if (boardState.hasSelectedNode(nodeId)) {
-            boardState.deleteSelectedNode(nodeId);
-            boardState.syncPrimarySelectedNodeId();
-            selectionChanged = true;
-        }
-
-        node.remove();
-        boardState.deleteNode(nodeId);
-
-        for (let index = boardState.getConnections().length - 1; index >= 0; index -= 1) {
-            const connection = boardState.getConnections()[index];
-            if (connection.fromNodeId === nodeId || connection.toNodeId === nodeId) {
-                connection.line.remove();
-                boardState.removeConnectionAt(index);
-            }
-        }
-
-        captureState();
-
-        if (selectionChanged && notifySelection) {
-            boardSelection.notifySelectionState();
-        }
+        boardMutation.removeNode(nodeId, options);
     }
 
     function removeNodes(nodeIds = []) {
-        const uniqueNodeIds = [...new Set(nodeIds.filter(nodeId => typeof nodeId === "string"))];
-        if (uniqueNodeIds.length === 0) {
-            return;
-        }
-
-        uniqueNodeIds.forEach(nodeId => {
-            removeNode(nodeId, {
-                notifySelection: false
-            });
-        });
-
-        boardSelection.notifySelectionState();
-        captureState();
+        boardMutation.removeNodes(nodeIds);
     }
 
     function isNodeOutsideMixZone(x, y) {
