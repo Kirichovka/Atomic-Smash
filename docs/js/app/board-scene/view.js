@@ -1,5 +1,6 @@
 import { createSceneUiFactory } from "../scene-ui/factory.js";
 import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
+import { assertBoardNodeSchemaContract } from "./contracts.js";
 
 const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
 const sceneUiFactory = createSceneUiFactory();
@@ -55,7 +56,9 @@ export function createBoardNodeView({
     onNodePointerDown,
     onNodeDragStart
 }) {
-    return sceneUiFactory.createElement(
+    assertBoardNodeSchemaContract(schemaConfig);
+
+    const nodeElement = sceneUiFactory.createElement(
         compileSceneSchema(
             resolveSceneSchema(
                 createBoardNodeSchema(schemaConfig),
@@ -73,6 +76,16 @@ export function createBoardNodeView({
             )
         )
     );
+
+    hydrateBoardNodeElement(nodeElement, {
+        id,
+        onConnectorPointerDown,
+        onNodeDragStart,
+        onNodePointerDown,
+        symbol
+    });
+
+    return nodeElement;
 }
 
 export function createBoardConnectionView({
@@ -89,18 +102,60 @@ export function createBoardConnectionView({
 function createBoardNodeSchema(schemaConfig = {}) {
     const nodeSchema = structuredClone(schemaConfig.boardNode ?? {});
     const connectorSchema = schemaConfig.boardConnector ?? {};
+    delete nodeSchema.on;
+    delete nodeSchema.listeners;
 
     nodeSchema.children = [
         ...(Array.isArray(nodeSchema.children) ? nodeSchema.children : []),
-        ...CONNECTOR_POSITIONS.map(position =>
-            resolveSceneSchema(connectorSchema, {
-                connector: {
-                    className: `connector ${position}`,
+        ...CONNECTOR_POSITIONS.map(position => {
+            const connectorDefinition = structuredClone(connectorSchema);
+            delete connectorDefinition.on;
+            delete connectorDefinition.listeners;
+
+            return {
+                ...connectorDefinition,
+                className: `connector ${position}`,
+                data: {
+                    ...(connectorSchema.data ?? {}),
                     position
                 }
-            })
-        )
+            };
+        })
     ];
 
     return nodeSchema;
+}
+
+function hydrateBoardNodeElement(nodeElement, {
+    id,
+    onConnectorPointerDown,
+    onNodeDragStart,
+    onNodePointerDown,
+    symbol
+}) {
+    nodeElement.dataset.id = id;
+    nodeElement.dataset.symbol = symbol;
+    nodeElement.draggable = false;
+
+    if (typeof onNodePointerDown === "function") {
+        nodeElement.addEventListener("pointerdown", onNodePointerDown);
+    }
+
+    if (typeof onNodeDragStart === "function") {
+        nodeElement.addEventListener("dragstart", onNodeDragStart);
+    }
+
+    CONNECTOR_POSITIONS.forEach(position => {
+        const connector = nodeElement.querySelector(`.connector.${position}`);
+        if (!connector) {
+            return;
+        }
+
+        connector.dataset.nodeId = id;
+        connector.dataset.position = position;
+
+        if (typeof onConnectorPointerDown === "function") {
+            connector.addEventListener("pointerdown", onConnectorPointerDown);
+        }
+    });
 }

@@ -1,4 +1,5 @@
 import { createBoardEdgeEntity, createBoardEdgeEntityId, createBoardNodeEntity } from "./entity-factory.js";
+import { createSvgLine } from "../../svg.js";
 
 export function createBoardMutationController({
     board,
@@ -121,11 +122,11 @@ export function createBoardMutationController({
             ...connection,
             line: null
         });
-        const line = boardRender.createConnection({
-            edgeEntity,
-            onClick: () => onConnectionClick(line),
-            stroke: "var(--wire-solid)"
-        });
+        const line = createSvgLine("var(--wire-solid)");
+        line.classList.add("connection-hitbox");
+        line.addEventListener("click", () => onConnectionClick(line));
+        edgeEntity.attachLine(line);
+        boardRender.svgElement.appendChild(line);
 
         boardState.addConnection({
             edgeEntity,

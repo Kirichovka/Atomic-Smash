@@ -1,4 +1,4 @@
-import { createSvgLine, getConnectorCenter } from "../../svg.js";
+import { createSvgLine, getConnectorCenter, redrawConnections } from "../../svg.js";
 import { createBoardEdgeEntity } from "./entity-factory.js";
 
 export function createBoardConnectionSessionController({
@@ -33,7 +33,6 @@ export function createBoardConnectionSessionController({
             persist: false
         });
         board.connectionPointerId = event.pointerId;
-        board.startConnector.setPointerCapture(event.pointerId);
 
         boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
 
@@ -46,9 +45,9 @@ export function createBoardConnectionSessionController({
 
         boardRender.svgElement.appendChild(board.currentWire);
 
-        document.addEventListener("pointermove", drawTemporaryWire);
-        document.addEventListener("pointerup", finishConnection);
-        document.addEventListener("pointercancel", removeTemporaryWire);
+        window.addEventListener("pointermove", drawTemporaryWire);
+        window.addEventListener("pointerup", finishConnection);
+        window.addEventListener("pointercancel", removeTemporaryWire);
     }
 
     function drawTemporaryWire(event) {
@@ -101,14 +100,14 @@ export function createBoardConnectionSessionController({
             toNodeId: endNodeId,
             toPosition: endConnector.dataset.position
         });
-        const line = boardRender.createConnection({
-            edgeEntity,
-            onClick: () => {
-                boardSelection.clearSelectedNodes();
-                removeConnectionByLine(line);
-            },
-            stroke: "var(--wire-solid)"
+        const line = createSvgLine("var(--wire-solid)");
+        line.classList.add("connection-hitbox");
+        line.addEventListener("click", () => {
+            boardSelection.clearSelectedNodes();
+            removeConnectionByLine(line);
         });
+        edgeEntity.attachLine(line);
+        boardRender.svgElement.appendChild(line);
 
         boardState.addConnection({
             edgeEntity,
@@ -120,7 +119,7 @@ export function createBoardConnectionSessionController({
         });
         boardState.addEdgeEntity(edgeEntity);
 
-        boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
+        redrawConnections(boardState.getConnections(), boardState.getNodes(), boardRender.svgElement);
         removeTemporaryWire();
         captureState();
     }
@@ -134,21 +133,13 @@ export function createBoardConnectionSessionController({
             board.currentWire.remove();
         }
 
-        if (
-            board.startConnector &&
-            board.connectionPointerId !== null &&
-            board.startConnector.hasPointerCapture(board.connectionPointerId)
-        ) {
-            board.startConnector.releasePointerCapture(board.connectionPointerId);
-        }
-
         board.currentWire = null;
         board.startConnector = null;
         board.connectionPointerId = null;
 
-        document.removeEventListener("pointermove", drawTemporaryWire);
-        document.removeEventListener("pointerup", finishConnection);
-        document.removeEventListener("pointercancel", removeTemporaryWire);
+        window.removeEventListener("pointermove", drawTemporaryWire);
+        window.removeEventListener("pointerup", finishConnection);
+        window.removeEventListener("pointercancel", removeTemporaryWire);
     }
 
     return {

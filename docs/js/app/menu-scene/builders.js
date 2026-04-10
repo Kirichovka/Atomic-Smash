@@ -141,20 +141,21 @@ export class MenuSceneSheetBuilder {
 
 function buildSceneLayoutNodes(levels, themeMap) {
     const configuredNodes = Array.isArray(themeMap?.nodes) ? themeMap.nodes : [];
-    const configByLevelId = new Map(configuredNodes.map(node => [node.levelId, node]));
+    if (configuredNodes.length > 0) {
+        const levelIds = new Set(levels.map(level => level.id));
 
-    return levels.map((level, index) => {
-        const configuredNode = configByLevelId.get(level.id);
-        if (configuredNode) {
-            return {
+        return configuredNodes
+            .filter(node => levelIds.has(node.levelId))
+            .map(configuredNode => ({
                 edgeTo: Array.isArray(configuredNode.edgeTo) ? configuredNode.edgeTo : [],
-                levelId: level.id,
+                levelId: configuredNode.levelId,
                 size: configuredNode.size ?? "sm",
                 x: configuredNode.x,
                 y: configuredNode.y
-            };
-        }
+            }));
+    }
 
+    return levels.map((level, index) => {
         return createFallbackLayout(level.id, index);
     });
 }

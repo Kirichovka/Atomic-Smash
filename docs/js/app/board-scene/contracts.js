@@ -43,6 +43,37 @@ export const BOARD_SCENE_PART_KIND = Object.freeze({
     state: "state"
 });
 
+export function assertBoardNodeSchemaContract(schemaConfig = {}) {
+    const boardNode = schemaConfig.boardNode;
+    const boardConnector = schemaConfig.boardConnector;
+
+    if (!boardNode || typeof boardNode !== "object") {
+        throw new Error("Invalid board node schema: boardNode definition is required.");
+    }
+
+    if (!boardConnector || typeof boardConnector !== "object") {
+        throw new Error("Invalid board node schema: boardConnector definition is required.");
+    }
+
+    if (boardNode.kind !== "container") {
+        throw new Error(`Invalid board node schema: boardNode.kind must be "container", got "${boardNode.kind ?? "unknown"}".`);
+    }
+
+    if (!boardNode.data || typeof boardNode.data !== "object" || !boardNode.data.id) {
+        throw new Error("Invalid board node schema: boardNode.data.id binding is required.");
+    }
+
+    if (!boardConnector.on || typeof boardConnector.on !== "object" || !boardConnector.on.pointerdown) {
+        throw new Error("Invalid board node schema: boardConnector.on.pointerdown binding is required.");
+    }
+
+    if (!boardConnector.data || typeof boardConnector.data !== "object" || !boardConnector.data.nodeId) {
+        throw new Error("Invalid board node schema: boardConnector.data.nodeId binding is required.");
+    }
+
+    return schemaConfig;
+}
+
 const REQUIRED_METHODS_BY_KIND = Object.freeze({
     [BOARD_SCENE_PART_KIND.geometry]: [
         "clampPosition",

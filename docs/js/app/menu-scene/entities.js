@@ -116,10 +116,12 @@ export class MenuSceneSpace {
         };
     }
 
-    getNodeWidthPercent(sizeKey) {
-        const sizeRatio = MENU_SCENE_DEFAULTS.nodeSizeRatios[sizeKey] ?? MENU_SCENE_DEFAULTS.nodeSizeRatios.sm;
-        const minSide = Math.max(Math.min(this.width, this.height), 1);
-        return (minSide * (sizeRatio / 100) / Math.max(this.width, 1)) * 100;
+    getNodeWidthPx(node) {
+        if (node?.isUnlocked) {
+            return MENU_SCENE_DEFAULTS.nodeStateSizePixels.interactive;
+        }
+
+        return MENU_SCENE_DEFAULTS.nodeStateSizePixels.locked;
     }
 }
 

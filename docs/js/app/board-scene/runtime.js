@@ -7,7 +7,7 @@ import { createBoardMutationController } from "./mutation-controller.js";
 import { createBoardRenderController } from "./render-controller.js";
 import { createBoardSelectionController } from "./selection-controller.js";
 import { createBoardStateController } from "./state-controller.js";
-import { createBoardSceneViewport } from "./view.js";
+import { createBoardSceneViewport } from "./view.js?v=20260411-connector-bind-fix";
 import { createSceneRuntimePart } from "../scene-runtime/factory.js";
 import { SCENE_RUNTIME_PART_KIND } from "../scene-runtime/contracts.js";
 

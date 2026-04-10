@@ -3,7 +3,7 @@ import {
     syncConnectionsLayer
 } from "../../svg.js";
 import { clampBoardLocalCoordinate } from "./methods.js";
-import { createBoardConnectionView, createBoardNodeView } from "./view.js";
+import { createBoardConnectionView, createBoardNodeView } from "./view.js?v=20260411-connector-bind-fix";
 
 export function createBoardRenderController({
     boardVisualContentBuilder,

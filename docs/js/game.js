@@ -13,7 +13,7 @@ import {
     loadPaletteRuntimeSchemaConfig,
     loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
-} from "./data.js?v=20260409-scene-schema";
+} from "./data.js?v=20260411-connection-revert";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";

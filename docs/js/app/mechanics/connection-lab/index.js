@@ -209,7 +209,7 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
 
         const node = element.closest(".node");
         if (!node) {
-            return null;
+            return getClosestConnectorOnNearestOtherNode(clientX, clientY);
         }
 
         return getClosestConnector(node, clientX, clientY);
@@ -233,6 +233,32 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
         });
 
         return closestConnector;
+    }
+
+    function getClosestConnectorOnNearestOtherNode(clientX, clientY) {
+        const startNodeId = board.startConnector?.dataset?.nodeId ?? null;
+        const nodes = [...refs.mixZone.querySelectorAll(".node")]
+            .filter(node => node.dataset?.id && node.dataset.id !== startNodeId);
+        let closestNode = null;
+        let closestDistance = Infinity;
+
+        nodes.forEach(node => {
+            const rect = node.getBoundingClientRect();
+            const centerX = rect.left + (rect.width / 2);
+            const centerY = rect.top + (rect.height / 2);
+            const distance = Math.hypot(clientX - centerX, clientY - centerY);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestNode = node;
+            }
+        });
+
+        if (!closestNode || closestDistance > 120) {
+            return null;
+        }
+
+        return getClosestConnector(closestNode, clientX, clientY);
     }
 
     function connectionExists(startNodeId, endNodeId) {
