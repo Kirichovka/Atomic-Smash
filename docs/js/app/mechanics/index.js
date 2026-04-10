@@ -1,11 +1,18 @@
 import { DEFAULT_MECHANIC_ID } from "../state.js";
-import { createConnectionLabMechanic } from "./connection-lab.js";
+import { createMechanicAdapter } from "./adapters.js";
 import { createMechanicInstance } from "./factory.js";
+import { createBuiltInMechanicManifests } from "./manifests.js";
 
 export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaConfig }) {
-    const mechanicFactories = {
-        "connection-lab": createConnectionLabMechanic
-    };
+    const mechanicAdapters = new Map(
+        createBuiltInMechanicManifests().map(manifest => [
+            manifest.id,
+            createMechanicAdapter({
+                manifest,
+                context: { refs, state, bus, boardRuntimeSchemaConfig }
+            })
+        ])
+    );
     const mechanics = new Map();
     let activeMechanicId = null;
 
@@ -20,6 +27,10 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
 
     function get(mechanicId = DEFAULT_MECHANIC_ID) {
         return mechanics.get(mechanicId) ?? mechanics.get(DEFAULT_MECHANIC_ID);
+    }
+
+    function getManifest(mechanicId = DEFAULT_MECHANIC_ID) {
+        return mechanicAdapters.get(mechanicId)?.manifest ?? mechanicAdapters.get(DEFAULT_MECHANIC_ID)?.manifest ?? null;
     }
 
     function syncActiveMechanic(nextMechanicId = DEFAULT_MECHANIC_ID, lifecycleContext = {}) {
@@ -66,15 +77,19 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
                 return;
             }
 
-            const createMechanic = mechanicFactories[mechanicConfig.id];
-            if (!createMechanic) {
+            const mechanicAdapter = mechanicAdapters.get(mechanicConfig.id);
+            if (!mechanicAdapter) {
                 return;
             }
 
             const mechanic = createMechanicInstance({
-                config: mechanicConfig,
-                context: { refs, state, bus, boardRuntimeSchemaConfig },
-                factory: createMechanic
+                config: {
+                    ...mechanicConfig,
+                    capabilities: mechanicAdapter.manifest.capabilities,
+                    manifestId: mechanicAdapter.manifest.id
+                },
+                context: { refs, state, bus, boardRuntimeSchemaConfig, mechanicManifest: mechanicAdapter.manifest },
+                factory: context => mechanicAdapter.createInstance(mechanicConfig, context)
             });
             mechanics.set(mechanicConfig.id, mechanic);
         });
@@ -89,17 +104,29 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
             DEFAULT_MECHANIC_ID,
             createMechanicInstance({
                 config: {
+                    capabilities: mechanicAdapters.get(DEFAULT_MECHANIC_ID)?.manifest?.capabilities ?? [],
                     id: DEFAULT_MECHANIC_ID,
+                    manifestId: mechanicAdapters.get(DEFAULT_MECHANIC_ID)?.manifest?.id ?? DEFAULT_MECHANIC_ID,
                     name: "Connection Lab"
                 },
-                context: { refs, state, bus, boardRuntimeSchemaConfig },
-                factory: createConnectionLabMechanic
+                context: {
+                    refs,
+                    state,
+                    bus,
+                    boardRuntimeSchemaConfig,
+                    mechanicManifest: mechanicAdapters.get(DEFAULT_MECHANIC_ID)?.manifest ?? null
+                },
+                factory: context => mechanicAdapters.get(DEFAULT_MECHANIC_ID).createInstance({
+                    id: DEFAULT_MECHANIC_ID,
+                    name: "Connection Lab"
+                }, context)
             })
         );
     }
 
     return {
         get,
+        getManifest,
         init,
         deactivateActiveMechanic,
         resetAll,

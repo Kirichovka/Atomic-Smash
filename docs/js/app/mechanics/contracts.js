@@ -57,9 +57,11 @@ export function assertMechanicContract(mechanic, config = {}) {
 
 export function attachMechanicMetadata(mechanic, config = {}) {
     return Object.assign(mechanic, {
+        capabilities: Object.freeze([...(config.capabilities ?? mechanic.capabilities ?? [])]),
         contractVersion: MECHANIC_CONTRACT_VERSION,
         displayName: config.name ?? mechanic.displayName ?? mechanic.id,
         mechanicConfig: config,
+        mechanicManifestId: config.manifestId ?? mechanic.mechanicManifestId ?? mechanic.id,
         mechanicLifecycle: Object.freeze({
             hasActivate: typeof mechanic.activate === "function",
             hasDeactivate: typeof mechanic.deactivate === "function",
