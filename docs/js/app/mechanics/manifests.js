@@ -1,4 +1,4 @@
-import { createConnectionLabMechanic } from "./connection-lab.js";
+import { createConnectionLabMechanic } from "./connection-lab/index.js";
 import { createMechanicManifest } from "./manifest-factory.js";
 import { MECHANIC_CAPABILITY } from "./manifest-contracts.js";
 
