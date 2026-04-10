@@ -2,12 +2,43 @@
 
 ## Purpose
 
-This repository has been moving from ad-hoc DOM code toward a layered runtime:
+This repository is moving from ad-hoc DOM code toward a layered runtime.
+
+Main mental models:
 
 - `data -> state -> controllers -> scene/runtime -> DOM`
 - `JSON schema -> validator -> bindings/actions -> scene-ui -> rendered UI`
 
-This file is a practical guide for AI/code agents so changes land in the right layer and do not reintroduce recent bugs.
+This file is a practical guide for AI/code agents so changes land in the right layer and do not reintroduce known bugs.
+
+Documentation rule:
+
+- after every meaningful bug fix, regression fix, or architecture change, update `AGENTS.md`
+- record:
+  - what broke
+  - the real cause
+  - the fix
+  - the safe rule to avoid repeating it
+
+Treat `AGENTS.md` as a living operational document, not as one-time documentation.
+
+## Fast Start
+
+If you need to understand the project quickly, read in this order:
+
+1. `docs/js/game.js`
+2. `docs/js/data.js`
+3. `docs/js/app/game-runtime/runtime.js`
+4. `docs/js/app/menu-scene/controller.js`
+5. `docs/js/app/mechanics/connection-lab/index.js`
+6. `docs/js/app/board-scene/*`
+
+This gives the shortest path to understanding:
+
+- how data enters
+- where the app is assembled
+- how ordinary UI is rendered
+- how board/mechanic logic is structured
 
 ## Top-Level Architecture
 
@@ -15,7 +46,7 @@ This file is a practical guide for AI/code agents so changes land in the right l
 
 - `docs/js/game.js`
   - application bootstrap/composition root
-  - loads data + runtime schema configs
+  - loads data and runtime schema configs
   - creates refs, state, event bus, runtime
 
 - `docs/js/data.js`
@@ -35,6 +66,14 @@ This file is a practical guide for AI/code agents so changes land in the right l
   - mix-zone context
   - mechanics registry
 
+Useful mental model:
+
+- `game.js` starts the app
+- `runtime.js` wires the app
+- controllers run behavior
+- scenes own rendering/layout domains
+- mechanics own interaction rules
+
 ### Scene UI
 
 - `docs/js/app/scene-ui/*`
@@ -46,6 +85,14 @@ This file is a practical guide for AI/code agents so changes land in the right l
 
 Use this for regular UI, panels, cards, modals, chrome, and screen shells.
 
+If the feature already has:
+
+- runtime schema JSON
+- content builder
+- controller
+
+do not start by editing raw HTML first.
+
 ### Home/Menu Scene
 
 - `docs/js/app/menu-scene/*`
@@ -55,7 +102,7 @@ Use this for regular UI, panels, cards, modals, chrome, and screen shells.
   - layout runtime
   - controller
 
-This is the structured version of the old hand-written homepage map logic.
+This is the structured version of the older hand-written homepage map logic.
 
 ### Board / Mix Zone
 
@@ -72,10 +119,32 @@ This is the structured version of the old hand-written homepage map logic.
 ### Mechanics
 
 - `docs/js/app/mechanics/*`
-  - manifest/adapters/contracts
+  - manifest
+  - adapters
+  - contracts
   - mechanic implementations
-- current main mechanic:
-  - `docs/js/app/mechanics/connection-lab/index.js`
+
+Current main mechanic:
+
+- `docs/js/app/mechanics/connection-lab/index.js`
+
+## Change Routing
+
+Use this map before editing:
+
+| Goal | Primary place to change |
+| --- | --- |
+| Add or change screen shell UI | `docs/data/*.schema.json`, `docs/js/app/*-runtime/content-builders.js` |
+| Change modal/card/panel structure | `docs/js/app/scene-ui/*` and runtime schema |
+| Change menu/home map rendering | `docs/js/app/menu-scene/*` |
+| Change board node or connector DOM | `docs/js/app/board-scene/view.js` |
+| Change board drag/connect lifecycle | `docs/js/app/board-scene/*-session-controller.js` |
+| Change board persistence or mutations | `docs/js/app/board-scene/mutation-controller.js` |
+| Change chemistry rule/evaluation | `docs/js/app/mechanics/connection-lab/index.js` |
+| Change low-level SVG helpers | `docs/js/svg.js` |
+| Change controller composition | `docs/js/app/game-runtime/runtime.js` |
+
+If uncertain, follow the existing runtime path instead of inventing a new one.
 
 ## Current Runtime UI Rule
 
@@ -95,7 +164,7 @@ If a feature is interactive board logic, prefer:
 
 ### What controls node size
 
-Home/menu node size is **not CSS width-driven**.
+Home/menu node size is not CSS-width-driven.
 
 Current source of truth:
 
@@ -107,7 +176,7 @@ Renderer writes inline width:
 
 - `element.style.width = "...px"`
 
-CSS only affects:
+CSS mainly affects:
 
 - typography
 - padding
@@ -115,12 +184,17 @@ CSS only affects:
 - shadows
 - visual compactness
 
+That means:
+
+- if size looks wrong, inspect inline style first
+- CSS width is usually not the real source of truth here
+
 ### Important past issue
 
 Node size appeared not to change because:
 
 - `.home-level-node` used percentage padding in CSS
-- percentage padding was effectively inflating visual size
+- percentage padding inflated visual size
 - runtime width changed, but visual circle stayed large
 
 Fix that was applied:
@@ -148,26 +222,26 @@ When `themeMap.nodes` exists, it should be treated as the explicit source of tru
 Important fix:
 
 - `docs/js/app/menu-scene/builders.js`
-  - do **not** auto-fill fallback nodes if explicit `themeMap.nodes` is present
+  - do not auto-fill fallback nodes if explicit `themeMap.nodes` is present
 
 Without this, debugging layout is misleading because deleted nodes silently reappear.
 
-## Board/Connection Notes
+## Board / Connection Notes
 
 ### Most important bug class we hit
 
-The biggest recent board bug was **premature schema resolve** for board connectors.
+The biggest recent board bug was premature schema resolve for board connectors.
 
 What happened:
 
-- board connector schema was being expanded too early
+- board connector schema was expanded too early
 - runtime `handlers` and `node` bindings were not reliably preserved
-- connector DOM existed, but `pointerdown`/dataset bindings could be wrong or missing
+- connector DOM existed, but `pointerdown` and dataset bindings could be wrong or missing
 
 Fix applied:
 
 - `docs/js/app/board-scene/view.js`
-  - board node view now hydrates the created DOM explicitly
+  - board node view hydrates created DOM explicitly
   - connector dataset and event listeners are attached after element creation
 
 - `docs/js/app/board-scene/contracts.js`
@@ -175,11 +249,11 @@ Fix applied:
 
 ### Rule for board interactive elements
 
-Do **not** rely only on schema listener resolution for critical board interactions.
+Do not rely only on schema listener resolution for critical board interactions.
 
-For board connectors/nodes:
+For board connectors and nodes:
 
-- schema can define structure/classes
+- schema can define structure and classes
 - runtime hydration should enforce:
   - `data-id`
   - `data-symbol`
@@ -198,7 +272,7 @@ Historically the most stable path was the older direct flow:
 
 When refactoring this area:
 
-- preserve a single clear lifecycle
+- preserve a single clear lifecycle:
   - `startConnection`
   - `drawTemporaryWire`
   - `finishConnection`
@@ -209,9 +283,18 @@ When refactoring this area:
   - SVG creation changes
   in the same patch
 
+Recommended verification order:
+
+1. connector DOM exists
+2. connector has `data-node-id` and `data-position`
+3. connector `pointerdown` works
+4. temp wire appears
+5. final line is appended to SVG
+6. redraw keeps the final line visible
+
 ### Current caution
 
-Connection creation was recently unstable during refactors. Even after multiple fixes, this area should still be treated as sensitive until manually re-verified in-browser.
+Connection creation has been unstable during refactors. Treat this area as sensitive until manually re-verified in-browser.
 
 If touching this area:
 
@@ -239,7 +322,9 @@ If a fix appears correct in code but not in browser:
   - `docs/js/main.js`
   - `docs/js/game.js`
 
-Do this carefully and intentionally. Avoid random repeated churn, but do not ignore caching as a debugging variable.
+Do this carefully and intentionally. Avoid random churn, but do not ignore caching as a debugging variable.
+
+If browser behavior and code disagree, suspect cache before suspecting the math.
 
 ## Where To Change Things
 
@@ -272,6 +357,16 @@ Prefer:
 - `docs/js/app/board-scene/view.js`
 - `docs/js/svg.js`
 
+### If changing controller wiring
+
+Prefer:
+
+- `docs/js/app/game-runtime/runtime.js`
+- `docs/js/app/game-runtime/controller-contracts.js`
+- `docs/js/app/game-runtime/controller-factory.js`
+
+Do not wire one-off controller composition from random feature files if runtime already owns it.
+
 ## Refactor Guidance
 
 ### Good
@@ -280,6 +375,7 @@ Prefer:
 - keep one source of truth per concern
 - validate contracts where runtime bugs are expensive
 - separate view structure from event hydration for board nodes
+- keep critical board interactivity explicit when schema ordering is risky
 
 ### Bad
 
@@ -287,6 +383,7 @@ Prefer:
 - changing coordinates, zoom, fit, and camera in one patch
 - resolving schema fragments before runtime bindings are available
 - debugging cached browser code as if it were fresh code
+- changing DOM structure and interaction binding together without a browser check
 
 ## Practical Testing Checklist
 
@@ -306,6 +403,12 @@ After changing board/mix-zone:
 5. remove a bond
 6. verify tutorial overlay does not break interaction
 
+If connection logic was touched, also verify:
+
+1. tutorial bond creation still works
+2. saved/restored bonds render after reload
+3. dragging a node keeps the line attached
+
 ## Local Repository Notes
 
 - Do not commit:
@@ -317,7 +420,7 @@ After changing board/mix-zone:
 
 ## Summary
 
-This codebase is no longer “just DOM code”.
+This codebase is no longer "just DOM code".
 
 The safest mental model is:
 
