@@ -13,6 +13,7 @@ import { SCENE_RUNTIME_PART_KIND } from "../scene-runtime/contracts.js";
 
 export function createBoardSceneRuntime({
     board,
+    boardVisualContentBuilder,
     boardRuntimeSchemaConfig,
     bus,
     refs,
@@ -45,6 +46,7 @@ export function createBoardSceneRuntime({
     const boardRender = createBoardScenePart({
         kind: BOARD_SCENE_PART_KIND.render,
         context: {
+            boardVisualContentBuilder,
             boardRuntimeSchemaConfig,
             boardScene,
             boardState,

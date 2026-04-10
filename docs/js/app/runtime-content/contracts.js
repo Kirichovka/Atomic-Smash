@@ -1,4 +1,5 @@
 export const RUNTIME_CONTENT_BUILDER_KIND = Object.freeze({
+    boardVisual: "board-visual",
     gameShell: "game-shell",
     mixZoneContext: "mix-zone-context",
     modal: "modal",
@@ -9,6 +10,10 @@ export const RUNTIME_CONTENT_BUILDER_KIND = Object.freeze({
 });
 
 const REQUIRED_METHODS_BY_KIND = Object.freeze({
+    [RUNTIME_CONTENT_BUILDER_KIND.boardVisual]: [
+        "createConnectionVisual",
+        "renderHelpVisual"
+    ],
     [RUNTIME_CONTENT_BUILDER_KIND.screen]: [
         "renderJournalCompoundCards",
         "renderJournalElementCards",

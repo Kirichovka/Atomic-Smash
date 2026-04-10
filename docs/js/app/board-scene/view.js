@@ -76,14 +76,14 @@ export function createBoardNodeView({
 }
 
 export function createBoardConnectionView({
-    createSvgLine,
+    boardVisualContentBuilder,
     stroke,
     onClick
 }) {
-    const line = createSvgLine(stroke);
-    line.classList.add("connection-hitbox");
-    line.addEventListener("click", onClick);
-    return line;
+    return boardVisualContentBuilder.createConnectionVisual({
+        onClick,
+        stroke
+    });
 }
 
 function createBoardNodeSchema(schemaConfig = {}) {

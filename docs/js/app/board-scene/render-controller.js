@@ -1,5 +1,4 @@
 import {
-    createSvgLine,
     redrawConnections,
     syncConnectionsLayer
 } from "../../svg.js";
@@ -7,6 +6,7 @@ import { clampBoardLocalCoordinate } from "./methods.js";
 import { createBoardConnectionView, createBoardNodeView } from "./view.js";
 
 export function createBoardRenderController({
+    boardVisualContentBuilder,
     boardRuntimeSchemaConfig,
     boardScene,
     boardState,
@@ -37,7 +37,7 @@ export function createBoardRenderController({
 
     function createConnection({ edgeEntity = null, onClick, stroke = "var(--wire-solid)" }) {
         const line = createBoardConnectionView({
-            createSvgLine,
+            boardVisualContentBuilder,
             onClick,
             stroke
         });
