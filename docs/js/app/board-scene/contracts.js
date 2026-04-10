@@ -4,6 +4,30 @@ export const BOARD_SCENE_ENTITY_KIND = Object.freeze({
     space: "space"
 });
 
+export const BOARD_SCENE_ENTITY_REQUIRED_METADATA = Object.freeze({
+    [BOARD_SCENE_ENTITY_KIND.edge]: [
+        "fromNodeId",
+        "fromPosition",
+        "toNodeId",
+        "toPosition"
+    ],
+    [BOARD_SCENE_ENTITY_KIND.node]: [
+        "localX",
+        "localY",
+        "pixelX",
+        "pixelY",
+        "symbol"
+    ],
+    [BOARD_SCENE_ENTITY_KIND.space]: [
+        "defaultNodeHeight",
+        "defaultNodeWidth",
+        "nodeHeight",
+        "nodeWidth",
+        "viewportHeight",
+        "viewportWidth"
+    ]
+});
+
 export const BOARD_SCENE_POSITION_SPACE = Object.freeze({
     local: "local",
     pixel: "pixel"
@@ -74,15 +98,28 @@ const REQUIRED_METHODS_BY_KIND = Object.freeze({
     ],
     [BOARD_SCENE_PART_KIND.state]: [
         "addConnection",
+        "addEdgeEntity",
         "addNode",
+        "addNodeEntity",
         "clearConnections",
+        "clearEdgeEntities",
         "clearNodes",
+        "clearNodeEntities",
         "clearSelection",
         "deleteNode",
+        "deleteEdgeEntity",
+        "deleteNodeEntity",
         "deleteSelectedNode",
         "getConnections",
+        "getEdgeEntity",
+        "getEdgeEntityValues",
         "getNode",
         "getNodeEntries",
+        "getNodeIdFromElement",
+        "getNodeEntity",
+        "getNodeEntityByElement",
+        "getNodeEntityValues",
+        "getNodeSymbol",
         "getNodes",
         "getNodeValues",
         "getPrimarySelectedNodeId",
@@ -114,4 +151,36 @@ export function assertBoardScenePartContract(part, kind) {
     });
 
     return part;
+}
+
+export function assertBoardSceneEntityContract(entity, kind) {
+    if (!kind || !BOARD_SCENE_ENTITY_REQUIRED_METADATA[kind]) {
+        throw new Error(`Unknown board scene entity kind: "${kind}".`);
+    }
+
+    if (!entity || typeof entity !== "object") {
+        throw new Error(`Invalid board scene ${kind}: entity factory must return an object.`);
+    }
+
+    if (entity.kind !== kind) {
+        throw new Error(`Invalid board scene ${kind}: entity kind mismatch ("${entity.kind ?? "unknown"}").`);
+    }
+
+    if (typeof entity.id !== "string" || entity.id.trim() === "") {
+        throw new Error(`Invalid board scene ${kind}: entity id must be a non-empty string.`);
+    }
+
+    if (!entity.metadata || typeof entity.metadata !== "object") {
+        throw new Error(`Invalid board scene ${kind}: metadata must be an object.`);
+    }
+
+    BOARD_SCENE_ENTITY_REQUIRED_METADATA[kind].forEach(metadataKey => {
+        if (!(metadataKey in entity.metadata)) {
+            throw new Error(
+                `Invalid board scene ${kind}: required metadata "${metadataKey}" is missing.`
+            );
+        }
+    });
+
+    return entity;
 }

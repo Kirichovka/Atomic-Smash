@@ -17,31 +17,61 @@ export class BoardSceneEntity extends SceneObject {
 }
 
 export class BoardSceneNode extends BoardSceneEntity {
-    constructor({ id, localX = 0, localY = 0, symbol }) {
+    constructor({ element = null, id, localX = 0, localY = 0, pixelX = 0, pixelY = 0, symbol }) {
         super({
             id,
             kind: BOARD_SCENE_ENTITY_KIND.node,
             metadata: {
+                element,
                 localX,
                 localY,
+                pixelX,
+                pixelY,
                 symbol
             }
         });
     }
+
+    attachElement(element) {
+        this.metadata.element = element ?? null;
+    }
+
+    getElement() {
+        return this.metadata.element ?? null;
+    }
+
+    updateLocalPosition(localX, localY) {
+        this.metadata.localX = localX;
+        this.metadata.localY = localY;
+    }
+
+    updatePixelPosition(pixelX, pixelY) {
+        this.metadata.pixelX = pixelX;
+        this.metadata.pixelY = pixelY;
+    }
 }
 
 export class BoardSceneEdge extends BoardSceneEntity {
-    constructor({ id, fromNodeId, fromPosition, toNodeId, toPosition }) {
+    constructor({ id, fromNodeId, fromPosition, line = null, toNodeId, toPosition }) {
         super({
             id,
             kind: BOARD_SCENE_ENTITY_KIND.edge,
             metadata: {
                 fromNodeId,
                 fromPosition,
+                line,
                 toNodeId,
                 toPosition
             }
         });
+    }
+
+    attachLine(line) {
+        this.metadata.line = line ?? null;
+    }
+
+    getLine() {
+        return this.metadata.line ?? null;
     }
 }
 
@@ -95,4 +125,3 @@ export class BoardSceneSpace extends BoardSceneEntity {
         };
     }
 }
-

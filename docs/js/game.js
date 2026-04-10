@@ -1,4 +1,5 @@
 import {
+    loadBoardRuntimeSchemaConfig,
     loadGameData,
     loadGameShellRuntimeSchemaConfig,
     loadHomeChromeSchemaConfig,
@@ -25,6 +26,7 @@ import { createState, hydrateState } from "./app/state.js";
 export async function initGame() {
     const [
         gameData,
+        boardRuntimeSchemaConfig,
         hotkeysConfig,
         menuMapConfig,
         levelBriefsConfig,
@@ -39,6 +41,7 @@ export async function initGame() {
         screenRuntimeSchemaConfig
     ] = await Promise.all([
         loadGameData(),
+        loadBoardRuntimeSchemaConfig(),
         loadHotkeysConfig(),
         loadMenuMapConfig(),
         loadLevelBriefsConfig(),
@@ -72,6 +75,7 @@ export async function initGame() {
         refs,
         state,
         bus,
+        boardRuntimeSchemaConfig,
         currentPage,
         gameShellRuntimeSchemaConfig,
         homeChromeSchemaConfig,

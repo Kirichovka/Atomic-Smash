@@ -2,7 +2,7 @@ import { DEFAULT_MECHANIC_ID } from "../state.js";
 import { createConnectionLabMechanic } from "./connection-lab.js";
 import { createMechanicInstance } from "./factory.js";
 
-export function createMechanicsRegistry({ refs, state, bus }) {
+export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaConfig }) {
     const mechanicFactories = {
         "connection-lab": createConnectionLabMechanic
     };
@@ -44,7 +44,7 @@ export function createMechanicsRegistry({ refs, state, bus }) {
 
             const mechanic = createMechanicInstance({
                 config: mechanicConfig,
-                context: { refs, state, bus },
+                context: { refs, state, bus, boardRuntimeSchemaConfig },
                 factory: createMechanic
             });
             mechanics.set(mechanicConfig.id, mechanic);
@@ -63,7 +63,7 @@ export function createMechanicsRegistry({ refs, state, bus }) {
                     id: DEFAULT_MECHANIC_ID,
                     name: "Connection Lab"
                 },
-                context: { refs, state, bus },
+                context: { refs, state, bus, boardRuntimeSchemaConfig },
                 factory: createConnectionLabMechanic
             })
         );

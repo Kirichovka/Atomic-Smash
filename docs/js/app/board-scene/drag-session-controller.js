@@ -28,7 +28,7 @@ export function createBoardDragSessionController({
         }
 
         event.preventDefault();
-        const draggedNodeId = event.currentTarget.dataset.id;
+        const draggedNodeId = boardState.getNodeIdFromElement(event.currentTarget);
         if (event.ctrlKey) {
             boardSelection.toggleNodeSelection(draggedNodeId);
             return;
@@ -48,7 +48,7 @@ export function createBoardDragSessionController({
             source: "mix-zone-node",
             zone: "mix-zone",
             clearPaletteSelection: true,
-            inspectedSymbol: event.currentTarget.dataset.symbol,
+            inspectedSymbol: boardState.getNodeSymbol(draggedNodeId),
             persist: false
         });
 
@@ -91,7 +91,9 @@ export function createBoardDragSessionController({
         }
 
         if (hasMovedDuringDrag && isPointerOutsideViewport(event.clientX, event.clientY)) {
-            const removedNodeIds = movingGroup.map(item => item.node.dataset.id);
+            const removedNodeIds = movingGroup
+                .map(item => boardState.getNodeIdFromElement(item.node))
+                .filter(Boolean);
             cleanupMovingNode();
             removeNodes(removedNodeIds);
             return;
@@ -131,7 +133,8 @@ export function createBoardDragSessionController({
 
         const releasedNodeIds = movingGroup
             .filter(item => isNodeOutsideMixZone(boardRender.getNodeLeft(item.node), boardRender.getNodeTop(item.node)))
-            .map(item => item.node.dataset.id);
+            .map(item => boardState.getNodeIdFromElement(item.node))
+            .filter(Boolean);
         cleanupMovingNode();
 
         if (releasedNodeIds.length > 0) {

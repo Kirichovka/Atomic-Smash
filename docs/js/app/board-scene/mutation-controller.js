@@ -1,3 +1,5 @@
+import { createBoardEdgeEntity, createBoardEdgeEntityId, createBoardNodeEntity } from "./entity-factory.js";
+
 export function createBoardMutationController({
     board,
     boardConnectionSession,
@@ -14,9 +16,11 @@ export function createBoardMutationController({
         boardSelection.clearSelectedNodes();
         boardState.getNodeValues().forEach(node => node.remove());
         boardState.clearNodes();
+        boardState.clearNodeEntities();
 
         boardState.getConnections().forEach(connection => connection.line.remove());
         boardState.clearConnections();
+        boardState.clearEdgeEntities();
 
         boardConnectionSession.removeTemporaryWire();
         sync();
@@ -31,19 +35,19 @@ export function createBoardMutationController({
             };
         }
 
-        board.savedNodes = boardState.getNodeValues().map(node => ({
-            id: node.dataset.id,
-            localX: boardRender.getNodeLocalX(node),
-            localY: boardRender.getNodeLocalY(node),
-            symbol: node.dataset.symbol,
-            x: boardRender.getNodeLeft(node),
-            y: boardRender.getNodeTop(node)
+        board.savedNodes = boardState.getNodeEntityValues().map(nodeEntity => ({
+            id: nodeEntity.id,
+            localX: nodeEntity.metadata.localX,
+            localY: nodeEntity.metadata.localY,
+            symbol: nodeEntity.metadata.symbol,
+            x: nodeEntity.metadata.pixelX,
+            y: nodeEntity.metadata.pixelY
         }));
-        board.savedConnections = boardState.getConnections().map(connection => ({
-            fromNodeId: connection.fromNodeId,
-            fromPosition: connection.fromPosition,
-            toNodeId: connection.toNodeId,
-            toPosition: connection.toPosition
+        board.savedConnections = boardState.getEdgeEntityValues().map(edgeEntity => ({
+            fromNodeId: edgeEntity.metadata.fromNodeId,
+            fromPosition: edgeEntity.metadata.fromPosition,
+            toNodeId: edgeEntity.metadata.toNodeId,
+            toPosition: edgeEntity.metadata.toPosition
         }));
 
         return {
@@ -63,10 +67,22 @@ export function createBoardMutationController({
         const position = options.positionSpace === "local"
             ? boardRender.localToPixelPosition(x, y)
             : boardScene.clampPosition(x, y);
+        const localPosition = options.positionSpace === "local"
+            ? { localX: x, localY: y }
+            : boardRender.pixelToLocalPosition(position.x, position.y);
 
         board.nodeIdCounter = Math.max(board.nodeIdCounter + (options.id ? 0 : 1), parseNodeIndex(id));
+        const nodeEntity = createBoardNodeEntity({
+            id,
+            localX: localPosition.localX,
+            localY: localPosition.localY,
+            pixelX: position.x,
+            pixelY: position.y,
+            symbol
+        });
 
         const node = boardRender.createNode({
+            entity: nodeEntity,
             id,
             onConnectorPointerDown: boardConnectionSession.startConnection,
             onNodeDragStart: preventNativeDrag,
@@ -74,6 +90,7 @@ export function createBoardMutationController({
             position,
             symbol
         });
+        boardState.addNodeEntity(nodeEntity);
         boardState.addNode(id, node);
 
         if (options.persist !== false) {
@@ -100,18 +117,25 @@ export function createBoardMutationController({
             return;
         }
 
+        const edgeEntity = createBoardEdgeEntity({
+            ...connection,
+            line: null
+        });
         const line = boardRender.createConnection({
+            edgeEntity,
             onClick: () => onConnectionClick(line),
             stroke: "var(--wire-solid)"
         });
 
         boardState.addConnection({
+            edgeEntity,
             fromNodeId: connection.fromNodeId,
             fromPosition: connection.fromPosition,
             toNodeId: connection.toNodeId,
             toPosition: connection.toPosition,
             line
         });
+        boardState.addEdgeEntity(edgeEntity);
     }
 
     function removeConnectionByLine(line) {
@@ -120,8 +144,11 @@ export function createBoardMutationController({
             return;
         }
 
+        const edgeId = boardState.getConnections()[index].edgeEntity?.id
+            ?? createBoardEdgeEntityId(boardState.getConnections()[index]);
         boardState.getConnections()[index].line.remove();
         boardState.removeConnectionAt(index);
+        boardState.deleteEdgeEntity(edgeId);
         captureState();
     }
 
@@ -141,12 +168,15 @@ export function createBoardMutationController({
 
         node.remove();
         boardState.deleteNode(nodeId);
+        boardState.deleteNodeEntity(nodeId);
 
         for (let index = boardState.getConnections().length - 1; index >= 0; index -= 1) {
             const connection = boardState.getConnections()[index];
             if (connection.fromNodeId === nodeId || connection.toNodeId === nodeId) {
+                const edgeId = connection.edgeEntity?.id ?? createBoardEdgeEntityId(connection);
                 connection.line.remove();
                 boardState.removeConnectionAt(index);
+                boardState.deleteEdgeEntity(edgeId);
             }
         }
 

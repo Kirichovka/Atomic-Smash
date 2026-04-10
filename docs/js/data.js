@@ -131,6 +131,17 @@ export async function loadModalRuntimeSchemaConfig() {
     return validateSceneSchemaConfig(schema, "modal-runtime.schema").definitions;
 }
 
+export async function loadBoardRuntimeSchemaConfig() {
+    const response = await fetch("./data/board-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load board runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "board-runtime.schema").definitions;
+}
+
 export async function loadLevelBriefsConfig() {
     const response = await fetch("./data/level-briefs.json");
 

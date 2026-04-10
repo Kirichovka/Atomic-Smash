@@ -1,4 +1,5 @@
 import { createSvgLine, getConnectorCenter } from "../../svg.js";
+import { createBoardEdgeEntity } from "./entity-factory.js";
 
 export function createBoardConnectionSessionController({
     board,
@@ -22,13 +23,13 @@ export function createBoardConnectionSessionController({
         removeTemporaryWire();
 
         board.startConnector = event.currentTarget;
-        const startNode = boardState.getNode(board.startConnector.dataset.nodeId) ?? null;
+        const startNodeId = board.startConnector.dataset.nodeId;
         boardSelection.selectSingleNode(board.startConnector.dataset.nodeId, { notify: false });
         publishInteractionContext({
             source: "mix-zone-connector",
             zone: "mix-zone",
             clearPaletteSelection: true,
-            inspectedSymbol: startNode?.dataset.symbol ?? null,
+            inspectedSymbol: boardState.getNodeSymbol(startNodeId),
             persist: false
         });
         board.connectionPointerId = event.pointerId;
@@ -94,7 +95,14 @@ export function createBoardConnectionSessionController({
             return;
         }
 
+        const edgeEntity = createBoardEdgeEntity({
+            fromNodeId: startNodeId,
+            fromPosition: board.startConnector.dataset.position,
+            toNodeId: endNodeId,
+            toPosition: endConnector.dataset.position
+        });
         const line = boardRender.createConnection({
+            edgeEntity,
             onClick: () => {
                 boardSelection.clearSelectedNodes();
                 removeConnectionByLine(line);
@@ -103,12 +111,14 @@ export function createBoardConnectionSessionController({
         });
 
         boardState.addConnection({
+            edgeEntity,
             fromNodeId: startNodeId,
             fromPosition: board.startConnector.dataset.position,
             toNodeId: endNodeId,
             toPosition: endConnector.dataset.position,
             line
         });
+        boardState.addEdgeEntity(edgeEntity);
 
         boardRender.sync(boardState.getNodes(), boardState.getConnections(), board.movingNode);
         removeTemporaryWire();

@@ -7,11 +7,14 @@ import { clampBoardLocalCoordinate } from "./methods.js";
 import { createBoardConnectionView, createBoardNodeView } from "./view.js";
 
 export function createBoardRenderController({
+    boardRuntimeSchemaConfig,
     boardScene,
+    boardState,
     mixZoneElement,
     svgElement
 }) {
     function createNode({
+        entity = null,
         id,
         onConnectorPointerDown,
         onNodeDragStart,
@@ -20,23 +23,26 @@ export function createBoardRenderController({
         symbol
     }) {
         const node = createBoardNodeView({
-            id,
+            id: entity?.id ?? id,
             onConnectorPointerDown,
             onNodeDragStart,
             onNodePointerDown,
-            symbol
+            schemaConfig: boardRuntimeSchemaConfig,
+            symbol: entity?.metadata.symbol ?? symbol
         });
         setNodePosition(node, position.x, position.y);
+        entity?.attachElement(node);
         mixZoneElement.appendChild(node);
         return node;
     }
 
-    function createConnection({ onClick, stroke = "var(--wire-solid)" }) {
+    function createConnection({ edgeEntity = null, onClick, stroke = "var(--wire-solid)" }) {
         const line = createBoardConnectionView({
             createSvgLine,
             onClick,
             stroke
         });
+        edgeEntity?.attachLine(line);
         svgElement.appendChild(line);
         return line;
     }
@@ -55,7 +61,11 @@ export function createBoardRenderController({
                 return;
             }
 
-            const position = localToPixelPosition(getNodeLocalX(node), getNodeLocalY(node));
+            const entity = boardState.getNodeEntityByElement(node);
+            const position = localToPixelPosition(
+                entity?.metadata.localX ?? getNodeLocalX(node),
+                entity?.metadata.localY ?? getNodeLocalY(node)
+            );
             node.style.left = `${position.x}px`;
             node.style.top = `${position.y}px`;
         });
@@ -71,6 +81,12 @@ export function createBoardRenderController({
         node.style.top = `${renderedPosition.y}px`;
         node.dataset.localX = String(localPosition.localX);
         node.dataset.localY = String(localPosition.localY);
+
+        const entity = boardState.getNodeEntityByElement(node);
+        if (entity) {
+            entity.updateLocalPosition(localPosition.localX, localPosition.localY);
+            entity.updatePixelPosition(renderedPosition.x, renderedPosition.y);
+        }
     }
 
     function pixelToLocalPosition(x, y) {

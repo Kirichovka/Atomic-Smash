@@ -62,12 +62,11 @@ export function createBoardSelectionController({
         boardState.replaceSelectedNodeId(primarySelectedNodeId);
 
         if (primarySelectedNodeId && boardState.hasNode(primarySelectedNodeId)) {
-            const selectedNode = boardState.getNode(primarySelectedNodeId);
             bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, {
                 source: "mix-zone-selection",
                 zone: "mix-zone",
                 clearPaletteSelection: true,
-                inspectedSymbol: selectedNode.dataset.symbol,
+                inspectedSymbol: boardState.getNodeSymbol(primarySelectedNodeId),
                 persist: false
             });
             return;
@@ -87,7 +86,7 @@ export function createBoardSelectionController({
     }
 
     function getMovingGroup(anchorNode, getNodeLeft, getNodeTop) {
-        const anchorNodeId = anchorNode.dataset.id;
+        const anchorNodeId = boardState.getNodeIdFromElement(anchorNode);
         const shouldMoveSelection =
             board.selectedNodeIds.has(anchorNodeId)
             && board.selectedNodeIds.size > 1;

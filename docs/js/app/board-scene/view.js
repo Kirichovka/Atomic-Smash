@@ -1,10 +1,11 @@
 import { createSceneUiFactory } from "../scene-ui/factory.js";
-import { compileSceneSchema, resolveSceneSchema, sceneContainer, sceneText } from "../scene-ui/schema.js";
+import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
 
 const CONNECTOR_POSITIONS = ["left", "right", "top", "bottom"];
 const sceneUiFactory = createSceneUiFactory();
 
 export function createBoardNodeView({
+    schemaConfig,
     id,
     symbol,
     onConnectorPointerDown,
@@ -14,7 +15,7 @@ export function createBoardNodeView({
     return sceneUiFactory.createElement(
         compileSceneSchema(
             resolveSceneSchema(
-                createBoardNodeSchema(),
+                createBoardNodeSchema(schemaConfig),
                 {
                     handlers: {
                         connectorPointerDown: onConnectorPointerDown,
@@ -42,38 +43,21 @@ export function createBoardConnectionView({
     return line;
 }
 
-function createBoardNodeSchema() {
-    return sceneContainer({
-        className: "node",
-        attrs: {
-            draggable: "false"
-        },
-        data: {
-            id: { bind: "node.id" },
-            symbol: { bind: "node.symbol" }
-        },
-        on: {
-            dragstart: { bind: "handlers.nodeDragStart" },
-            pointerdown: { bind: "handlers.nodePointerDown" }
-        },
-        children: [
-            sceneText({
-                className: "node-label",
-                tagName: "span",
-                text: { bind: "node.symbol" }
-            }),
-            ...CONNECTOR_POSITIONS.map(position =>
-                sceneContainer({
+function createBoardNodeSchema(schemaConfig = {}) {
+    const nodeSchema = structuredClone(schemaConfig.boardNode ?? {});
+    const connectorSchema = schemaConfig.boardConnector ?? {};
+
+    nodeSchema.children = [
+        ...(Array.isArray(nodeSchema.children) ? nodeSchema.children : []),
+        ...CONNECTOR_POSITIONS.map(position =>
+            resolveSceneSchema(connectorSchema, {
+                connector: {
                     className: `connector ${position}`,
-                    data: {
-                        nodeId: { bind: "node.id" },
-                        position
-                    },
-                    on: {
-                        pointerdown: { bind: "handlers.connectorPointerDown" }
-                    }
-                })
-            )
-        ]
-    });
+                    position
+                }
+            })
+        )
+    ];
+
+    return nodeSchema;
 }

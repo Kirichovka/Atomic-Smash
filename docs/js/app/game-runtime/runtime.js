@@ -18,6 +18,7 @@ export function createGameRuntime({
     refs,
     state,
     bus,
+    boardRuntimeSchemaConfig,
     currentPage,
     gameShellRuntimeSchemaConfig,
     homeChromeSchemaConfig,
@@ -35,7 +36,8 @@ export function createGameRuntime({
     const mechanicsRegistry = createMechanicsRegistry({
         refs,
         state,
-        bus
+        bus,
+        boardRuntimeSchemaConfig
     });
     const runtimeActions = createRuntimeActionRegistry();
     const getActiveMechanic = () => mechanicsRegistry.get(getActiveMechanicId(state));

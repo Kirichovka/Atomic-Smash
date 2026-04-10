@@ -1,12 +1,4 @@
-import { createBoardConnectionSessionController } from "../board-scene/connection-session-controller.js";
-import { createBoardSceneController } from "../board-scene/controller.js";
-import { createBoardDragSessionController } from "../board-scene/drag-session-controller.js";
-import { BOARD_SCENE_PART_KIND } from "../board-scene/contracts.js";
-import { createBoardScenePart } from "../board-scene/factory.js";
-import { createBoardMutationController } from "../board-scene/mutation-controller.js";
-import { createBoardRenderController } from "../board-scene/render-controller.js";
-import { createBoardSelectionController } from "../board-scene/selection-controller.js";
-import { createBoardStateController } from "../board-scene/state-controller.js";
+import { createBoardSceneRuntime } from "../board-scene/runtime.js";
 import {
     getBoardNodeMetrics
 } from "../board-scene/methods.js";
@@ -26,92 +18,41 @@ const SPAWN_OFFSETS = [
     { x: -36, y: 0 }
 ];
 
-export function createConnectionLabMechanic({ refs, state, bus }) {
+export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSchemaConfig }) {
     const board = state.board;
-    const boardState = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.state,
-        context: board,
-        factory: sourceBoard => createBoardStateController(sourceBoard)
-    });
     const elementsBySymbol = new Map(state.catalog.elements.map(element => [element.symbol, element]));
-    const boardScene = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.geometry,
-        context: {
-            defaultNodeHeight: DEFAULT_NODE_HEIGHT,
-            defaultNodeWidth: DEFAULT_NODE_WIDTH,
-            offsets: SPAWN_OFFSETS,
-            viewportElement: refs.mixZone
-        },
-        factory: createBoardSceneController
-    });
-    const boardRender = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.render,
-        context: {
-            boardScene,
-            mixZoneElement: refs.mixZone,
-            svgElement: refs.svg
-        },
-        factory: createBoardRenderController
-    });
-    const boardSelection = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.selection,
-        context: {
-            board,
-            boardState,
-            bus
-        },
-        factory: createBoardSelectionController
-    });
     let resizeObserver = null;
     let resizeSyncFrame = null;
     const publishInteractionContext = payload => {
         bus.publish(RUNTIME_EVENT_IDS.interactionContextChanged, payload);
     };
-    const boardDragSession = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.dragSession,
-        context: {
-            board,
-            boardRender,
-            boardSelection,
-            boardState,
-            captureState,
-            isNodeOutsideMixZone,
-            isPointerOutsideViewport,
-            publishInteractionContext,
-            removeNodes
-        },
-        factory: createBoardDragSessionController
-    });
-    const boardConnectionSession = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.connectionSession,
-        context: {
-            board,
-            boardRender,
-            boardSelection,
-            boardState,
-            captureState: () => boardMutation.captureState(),
+    const {
+        boardConnectionSession,
+        boardDragSession,
+        boardMutation,
+        boardRender,
+        boardScene,
+        boardSelection,
+        boardState
+    } = createBoardSceneRuntime({
+        board,
+        boardRuntimeSchemaConfig,
+        bus,
+        refs,
+        callbacks: {
             connectionExists,
+            defaultNodeHeight: DEFAULT_NODE_HEIGHT,
+            defaultNodeWidth: DEFAULT_NODE_WIDTH,
             getConnectionTargetAtPoint,
-            publishInteractionContext,
-            removeConnectionByLine: line => boardMutation.removeConnectionByLine(line)
-        },
-        factory: createBoardConnectionSessionController
-    });
-    const boardMutation = createBoardScenePart({
-        kind: BOARD_SCENE_PART_KIND.mutation,
-        context: {
-            board,
-            boardConnectionSession,
-            boardRender,
-            boardScene,
-            boardSelection,
-            boardState,
             getMaxNodeId,
             isMounted,
+            isNodeOutsideMixZone,
+            isPointerOutsideViewport,
             parseNodeIndex,
+            publishInteractionContext,
+            spawnOffsets: SPAWN_OFFSETS,
             sync
-        },
-        factory: createBoardMutationController
+        }
     });
 
     function init() {
@@ -206,9 +147,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             return { status: "unknown" };
         }
 
-        const nodeEntries = boardState.getNodeEntries().map(([id, node]) => ({
-            id,
-            symbol: node.dataset.symbol
+        const nodeEntries = boardState.getNodeEntityValues().map(nodeEntity => ({
+            id: nodeEntity.id,
+            symbol: nodeEntity.metadata.symbol
         }));
         const ingredientKey = nodeEntries.map(node => node.symbol).sort().join(",");
         const candidates = state.catalog.compoundsByIngredients.get(ingredientKey) ?? [];
@@ -245,9 +186,11 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
             degreeByNodeId.set(connection.toNodeId, (degreeByNodeId.get(connection.toNodeId) ?? 0) + 1);
         });
 
-        const issues = boardState.getNodeEntries()
-            .map(([nodeId, node]) => {
-                const element = elementsBySymbol.get(node.dataset.symbol);
+        const issues = boardState.getNodeEntityValues()
+            .map(nodeEntity => {
+                const nodeId = nodeEntity.id;
+                const symbol = nodeEntity.metadata.symbol;
+                const element = elementsBySymbol.get(symbol);
                 const allowedBonds = Number(element?.valency);
                 const actualBonds = degreeByNodeId.get(nodeId) ?? 0;
 
@@ -258,9 +201,9 @@ export function createConnectionLabMechanic({ refs, state, bus }) {
                 return {
                     actualBonds,
                     allowedBonds,
-                    elementName: element?.name ?? node.dataset.symbol,
+                    elementName: element?.name ?? symbol,
                     nodeId,
-                    symbol: node.dataset.symbol
+                    symbol
                 };
             })
             .filter(Boolean);
