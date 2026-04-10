@@ -9,44 +9,12 @@
 <body data-page="game">
     <div id="game-screen" class="app-screen">
         <aside id="sidebar" class="palette-sidebar">
-            <div id="sidebar-content">
-                <div class="sidebar-header">
-                    <h2>Element Palette</h2>
-                    <button id="sidebar-collapse-btn" class="sidebar-toggle" type="button" aria-expanded="true">
-                        Hide
-                    </button>
-                </div>
-                <div id="element-list"></div>
-                <div class="palette-actions">
-                    <button id="add-selected-btn" type="button">Add Selected To Board</button>
-                    <p class="palette-tip">On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom.</p>
-                </div>
-                <section id="element-info">
-                    <div class="zone-title">Selected Element</div>
-                    <div id="element-card">
-                        <div class="empty-state">Select an element to see its description.</div>
-                    </div>
-                </section>
-            </div>
+            <div id="sidebar-content"></div>
             <button id="sidebar-resize-handle" class="sidebar-resize-handle" type="button" tabindex="-1" aria-label="Resize palette"></button>
         </aside>
 
         <main id="workspace">
-            <div id="topbar">
-                <div id="task-panel">
-                    <div id="level-indicator"></div>
-                    <div id="task"></div>
-                    <div id="hint"></div>
-                </div>
-                <div id="controls">
-                    <button id="palette-toggle-btn" class="secondary" type="button">Hide Palette</button>
-                    <button id="menu-btn" class="secondary" type="button">Menu</button>
-                    <button id="journal-btn" class="secondary" type="button">Journal</button>
-                    <button id="mix-btn" type="button">Mix</button>
-                    <button id="clear-btn" class="secondary" type="button">Clear Board</button>
-                    <div id="result"></div>
-                </div>
-            </div>
+            <div id="topbar"></div>
 
             <div id="mix-zone">
                 <svg id="connections-layer" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
@@ -78,12 +46,7 @@
                 </section>
             </div>
 
-            <section id="compound-zone">
-                <div class="zone-title">Discovered Compounds</div>
-                <div id="compound-list">
-                    <div class="empty-state">No compounds discovered yet</div>
-                </div>
-            </section>
+            <section id="compound-zone"></section>
         </main>
     </div>
 
@@ -127,6 +90,6 @@
         </div>
     </div>
 
-    <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/main.js?v=20260411-connection-revert"></script>
 </body>
 </html>

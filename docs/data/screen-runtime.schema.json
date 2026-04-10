@@ -1,0 +1,140 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "emptyState": {
+      "kind": "text",
+      "className": "empty-state",
+      "tagName": "div",
+      "text": { "bind": "message" }
+    },
+    "journalCompoundCard": {
+      "kind": "button",
+      "className": "journal-card",
+      "on": {
+        "click": { "bind": "handlers.open" }
+      },
+      "children": [
+        {
+          "kind": "text",
+          "className": "journal-card-kicker",
+          "tagName": "div",
+          "text": "Discovered compound"
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-title",
+          "tagName": "div",
+          "text": { "bind": "compound.formula" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-subtitle",
+          "tagName": "div",
+          "text": { "bind": "compound.name" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-description",
+          "tagName": "div",
+          "text": { "bind": "compound.description" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-index",
+          "tagName": "div",
+          "text": { "bind": "compound.indexLabel" }
+        }
+      ]
+    },
+    "journalElementCard": {
+      "kind": "button",
+      "className": { "bind": "element.className" },
+      "attrs": {
+        "disabled": { "bind": "element.locked" }
+      },
+      "on": {
+        "click": { "bind": "handlers.open" }
+      },
+      "children": [
+        {
+          "kind": "text",
+          "className": "journal-card-kicker",
+          "tagName": "div",
+          "text": { "bind": "element.kicker" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-title",
+          "tagName": "div",
+          "text": { "bind": "element.title" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-subtitle",
+          "tagName": "div",
+          "text": { "bind": "element.name" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-description",
+          "tagName": "div",
+          "text": { "bind": "element.description" }
+        },
+        {
+          "kind": "text",
+          "className": "journal-card-index",
+          "tagName": "div",
+          "text": { "bind": "element.status" }
+        }
+      ]
+    },
+    "themeCard": {
+      "kind": "container",
+      "tagName": "article",
+      "className": { "bind": "theme.className" },
+      "children": [
+        {
+          "kind": "text",
+          "className": "theme-card-kicker",
+          "tagName": "div",
+          "text": { "bind": "theme.kicker" }
+        },
+        {
+          "kind": "text",
+          "className": "theme-card-name",
+          "tagName": "div",
+          "text": { "bind": "theme.name" }
+        },
+        {
+          "kind": "text",
+          "className": "theme-card-description",
+          "tagName": "div",
+          "text": { "bind": "theme.description" }
+        },
+        {
+          "kind": "text",
+          "className": "theme-card-progress",
+          "tagName": "div",
+          "text": { "bind": "theme.progress" }
+        },
+        {
+          "kind": "text",
+          "className": "theme-card-meta",
+          "tagName": "div",
+          "text": { "bind": "theme.meta" }
+        },
+        {
+          "kind": "button",
+          "attrs": {
+            "disabled": { "bind": "theme.disabled" }
+          },
+          "on": {
+            "click": { "bind": "handlers.start" }
+          },
+          "text": { "bind": "theme.actionLabel" }
+        }
+      ]
+    }
+  }
+}

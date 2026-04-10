@@ -1,3 +1,6 @@
+import { validateHotkeysConfig } from "./app/hotkeys-validator.js";
+import { validateSceneSchemaConfig } from "./app/scene-ui/validator.js";
+
 export async function loadGameData() {
     const response = await fetch("./data/game-data.json");
 
@@ -14,6 +17,136 @@ export async function loadHotkeysConfig() {
 
     if (!response.ok) {
         throw new Error(`Failed to load hotkeys config: ${response.status}`);
+    }
+
+    return validateHotkeysConfig(await response.json());
+}
+
+export async function loadMenuMapConfig() {
+    const response = await fetch("./data/menu-map.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load menu map config: ${response.status}`);
+    }
+
+    return response.json();
+}
+
+export async function loadHomeChromeSchemaConfig() {
+    const response = await fetch("./data/home-chrome.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load home chrome schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "home-chrome.schema").definitions;
+}
+
+export async function loadMenuSceneSchemaConfig() {
+    const response = await fetch("./data/menu-scene.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load menu scene schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "menu-scene.schema").definitions;
+}
+
+export async function loadScreenRuntimeSchemaConfig() {
+    const response = await fetch("./data/screen-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load screen runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "screen-runtime.schema").definitions;
+}
+
+export async function loadPaletteRuntimeSchemaConfig() {
+    const response = await fetch("./data/palette-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load palette runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "palette-runtime.schema").definitions;
+}
+
+export async function loadMixZoneContextRuntimeSchemaConfig() {
+    const response = await fetch("./data/mix-zone-context-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load mix zone context runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "mix-zone-context-runtime.schema").definitions;
+}
+
+export async function loadProgressionRuntimeSchemaConfig() {
+    const response = await fetch("./data/progression-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load progression runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "progression-runtime.schema").definitions;
+}
+
+export async function loadGameShellRuntimeSchemaConfig() {
+    const response = await fetch("./data/game-shell-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load game shell runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "game-shell-runtime.schema").definitions;
+}
+
+export async function loadNavigationRuntimeSchemaConfig() {
+    const response = await fetch("./data/navigation-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load navigation runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "navigation-runtime.schema").definitions;
+}
+
+export async function loadModalRuntimeSchemaConfig() {
+    const response = await fetch("./data/modal-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load modal runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "modal-runtime.schema").definitions;
+}
+
+export async function loadBoardRuntimeSchemaConfig() {
+    const response = await fetch("./data/board-runtime.schema.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load board runtime schema: ${response.status}`);
+    }
+
+    const schema = await response.json();
+    return validateSceneSchemaConfig(schema, "board-runtime.schema").definitions;
+}
+
+export async function loadLevelBriefsConfig() {
+    const response = await fetch("./data/level-briefs.json");
+
+    if (!response.ok) {
+        throw new Error(`Failed to load level briefs config: ${response.status}`);
     }
 
     return response.json();
@@ -82,8 +215,14 @@ function normalizeGameData(rawGameData) {
         rawGameData.themes
         ?? rawGameData.tasks?.themes
         ?? [];
+    const mechanics =
+        rawGameData.mechanics
+        ?? rawGameData.tasks?.mechanics
+        ?? [];
     const levels = (rawGameData.levels ?? rawGameData.tasks?.levels ?? rawGameData.tasks?.items ?? [])
         .map(level => ({
+            displayTitle: level.displayTitle ?? level.title ?? level.objective ?? level.hint ?? level.id,
+            learningFocus: level.learningFocus ?? null,
             mechanicId: level.mechanicId ?? "connection-lab",
             ...level
         }));
@@ -93,6 +232,7 @@ function normalizeGameData(rawGameData) {
         compounds,
         elements,
         levels,
+        mechanics,
         themes
     };
 }

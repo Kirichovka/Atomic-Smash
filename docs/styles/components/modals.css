@@ -31,6 +31,66 @@
     background: var(--color-text-brand);
 }
 
+.level-intro-kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+}
+
+.level-intro-title {
+    margin-top: 10px;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.level-intro-summary {
+    margin-top: 14px;
+    max-width: 760px;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+}
+
+.level-intro-panel {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid var(--color-border-visual);
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--color-surface-visual-start) 0%, var(--color-surface-visual-end) 100%);
+}
+
+.level-intro-panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+}
+
+.level-intro-panel-text {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+}
+
+.level-intro-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 24px;
+}
+
+.level-intro-action {
+    min-width: 180px;
+}
+
+.level-intro-action:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 .element-modal-symbol {
     font-size: 80px;
     font-weight: 700;

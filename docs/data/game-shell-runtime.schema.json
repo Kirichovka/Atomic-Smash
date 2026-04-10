@@ -1,0 +1,163 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "sidebarContent": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "className": "sidebar-header",
+          "children": [
+            {
+              "kind": "text",
+              "tagName": "h2",
+              "text": "Element Palette"
+            },
+            {
+              "kind": "button",
+              "id": "sidebar-collapse-btn",
+              "className": "sidebar-toggle",
+              "attrs": {
+                "aria-expanded": "true",
+                "type": "button"
+              },
+              "text": "Hide"
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "id": "element-list"
+        },
+        {
+          "kind": "container",
+          "className": "palette-actions",
+          "children": [
+            {
+              "kind": "button",
+              "id": "add-selected-btn",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Add Selected To Board"
+            },
+            {
+              "kind": "text",
+              "tagName": "p",
+              "className": "palette-tip",
+              "text": "On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom."
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "id": "element-info",
+          "tagName": "section",
+          "children": [
+            {
+              "kind": "container",
+              "className": "zone-title",
+              "text": "Selected Element"
+            },
+            {
+              "kind": "container",
+              "id": "element-card"
+            }
+          ]
+        }
+      ]
+    },
+    "topbar": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "id": "task-panel",
+          "children": [
+            {
+              "kind": "container",
+              "id": "level-indicator"
+            },
+            {
+              "kind": "container",
+              "id": "task"
+            },
+            {
+              "kind": "container",
+              "id": "hint"
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "id": "controls",
+          "children": [
+            {
+              "kind": "button",
+              "id": "palette-toggle-btn",
+              "className": "secondary",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Hide Palette"
+            },
+            {
+              "kind": "button",
+              "id": "menu-btn",
+              "className": "secondary",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Menu"
+            },
+            {
+              "kind": "button",
+              "id": "journal-btn",
+              "className": "secondary",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Journal"
+            },
+            {
+              "kind": "button",
+              "id": "mix-btn",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Mix"
+            },
+            {
+              "kind": "button",
+              "id": "clear-btn",
+              "className": "secondary",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Clear Board"
+            },
+            {
+              "kind": "container",
+              "id": "result"
+            }
+          ]
+        }
+      ]
+    },
+    "compoundZone": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "className": "zone-title",
+          "text": "Discovered Compounds"
+        },
+        {
+          "kind": "container",
+          "id": "compound-list"
+        }
+      ]
+    }
+  }
+}

@@ -471,5 +471,6 @@ That keeps the live site isolated from internal project documentation and any no
 Internal project documentation lives in:
 
 - `documentation/ARCHITECTURE.md`
+- `documentation/Atomic-Smash-Design-Vision.docx`
 
 Use the README as the product and repository entry point, and the `documentation/` folder for deeper internal notes, architecture decisions, and team-facing documentation.

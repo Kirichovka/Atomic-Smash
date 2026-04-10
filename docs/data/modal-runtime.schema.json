@@ -1,0 +1,413 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "levelIntro": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "level-intro-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "intro.kicker"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "level-intro-title",
+          "id": "level-intro-title",
+          "tagName": "div",
+          "text": {
+            "bind": "intro.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "level-intro-summary",
+          "tagName": "div",
+          "text": {
+            "bind": "intro.summary"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "level-intro-panels",
+          "data": {
+            "levelIntroPanelsSlot": "true"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "level-intro-actions",
+          "children": [
+            {
+              "kind": "button",
+              "className": "level-intro-action",
+              "attrs": {
+                "disabled": {
+                  "bind": "intro.disabled"
+                }
+              },
+              "on": {
+                "click": {
+                  "bind": "handlers.start"
+                }
+              },
+              "text": {
+                "bind": "intro.actionLabel"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "levelIntroPanel": {
+      "kind": "container",
+      "className": "level-intro-panel",
+      "tagName": "section",
+      "children": [
+        {
+          "kind": "text",
+          "className": "level-intro-panel-title",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "level-intro-panel-text",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.body"
+          }
+        }
+      ]
+    },
+    "elementModal": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "element-modal-symbol",
+          "id": "element-modal-title",
+          "tagName": "div",
+          "text": {
+            "bind": "element.symbol"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "element-modal-name",
+          "tagName": "div",
+          "text": {
+            "bind": "element.name"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "element-modal-meta",
+          "tagName": "div",
+          "text": {
+            "bind": "element.meta"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "element-modal-description",
+          "tagName": "div",
+          "text": {
+            "bind": "element.description"
+          }
+        }
+      ]
+    },
+    "compoundModal": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "compound-modal-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "compound.kicker"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "compound-modal-title",
+          "id": "compound-modal-title",
+          "tagName": "div",
+          "text": {
+            "bind": "compound.name"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "compound-modal-formula",
+          "tagName": "div",
+          "text": {
+            "bind": "compound.formula"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "compound-modal-description",
+          "tagName": "div",
+          "text": {
+            "bind": "compound.description"
+          }
+        }
+      ]
+    },
+    "themeComplete": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "theme-complete-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "theme.kicker"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "theme-complete-title",
+          "id": "theme-complete-title",
+          "tagName": "div",
+          "text": {
+            "bind": "theme.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "theme-complete-description",
+          "tagName": "div",
+          "text": {
+            "bind": "theme.description"
+          }
+        },
+        {
+          "kind": "container",
+          "data": {
+            "themeCompletePanelsSlot": "true"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "theme-complete-note",
+          "tagName": "div",
+          "text": {
+            "bind": "note"
+          }
+        }
+      ]
+    },
+    "themeCompletePanel": {
+      "kind": "container",
+      "className": "theme-complete-panel",
+      "tagName": "section",
+      "children": [
+        {
+          "kind": "text",
+          "className": "theme-complete-panel-title",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "theme-complete-panel-text",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.body"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "theme-complete-pill-list",
+          "data": {
+            "themeCompletePillsSlot": "true"
+          }
+        }
+      ]
+    },
+    "themeCompletePill": {
+      "kind": "text",
+      "className": "theme-complete-pill",
+      "tagName": "div",
+      "text": {
+        "bind": "pill.label"
+      }
+    },
+    "helpModal": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "help-modal-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "help.kicker"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "help-modal-title",
+          "id": "help-modal-title",
+          "tagName": "div",
+          "text": {
+            "bind": "help.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "help-modal-description",
+          "tagName": "div",
+          "text": {
+            "bind": "help.description"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "help-visual",
+          "data": {
+            "helpVisualSlot": "true"
+          }
+        }
+      ]
+    },
+    "valencyModal": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "text",
+          "className": "valency-modal-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "valency.kicker"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-modal-title",
+          "id": "valency-modal-title",
+          "tagName": "div",
+          "text": {
+            "bind": "valency.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-modal-description",
+          "tagName": "div",
+          "text": {
+            "bind": "valency.description"
+          }
+        },
+        {
+          "kind": "container",
+          "data": {
+            "valencyPanelsSlot": "true"
+          }
+        }
+      ]
+    },
+    "valencyPanel": {
+      "kind": "container",
+      "className": "valency-panel",
+      "tagName": "section",
+      "children": [
+        {
+          "kind": "text",
+          "className": "valency-panel-title",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-panel-text",
+          "tagName": "div",
+          "text": {
+            "bind": "panel.body"
+          }
+        },
+        {
+          "kind": "container",
+          "className": {
+            "bind": "panel.listClassName"
+          },
+          "data": {
+            "valencyPanelItemsSlot": "true"
+          }
+        }
+      ]
+    },
+    "valencyIssueItem": {
+      "kind": "container",
+      "className": "valency-issue-item",
+      "children": [
+        {
+          "kind": "text",
+          "className": "valency-issue-symbol",
+          "tagName": "div",
+          "text": {
+            "bind": "issue.symbol"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-issue-title",
+          "tagName": "div",
+          "text": {
+            "bind": "issue.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-issue-body",
+          "tagName": "div",
+          "text": {
+            "bind": "issue.body"
+          }
+        }
+      ]
+    },
+    "valencyTheoryCard": {
+      "kind": "container",
+      "className": "valency-theory-card",
+      "tagName": "article",
+      "children": [
+        {
+          "kind": "text",
+          "className": "valency-theory-header",
+          "tagName": "div",
+          "text": {
+            "bind": "element.header"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-theory-title",
+          "tagName": "div",
+          "text": {
+            "bind": "element.title"
+          }
+        },
+        {
+          "kind": "text",
+          "className": "valency-theory-body",
+          "tagName": "div",
+          "text": {
+            "bind": "element.body"
+          }
+        }
+      ]
+    }
+  }
+}

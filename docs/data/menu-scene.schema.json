@@ -1,0 +1,72 @@
+{
+    "kind": "atomic-smash.scene-ui-config",
+    "version": 1,
+    "definitions": {
+        "node": {
+            "kind": "button",
+            "classNames": [
+                "home-level-node",
+                { "bind": "node.sizeClass" },
+                { "bind": "node.statusClass" }
+            ],
+            "data": {
+                "levelId": { "bind": "level.id" }
+            },
+            "attrs": {
+                "disabled": { "bind": "disabled", "fallback": false }
+            },
+            "on": {
+                "click": {
+                    "action": "previewLevelIntro"
+                }
+            },
+            "children": [
+                {
+                    "kind": "text",
+                    "className": "home-level-index",
+                    "text": { "bind": "level.index" }
+                },
+                {
+                    "kind": "text",
+                    "className": "home-level-formula",
+                    "text": { "bind": "node.title" }
+                },
+                {
+                    "kind": "text",
+                    "className": "home-level-objective",
+                    "text": { "bind": "node.subtitle" }
+                }
+            ]
+        },
+        "placeholder": {
+            "kind": "container",
+            "className": "home-sheet-placeholder",
+            "children": [
+                {
+                    "kind": "text",
+                    "className": "home-sheet-placeholder-kicker",
+                    "tagName": "div",
+                    "text": { "bind": "kicker" }
+                },
+                {
+                    "kind": "text",
+                    "className": "home-sheet-placeholder-title",
+                    "tagName": "div",
+                    "text": { "bind": "title" }
+                },
+                {
+                    "kind": "text",
+                    "className": "home-sheet-placeholder-body",
+                    "tagName": "div",
+                    "text": { "bind": "body" }
+                },
+                {
+                    "kind": "text",
+                    "className": "home-sheet-placeholder-meta",
+                    "tagName": "div",
+                    "text": { "bind": "meta" }
+                }
+            ]
+        }
+    }
+}

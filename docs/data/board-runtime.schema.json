@@ -1,0 +1,40 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "boardConnector": {
+      "kind": "container",
+      "className": { "bind": "connector.className" },
+      "data": {
+        "nodeId": { "bind": "node.id" },
+        "position": { "bind": "connector.position" }
+      },
+      "on": {
+        "pointerdown": { "bind": "handlers.connectorPointerDown" }
+      }
+    },
+    "boardNode": {
+      "kind": "container",
+      "className": "node",
+      "attrs": {
+        "draggable": "false"
+      },
+      "data": {
+        "id": { "bind": "node.id" },
+        "symbol": { "bind": "node.symbol" }
+      },
+      "on": {
+        "dragstart": { "bind": "handlers.nodeDragStart" },
+        "pointerdown": { "bind": "handlers.nodePointerDown" }
+      },
+      "children": [
+        {
+          "kind": "text",
+          "className": "node-label",
+          "tagName": "span",
+          "text": { "bind": "node.symbol" }
+        }
+      ]
+    }
+  }
+}
