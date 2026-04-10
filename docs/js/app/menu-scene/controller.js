@@ -1,10 +1,12 @@
 import { MenuSceneCamera, MenuSceneSpace } from "./entities.js";
 import { MenuSceneSheetBuilder } from "./builders.js";
 import { getMenuStageOverflow, projectNodeToViewport, createSceneEdgePath } from "./methods.js";
-import { MenuSceneViewport } from "./view.js";
+import { createMenuSceneViewport } from "./view.js";
 import { createSceneUiFactory } from "../scene-ui/factory.js";
 import { compileSceneSchema, resolveSceneSchema, sceneButton, sceneContainer, sceneText } from "../scene-ui/schema.js";
 import { SCENE_ACTION_IDS, createPreviewLevelIntroActionId } from "../contracts/action-ids.js";
+import { createSceneRuntimePart } from "../scene-runtime/factory.js";
+import { SCENE_RUNTIME_PART_KIND } from "../scene-runtime/contracts.js";
 
 export function createMenuSceneController({
     refs,
@@ -22,10 +24,14 @@ export function createMenuSceneController({
     const camera = new MenuSceneCamera();
     const factory = createSceneUiFactory();
     const space = new MenuSceneSpace();
-    const viewport = new MenuSceneViewport({
-        edgeLayerElement: refs.menuLevelLines,
-        nodeLayerElement: refs.menuLevelMap,
-        viewportElement: refs.menuSceneViewport
+    const viewport = createSceneRuntimePart({
+        kind: SCENE_RUNTIME_PART_KIND.viewport,
+        context: {
+            edgeLayerElement: refs.menuLevelLines,
+            nodeLayerElement: refs.menuLevelMap,
+            viewportElement: refs.menuSceneViewport
+        },
+        factory: createMenuSceneViewport
     });
     let resizeObserver = null;
     let syncFrame = null;

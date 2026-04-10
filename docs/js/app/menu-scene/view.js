@@ -32,3 +32,7 @@ export class MenuSceneViewport {
         this.edgeLayerElement?.setAttribute("viewBox", `0 0 ${width} ${height}`);
     }
 }
+
+export function createMenuSceneViewport(context) {
+    return new MenuSceneViewport(context);
+}

@@ -33,7 +33,8 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
         boardRender,
         boardScene,
         boardSelection,
-        boardState
+        boardState,
+        viewport
     } = createBoardSceneRuntime({
         board,
         boardRuntimeSchemaConfig,
@@ -562,6 +563,17 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
         clearSelection: (options = {}) => boardSelection.clearSelectedNodes({ notify: !options.silent }),
         createHelpVisual,
         evaluate,
+        getSceneRuntime: () => ({
+            boardConnectionSession,
+            boardDragSession,
+            boardMutation,
+            boardRender,
+            boardScene,
+            boardSelection,
+            boardState,
+            viewport
+        }),
+        getSceneViewport: () => viewport,
         validateValency,
         getSelectedNodeIds: boardSelection.getSelectedNodeIds,
         id: "connection-lab",

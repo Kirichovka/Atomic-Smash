@@ -10,8 +10,7 @@ export function createBoardRenderController({
     boardRuntimeSchemaConfig,
     boardScene,
     boardState,
-    mixZoneElement,
-    svgElement
+    viewport
 }) {
     function createNode({
         entity = null,
@@ -32,7 +31,7 @@ export function createBoardRenderController({
         });
         setNodePosition(node, position.x, position.y);
         entity?.attachElement(node);
-        mixZoneElement.appendChild(node);
+        viewport.renderNode(node);
         return node;
     }
 
@@ -43,15 +42,15 @@ export function createBoardRenderController({
             stroke
         });
         edgeEntity?.attachLine(line);
-        svgElement.appendChild(line);
+        viewport.renderEdge(line);
         return line;
     }
 
     function sync(nodes, connections, movingNode = null) {
         boardScene.sync();
         syncNodeLayout(nodes, movingNode);
-        syncConnectionsLayer(svgElement, mixZoneElement);
-        redrawConnections(connections, nodes, svgElement);
+        syncConnectionsLayer(viewport.edgeLayerElement, viewport.nodeLayerElement);
+        redrawConnections(connections, nodes, viewport.edgeLayerElement);
     }
 
     function syncNodeLayout(nodes, movingNode = null) {
@@ -121,11 +120,11 @@ export function createBoardRenderController({
         getNodeLocalY,
         getNodeTop,
         localToPixelPosition,
-        mixZoneElement,
+        mixZoneElement: viewport.nodeLayerElement,
         pixelToLocalPosition,
         setNodePosition,
         sync,
-        svgElement,
+        svgElement: viewport.edgeLayerElement,
         syncNodeLayout
     };
 }

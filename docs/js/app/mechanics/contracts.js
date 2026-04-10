@@ -11,12 +11,15 @@ export const OPTIONAL_MECHANIC_METHODS = Object.freeze([
     "clearSelection",
     "createHelpVisual",
     "evaluate",
+    "getSceneRuntime",
+    "getSceneViewport",
     "getSelectedNodeIds",
     "removeNodeById",
     "removeNodesByIds",
     "restore",
     "spawnElement",
     "spawnElementAtClientPoint",
+    "teardown",
     "validateValency"
 ]);
 
@@ -54,6 +57,11 @@ export function attachMechanicMetadata(mechanic, config = {}) {
     return Object.assign(mechanic, {
         contractVersion: MECHANIC_CONTRACT_VERSION,
         displayName: config.name ?? mechanic.displayName ?? mechanic.id,
-        mechanicConfig: config
+        mechanicConfig: config,
+        mechanicLifecycle: Object.freeze({
+            hasSceneRuntime: typeof mechanic.getSceneRuntime === "function",
+            hasSceneViewport: typeof mechanic.getSceneViewport === "function",
+            hasTeardown: typeof mechanic.teardown === "function"
+        })
     });
 }

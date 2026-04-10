@@ -7,6 +7,9 @@ import { createBoardMutationController } from "./mutation-controller.js";
 import { createBoardRenderController } from "./render-controller.js";
 import { createBoardSelectionController } from "./selection-controller.js";
 import { createBoardStateController } from "./state-controller.js";
+import { createBoardSceneViewport } from "./view.js";
+import { createSceneRuntimePart } from "../scene-runtime/factory.js";
+import { SCENE_RUNTIME_PART_KIND } from "../scene-runtime/contracts.js";
 
 export function createBoardSceneRuntime({
     board,
@@ -19,6 +22,15 @@ export function createBoardSceneRuntime({
         kind: BOARD_SCENE_PART_KIND.state,
         context: board,
         factory: sourceBoard => createBoardStateController(sourceBoard)
+    });
+    const viewport = createSceneRuntimePart({
+        kind: SCENE_RUNTIME_PART_KIND.viewport,
+        context: {
+            edgeLayerElement: refs.svg,
+            nodeLayerElement: refs.mixZone,
+            viewportElement: refs.mixZone
+        },
+        factory: createBoardSceneViewport
     });
     const boardScene = createBoardScenePart({
         kind: BOARD_SCENE_PART_KIND.geometry,
@@ -36,8 +48,7 @@ export function createBoardSceneRuntime({
             boardRuntimeSchemaConfig,
             boardScene,
             boardState,
-            mixZoneElement: refs.mixZone,
-            svgElement: refs.svg
+            viewport
         },
         factory: createBoardRenderController
     });
@@ -108,5 +119,7 @@ export function createBoardSceneRuntime({
         boardScene,
         boardSelection,
         boardState
+        ,
+        viewport
     };
 }
