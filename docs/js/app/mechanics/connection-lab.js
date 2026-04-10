@@ -67,6 +67,15 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
         sync();
     }
 
+    function activate() {
+        sync();
+    }
+
+    function deactivate() {
+        boardConnectionSession.removeTemporaryWire();
+        boardDragSession.cleanupMovingNode();
+    }
+
     function bindResizeObserver() {
         if (resizeObserver || typeof ResizeObserver !== "function") {
             return;
@@ -563,6 +572,8 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
         clearSelection: (options = {}) => boardSelection.clearSelectedNodes({ notify: !options.silent }),
         createHelpVisual,
         evaluate,
+        activate,
+        deactivate,
         getSceneRuntime: () => ({
             boardConnectionSession,
             boardDragSession,

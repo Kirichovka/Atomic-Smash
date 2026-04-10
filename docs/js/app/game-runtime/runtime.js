@@ -187,6 +187,9 @@ export function createGameRuntime({
 
     function init() {
         mechanicsRegistry.init();
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "runtime-init"
+        });
         paletteController.bind();
         navigationController.bind();
         modalController.bind();

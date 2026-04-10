@@ -7,6 +7,7 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
         "connection-lab": createConnectionLabMechanic
     };
     const mechanics = new Map();
+    let activeMechanicId = null;
 
     registerConfiguredMechanics();
     ensureDefaultMechanic();
@@ -19,6 +20,34 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
 
     function get(mechanicId = DEFAULT_MECHANIC_ID) {
         return mechanics.get(mechanicId) ?? mechanics.get(DEFAULT_MECHANIC_ID);
+    }
+
+    function syncActiveMechanic(nextMechanicId = DEFAULT_MECHANIC_ID, lifecycleContext = {}) {
+        const resolvedNextMechanic = get(nextMechanicId);
+        const resolvedNextMechanicId = resolvedNextMechanic?.id ?? DEFAULT_MECHANIC_ID;
+
+        if (activeMechanicId && activeMechanicId !== resolvedNextMechanicId) {
+            get(activeMechanicId)?.deactivate?.({
+                nextMechanicId: resolvedNextMechanicId,
+                ...lifecycleContext
+            });
+        }
+
+        activeMechanicId = resolvedNextMechanicId;
+        resolvedNextMechanic?.activate?.({
+            activeMechanicId: resolvedNextMechanicId,
+            ...lifecycleContext
+        });
+        return resolvedNextMechanic;
+    }
+
+    function deactivateActiveMechanic(lifecycleContext = {}) {
+        if (!activeMechanicId) {
+            return;
+        }
+
+        get(activeMechanicId)?.deactivate?.(lifecycleContext);
+        activeMechanicId = null;
     }
 
     function resetAll() {
@@ -72,6 +101,8 @@ export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaCo
     return {
         get,
         init,
-        resetAll
+        deactivateActiveMechanic,
+        resetAll,
+        syncActiveMechanic
     };
 }

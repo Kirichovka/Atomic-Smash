@@ -8,8 +8,10 @@ export const REQUIRED_MECHANIC_METHODS = Object.freeze([
 ]);
 
 export const OPTIONAL_MECHANIC_METHODS = Object.freeze([
+    "activate",
     "clearSelection",
     "createHelpVisual",
+    "deactivate",
     "evaluate",
     "getSceneRuntime",
     "getSceneViewport",
@@ -59,6 +61,8 @@ export function attachMechanicMetadata(mechanic, config = {}) {
         displayName: config.name ?? mechanic.displayName ?? mechanic.id,
         mechanicConfig: config,
         mechanicLifecycle: Object.freeze({
+            hasActivate: typeof mechanic.activate === "function",
+            hasDeactivate: typeof mechanic.deactivate === "function",
             hasSceneRuntime: typeof mechanic.getSceneRuntime === "function",
             hasSceneViewport: typeof mechanic.getSceneViewport === "function",
             hasTeardown: typeof mechanic.teardown === "function"

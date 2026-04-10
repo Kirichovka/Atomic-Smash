@@ -1,5 +1,6 @@
 import {
     getCompoundById,
+    getActiveMechanicId,
     getCompletedCountForTheme,
     getCurrentLevel,
     getCurrentTheme,
@@ -32,6 +33,9 @@ export function createProgressionController({
         factory: createProgressionRuntimeContentBuilder
     });
     function refreshAllViews() {
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "refresh-all-views"
+        });
         navigationController.renderMenu();
         navigationController.renderThemeList();
         navigationController.renderJournal();
@@ -53,11 +57,17 @@ export function createProgressionController({
     }
 
     function openJournalScreen() {
+        mechanicsRegistry.deactivateActiveMechanic({
+            reason: "open-journal-screen"
+        });
         navigationController.renderJournal();
         navigationController.showJournalScreen();
     }
 
     function openMainMenu() {
+        mechanicsRegistry.deactivateActiveMechanic({
+            reason: "open-main-menu"
+        });
         navigationController.renderMenu();
         navigationController.showMenuScreen();
     }
@@ -68,6 +78,9 @@ export function createProgressionController({
             return;
         }
 
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "resume-current-theme"
+        });
         renderCurrentLevel();
         paletteController.render();
         renderDiscoveredCompounds();
@@ -94,6 +107,10 @@ export function createProgressionController({
         paletteController.render();
         renderCurrentLevel();
         onPersistState?.();
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "start-theme",
+            themeId
+        });
         navigationController.showGameScreen();
         onTutorialReset?.();
         onTutorialSync?.();
@@ -187,6 +204,10 @@ export function createProgressionController({
         }
 
         if (hadRemainingThemeLevels) {
+            mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+                reason: "advance-level",
+                themeId: currentTheme.id
+            });
             refreshMetaViews();
             paletteController.render();
             renderCurrentLevel();
@@ -200,6 +221,10 @@ export function createProgressionController({
         }
 
         state.progress.currentThemeId = null;
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "theme-complete",
+            themeId: currentTheme.id
+        });
         refreshMetaViews();
         paletteController.render();
         renderCurrentLevel();
