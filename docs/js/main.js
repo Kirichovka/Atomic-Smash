@@ -8,3 +8,5 @@ initGame().catch(error => {
         result.textContent = "Game failed to load.";
     }
 });
+
+
