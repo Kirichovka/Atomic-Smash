@@ -328,6 +328,7 @@ export function createBasicTutorialController({
         if (!missingEdgeGuide) {
             return null;
         }
+        const connectionFeedback = getConnectionFeedbackText();
 
         const fromNodeElement = refs.mixZone?.querySelector(`.node[data-id="${missingEdgeGuide.fromNodeId}"]`);
         const toNodeElement = refs.mixZone?.querySelector(`.node[data-id="${missingEdgeGuide.toNodeId}"]`);
@@ -337,11 +338,6 @@ export function createBasicTutorialController({
             return null;
         }
 
-        const fromName = state.catalog.elements.find(element => element.symbol === missingEdgeGuide.fromSymbol)?.name
-            ?? missingEdgeGuide.fromSymbol;
-        const toName = state.catalog.elements.find(element => element.symbol === missingEdgeGuide.toSymbol)?.name
-            ?? missingEdgeGuide.toSymbol;
-
         return {
             arrowFromRect: fromConnector.getBoundingClientRect(),
             arrowToRect: toConnector.getBoundingClientRect(),
@@ -349,10 +345,21 @@ export function createBasicTutorialController({
             secondaryLabel: "Connect here",
             secondaryTargetRect: toConnector.getBoundingClientRect(),
             target: fromConnector,
-            text: missingEdgeGuide.remainingEdges > 1
-                ? `Start from this ${fromName} atom and drag the bond to the highlighted ${toName} atom.`
-                : `Make the last bond by dragging from this ${fromName} atom to the highlighted ${toName} atom.`
+            text: connectionFeedback
+                ?? (
+                    missingEdgeGuide.remainingEdges > 1
+                        ? `Connect any Hydrogen atom to Oxygen. The highlight shows one working option, but any correct H-O bond is fine.`
+                        : `Make the last H-O bond. If the atoms and bonds are technically valid, the tutorial will move to Mix.`
+                )
         };
+    }
+
+    function getConnectionFeedbackText() {
+        if (!state.ui.basicTutorialConnectionFeedback) {
+            return null;
+        }
+
+        return `That connection will not work yet: ${state.ui.basicTutorialConnectionFeedback}`;
     }
 
     function getPostMixTarget() {

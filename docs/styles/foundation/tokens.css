@@ -58,4 +58,5 @@
     --connector-border: #ffffff;
     --wire-solid: #1e3a8a;
     --wire-temp: rgba(30, 58, 138, 0.5);
+    --wire-invalid: #ef4444;
 }

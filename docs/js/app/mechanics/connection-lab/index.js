@@ -3,6 +3,7 @@ import { createBoardVisualRuntimeContentBuilder } from "../../board-visual-runti
 import { RUNTIME_EVENT_IDS } from "../../contracts/event-contracts.js";
 import { createRuntimeContentBuilder } from "../../runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "../../runtime-content/contracts.js";
+import { getCompoundById, getCurrentLevel } from "../../state.js";
 import {
     DEFAULT_NODE_HEIGHT,
     DEFAULT_NODE_WIDTH,
@@ -57,7 +58,8 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
             parseNodeIndex,
             publishInteractionContext,
             spawnOffsets: SPAWN_OFFSETS,
-            sync
+            sync,
+            validateConnectionAttempt
         }
     });
     const evaluation = createConnectionLabEvaluation({
@@ -266,6 +268,107 @@ export function createConnectionLabMechanic({ refs, state, bus, boardRuntimeSche
             (connection.fromNodeId === startNodeId && connection.toNodeId === endNodeId) ||
             (connection.fromNodeId === endNodeId && connection.toNodeId === startNodeId)
         );
+    }
+
+    function validateConnectionAttempt({ startNodeId, endNodeId, preview = false }) {
+        if (!isBasicFirstTutorialActive()) {
+            return { isValid: true };
+        }
+
+        const issue = getBasicFirstTutorialConnectionIssue(startNodeId, endNodeId);
+        if (!issue) {
+            if (!preview) {
+                state.ui.basicTutorialConnectionFeedback = null;
+            }
+            return { isValid: true };
+        }
+
+        if (!preview) {
+            state.ui.basicTutorialConnectionFeedback = issue;
+        }
+        return {
+            isValid: false,
+            reason: issue
+        };
+    }
+
+    function isBasicFirstTutorialActive() {
+        if (state.progress.basicTutorialCompleted || state.progress.completedLevelIds.has("level-1")) {
+            return false;
+        }
+
+        const currentLevel = getCurrentLevel(state);
+        return currentLevel?.id === "level-1" && currentLevel.themeId === "basic";
+    }
+
+    function getBasicFirstTutorialConnectionIssue(startNodeId, endNodeId) {
+        if (!startNodeId || !endNodeId) {
+            return "Release the bond on another atom connector.";
+        }
+
+        if (startNodeId === endNodeId) {
+            return "A bond needs two different atoms. Start on one atom and release on another.";
+        }
+
+        if (connectionExists(startNodeId, endNodeId)) {
+            return "Those two atoms are already connected. For water, each Hydrogen needs one bond to Oxygen.";
+        }
+
+        const startSymbol = boardState.getNodeSymbol(startNodeId);
+        const endSymbol = boardState.getNodeSymbol(endNodeId);
+        if (!startSymbol || !endSymbol) {
+            return "The game cannot read one of those atoms yet. Try releasing directly on a connector.";
+        }
+
+        const currentLevel = getCurrentLevel(state);
+        const targetCompound = currentLevel ? getCompoundById(state, currentLevel.targetCompoundId) : null;
+        if (targetCompound?.id === "water" && !isHydrogenOxygenPair(startSymbol, endSymbol)) {
+            return "Water needs Hydrogen bonded to Oxygen. A Hydrogen-to-Hydrogen bond will not make H2O.";
+        }
+
+        const valencyIssue = getConnectionValencyIssue(startNodeId, endNodeId);
+        if (valencyIssue) {
+            return valencyIssue;
+        }
+
+        return null;
+    }
+
+    function isHydrogenOxygenPair(leftSymbol, rightSymbol) {
+        return (
+            (leftSymbol === "H" && rightSymbol === "O") ||
+            (leftSymbol === "O" && rightSymbol === "H")
+        );
+    }
+
+    function getConnectionValencyIssue(startNodeId, endNodeId) {
+        return [startNodeId, endNodeId]
+            .map(nodeId => {
+                const symbol = boardState.getNodeSymbol(nodeId);
+                const element = elementsBySymbol.get(symbol);
+                const allowedBonds = Number(element?.valency);
+                if (!Number.isFinite(allowedBonds)) {
+                    return null;
+                }
+
+                const nextBondCount = getNodeDegree(nodeId) + 1;
+                if (nextBondCount <= allowedBonds) {
+                    return null;
+                }
+
+                return `${element.name ?? symbol} can only make ${allowedBonds} bond${allowedBonds === 1 ? "" : "s"}. This connection would give it ${nextBondCount}.`;
+            })
+            .find(Boolean) ?? null;
+    }
+
+    function getNodeDegree(nodeId) {
+        return boardState.getConnections().reduce((degree, connection) => {
+            if (connection.fromNodeId === nodeId || connection.toNodeId === nodeId) {
+                return degree + 1;
+            }
+
+            return degree;
+        }, 0);
     }
 
     function removeNode(nodeId, options = {}) {

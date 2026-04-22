@@ -92,7 +92,8 @@ export function createBoardSceneRuntime({
             connectionExists: callbacks.connectionExists,
             getConnectionTargetAtPoint: callbacks.getConnectionTargetAtPoint,
             publishInteractionContext: callbacks.publishInteractionContext,
-            removeConnectionByLine: line => boardMutation.removeConnectionByLine(line)
+            removeConnectionByLine: line => boardMutation.removeConnectionByLine(line),
+            validateConnectionAttempt: callbacks.validateConnectionAttempt
         },
         factory: createBoardConnectionSessionController
     });

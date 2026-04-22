@@ -10,7 +10,8 @@ export function createBoardConnectionSessionController({
     connectionExists,
     captureState,
     publishInteractionContext,
-    removeConnectionByLine
+    removeConnectionByLine,
+    validateConnectionAttempt
 }) {
     function startConnection(event) {
         if (event.pointerType === "mouse" && event.button !== 0) {
@@ -73,6 +74,23 @@ export function createBoardConnectionSessionController({
 
         board.currentWire.setAttribute("x2", endPoint.x);
         board.currentWire.setAttribute("y2", endPoint.y);
+
+        const previewTarget = getConnectionTargetAtPoint(event.clientX, event.clientY);
+        const previewValidation = previewTarget
+            ? validateConnectionAttempt?.({
+                endConnector: previewTarget,
+                endNodeId: previewTarget.dataset.nodeId,
+                endPosition: previewTarget.dataset.position,
+                preview: true,
+                startConnector: board.startConnector,
+                startNodeId: board.startConnector.dataset.nodeId,
+                startPosition: board.startConnector.dataset.position
+            }) ?? { isValid: true }
+            : { isValid: true };
+
+        board.currentWire.style.stroke = previewValidation.isValid
+            ? "var(--wire-temp)"
+            : "var(--wire-invalid)";
     }
 
     function finishConnection(event) {
@@ -88,6 +106,20 @@ export function createBoardConnectionSessionController({
 
         const startNodeId = board.startConnector.dataset.nodeId;
         const endNodeId = endConnector.dataset.nodeId;
+        const connectionValidation = validateConnectionAttempt?.({
+            endConnector,
+            endNodeId,
+            endPosition: endConnector.dataset.position,
+            startConnector: board.startConnector,
+            startNodeId,
+            startPosition: board.startConnector.dataset.position
+        }) ?? { isValid: true };
+
+        if (!connectionValidation.isValid) {
+            showRejectedConnection(board.startConnector, endConnector);
+            removeTemporaryWire();
+            return;
+        }
 
         if (startNodeId === endNodeId || connectionExists(startNodeId, endNodeId)) {
             removeTemporaryWire();
@@ -122,6 +154,23 @@ export function createBoardConnectionSessionController({
         redrawConnections(boardState.getConnections(), boardState.getNodes(), boardRender.svgElement);
         removeTemporaryWire();
         captureState();
+    }
+
+    function showRejectedConnection(startConnector, endConnector) {
+        const startPoint = getConnectorCenter(startConnector, boardRender.svgElement);
+        const endPoint = getConnectorCenter(endConnector, boardRender.svgElement);
+        const rejectedLine = createSvgLine("var(--wire-invalid)", true);
+
+        rejectedLine.classList.add("connection-rejected");
+        rejectedLine.setAttribute("x1", startPoint.x);
+        rejectedLine.setAttribute("y1", startPoint.y);
+        rejectedLine.setAttribute("x2", endPoint.x);
+        rejectedLine.setAttribute("y2", endPoint.y);
+        boardRender.svgElement.appendChild(rejectedLine);
+
+        window.setTimeout(() => {
+            rejectedLine.remove();
+        }, 1400);
     }
 
     function removeTemporaryWire(event) {

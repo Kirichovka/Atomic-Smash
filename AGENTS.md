@@ -292,6 +292,40 @@ Recommended verification order:
 5. final line is appended to SVG
 6. redraw keeps the final line visible
 
+### First tutorial connection validation
+
+The opening `basic / level-1` tutorial should not force one exact node path when multiple technically correct H2O bonds are possible.
+
+Rule:
+
+- a Hydrogen-to-Oxygen bond is valid
+- a Hydrogen-to-Hydrogen bond is invalid for the water tutorial
+- duplicate bonds are invalid
+- same-node bonds are invalid
+- valency-breaking bonds are invalid
+
+Current implementation:
+
+- `docs/js/app/board-scene/connection-session-controller.js`
+  - owns connection lifecycle
+  - calls optional `validateConnectionAttempt(...)`
+  - turns the temporary wire red while hovering over an invalid tutorial target
+  - draws a short red rejected line after invalid release
+
+- `docs/js/app/mechanics/connection-lab/index.js`
+  - owns the chemistry-specific first-tutorial validation
+  - only applies this strict tutorial feedback to `basic / level-1`
+
+- `docs/js/app/game-runtime/basic-tutorial-controller.js`
+  - reads `state.ui.basicTutorialConnectionFeedback`
+  - explains why the attempted tutorial bond will not work
+
+Safe rule:
+
+- keep generic connection lifecycle in `board-scene`
+- keep chemistry/tutorial-specific validation in `connection-lab`
+- do not hard-code the first tutorial to a single specific node pair if several H-O mappings are valid
+
 ### Current caution
 
 Connection creation has been unstable during refactors. Treat this area as sensitive until manually re-verified in-browser.
