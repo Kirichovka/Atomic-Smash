@@ -90,6 +90,14 @@
       "children": [
         {
           "kind": "text",
+          "className": "element-modal-kicker",
+          "tagName": "div",
+          "text": {
+            "bind": "element.kicker"
+          }
+        },
+        {
+          "kind": "text",
           "className": "element-modal-symbol",
           "id": "element-modal-title",
           "tagName": "div",
@@ -120,43 +128,112 @@
           "text": {
             "bind": "element.description"
           }
+        },
+        {
+          "kind": "container",
+          "className": "element-modal-grid",
+          "data": {
+            "elementModalFactsSlot": "true"
+          }
+        },
+        {
+          "kind": "container",
+          "data": {
+            "elementModalPropertiesSlot": "true"
+          }
+        },
+        {
+          "kind": "container",
+          "data": {
+            "elementModalStorySlot": "true"
+          }
         }
       ]
     },
     "compoundModal": {
       "kind": "container",
+      "className": "compound-modal-shell",
       "children": [
         {
-          "kind": "text",
-          "className": "compound-modal-kicker",
-          "tagName": "div",
-          "text": {
-            "bind": "compound.kicker"
-          }
+          "kind": "container",
+          "className": "compound-modal-hero",
+          "children": [
+            {
+              "kind": "container",
+              "className": "compound-modal-copy",
+              "children": [
+                {
+                  "kind": "text",
+                  "className": "compound-modal-kicker",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.kicker"
+                  }
+                },
+                {
+                  "kind": "text",
+                  "className": "compound-modal-title",
+                  "id": "compound-modal-title",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.name"
+                  }
+                },
+                {
+                  "kind": "text",
+                  "className": "compound-modal-formula",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.formula"
+                  }
+                },
+                {
+                  "kind": "text",
+                  "className": "compound-modal-subtitle",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.subtitle"
+                  }
+                },
+                {
+                  "kind": "text",
+                  "className": "compound-modal-description",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.description"
+                  }
+                },
+                {
+                  "kind": "container",
+                  "className": "compound-modal-pill-list",
+                  "data": {
+                    "compoundPillsSlot": "true"
+                  }
+                },
+                {
+                  "kind": "text",
+                  "className": "compound-modal-journal-note",
+                  "tagName": "div",
+                  "text": {
+                    "bind": "compound.journalNote"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "className": "compound-modal-stage",
+              "data": {
+                "compoundVisualSlot": "true"
+              }
+            }
+          ]
         },
         {
-          "kind": "text",
-          "className": "compound-modal-title",
-          "id": "compound-modal-title",
-          "tagName": "div",
-          "text": {
-            "bind": "compound.name"
-          }
-        },
-        {
-          "kind": "text",
-          "className": "compound-modal-formula",
-          "tagName": "div",
-          "text": {
-            "bind": "compound.formula"
-          }
-        },
-        {
-          "kind": "text",
-          "className": "compound-modal-description",
-          "tagName": "div",
-          "text": {
-            "bind": "compound.description"
+          "kind": "container",
+          "className": "compound-modal-panel-grid",
+          "data": {
+            "compoundPanelsSlot": "true"
           }
         }
       ]

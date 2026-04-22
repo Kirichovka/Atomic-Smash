@@ -273,8 +273,8 @@
 }
 
 .journal-card.locked {
-    cursor: default;
-    opacity: 0.72;
+    cursor: pointer;
+    opacity: 0.84;
     background: #f1f5f9;
 }
 

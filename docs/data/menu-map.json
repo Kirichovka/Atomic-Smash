@@ -16,6 +16,44 @@
                 { "levelId": "level-11", "x": 72, "y": 87, "size": "sm", "edgeTo": ["level-12"] },
                 { "levelId": "level-12", "x": 92, "y": 87, "size": "sm", "edgeTo": [] }
             ]
+        },
+        "acids-bases": {
+            "routeLabel": "Acids and bases route",
+            "nodes": [
+                { "levelId": "ab-level-1", "x": 50, "y": 20, "size": "lg", "edgeTo": ["ab-level-2", "ab-level-3"] },
+                { "levelId": "ab-level-2", "x": 28, "y": 38, "size": "md", "edgeTo": ["ab-level-4", "ab-level-5"] },
+                { "levelId": "ab-level-3", "x": 72, "y": 38, "size": "md", "edgeTo": ["ab-level-6", "ab-level-7"] },
+                { "levelId": "ab-level-4", "x": 14, "y": 57, "size": "sm", "edgeTo": ["ab-level-8"] },
+                { "levelId": "ab-level-5", "x": 40, "y": 57, "size": "sm", "edgeTo": ["ab-level-9"] },
+                { "levelId": "ab-level-6", "x": 60, "y": 57, "size": "sm", "edgeTo": ["ab-level-10"] },
+                { "levelId": "ab-level-7", "x": 86, "y": 57, "size": "sm", "edgeTo": ["ab-level-11"] },
+                { "levelId": "ab-level-8", "x": 14, "y": 80, "size": "sm", "edgeTo": ["ab-level-12"] },
+                { "levelId": "ab-level-9", "x": 38, "y": 80, "size": "sm", "edgeTo": ["ab-level-12"] },
+                { "levelId": "ab-level-10", "x": 62, "y": 80, "size": "sm", "edgeTo": ["ab-level-12"] },
+                { "levelId": "ab-level-11", "x": 86, "y": 80, "size": "sm", "edgeTo": ["ab-level-12"] },
+                { "levelId": "ab-level-12", "x": 50, "y": 94, "size": "md", "edgeTo": [] }
+            ]
+        },
+        "salts-oxides": {
+            "routeLabel": "Salts and oxides route",
+            "nodes": [
+                { "levelId": "so-level-1", "x": 50, "y": 18, "size": "lg", "edgeTo": ["so-level-2", "so-level-3"] },
+                { "levelId": "so-level-2", "x": 27, "y": 33, "size": "md", "edgeTo": ["so-level-4", "so-level-5"] },
+                { "levelId": "so-level-3", "x": 73, "y": 33, "size": "md", "edgeTo": ["so-level-6", "so-level-7"] },
+                { "levelId": "so-level-4", "x": 14, "y": 49, "size": "sm", "edgeTo": ["so-level-8"] },
+                { "levelId": "so-level-5", "x": 40, "y": 49, "size": "sm", "edgeTo": ["so-level-9"] },
+                { "levelId": "so-level-6", "x": 60, "y": 49, "size": "sm", "edgeTo": ["so-level-10"] },
+                { "levelId": "so-level-7", "x": 86, "y": 49, "size": "sm", "edgeTo": ["so-level-11"] },
+                { "levelId": "so-level-8", "x": 12, "y": 65, "size": "sm", "edgeTo": ["so-level-12"] },
+                { "levelId": "so-level-9", "x": 34, "y": 65, "size": "sm", "edgeTo": ["so-level-13"] },
+                { "levelId": "so-level-10", "x": 56, "y": 65, "size": "sm", "edgeTo": ["so-level-14"] },
+                { "levelId": "so-level-11", "x": 88, "y": 65, "size": "sm", "edgeTo": ["so-level-15"] },
+                { "levelId": "so-level-12", "x": 18, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
+                { "levelId": "so-level-13", "x": 38, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
+                { "levelId": "so-level-14", "x": 62, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
+                { "levelId": "so-level-15", "x": 82, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
+                { "levelId": "so-level-16", "x": 50, "y": 100, "size": "md", "edgeTo": [] }
+            ]
         }
     }
 }
