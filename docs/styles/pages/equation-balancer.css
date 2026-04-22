@@ -8,14 +8,20 @@
 
 /* ── Screen wrapper ── */
 #eq-screen {
+    position: relative;
     min-height: 100vh;
     min-height: 100dvh;
     padding: 36px;
     overflow: auto;
-    background: #ffffff;
+    background:
+        radial-gradient(circle at top left, rgba(255, 209, 102, 0.32), transparent 28%),
+        radial-gradient(circle at top right, rgba(17, 138, 178, 0.18), transparent 24%),
+        linear-gradient(180deg, #fffaf1 0%, #f6fbff 48%, #eef7ff 100%);
 }
 
 .eq-shell {
+    position: relative;
+    z-index: 2;
     max-width: 900px;
     margin: 0 auto;
     display: flex;
@@ -32,20 +38,6 @@
     flex-wrap: wrap;
 }
 
-.eq-screen-header h1 {
-    margin: 10px 0 8px;
-    font-size: 44px;
-    font-weight: 900;
-    line-height: 1.05;
-    color: #073b4c;
-}
-
-.eq-screen-header p {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #118ab2;
-}
 
 /* ── Stat pills ── */
 .eq-pills {
