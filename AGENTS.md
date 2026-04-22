@@ -319,12 +319,14 @@ Current implementation:
 - `docs/js/app/game-runtime/basic-tutorial-controller.js`
   - reads `state.ui.basicTutorialConnectionFeedback`
   - explains why the attempted tutorial bond will not work
+  - scores tutorial bubble positions against board nodes and SVG lines so the bubble avoids covering active objects when possible
 
 Safe rule:
 
 - keep generic connection lifecycle in `board-scene`
 - keep chemistry/tutorial-specific validation in `connection-lab`
 - do not hard-code the first tutorial to a single specific node pair if several H-O mappings are valid
+- tutorial bubble placement should consider board nodes and existing connections as obstacles, not just the highlighted target
 
 ### Current caution
 

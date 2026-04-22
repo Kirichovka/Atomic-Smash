@@ -242,7 +242,12 @@ export function createBasicTutorialController({
         refs.tutorialBubble.style.maxWidth = "300px";
 
         const bubbleRect = refs.tutorialBubble.getBoundingClientRect();
-        const bubblePosition = getBubblePosition(stage.targetRect, bubbleRect, stage.placement);
+        const bubblePosition = getBubblePosition(
+            stage.targetRect,
+            bubbleRect,
+            stage.placement,
+            getTutorialObstacles(stage)
+        );
         refs.tutorialBubble.style.left = `${bubblePosition.left}px`;
         refs.tutorialBubble.style.top = `${bubblePosition.top}px`;
 
@@ -360,6 +365,29 @@ export function createBasicTutorialController({
         }
 
         return `That connection will not work yet: ${state.ui.basicTutorialConnectionFeedback}`;
+    }
+
+    function getTutorialObstacles(stage) {
+        const ignoredRects = [
+            stage.targetRect,
+            stage.secondaryTargetRect
+        ].filter(Boolean);
+        const nodeRects = refs.mixZone
+            ? [...refs.mixZone.querySelectorAll(".node")]
+                .map(node => node.getBoundingClientRect())
+                .filter(rect => !rectMatchesAny(rect, ignoredRects))
+            : [];
+        const lineRects = refs.svg
+            ? [...refs.svg.querySelectorAll("line")]
+                .filter(line => !line.classList.contains("connection-rejected"))
+                .map(line => inflateRect(line.getBoundingClientRect(), 10))
+                .filter(rect => rect.width > 0 || rect.height > 0)
+            : [];
+
+        return [
+            ...nodeRects.map(rect => ({ rect: inflateRect(rect, 8), weight: 8 })),
+            ...lineRects.map(rect => ({ rect, weight: 4 }))
+        ];
     }
 
     function getPostMixTarget() {
@@ -543,24 +571,101 @@ function positionArrow(stage, bubbleRect) {
     tutorialArrow.style.transform = `rotate(${angle}rad)`;
 }
 
-function getBubblePosition(targetRect, bubbleRect, placement = "bottom-left") {
+function getBubblePosition(targetRect, bubbleRect, placement = "bottom-left", obstacles = []) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const maxLeft = Math.max(viewportWidth - bubbleRect.width - 12, 12);
     const maxTop = Math.max(viewportHeight - bubbleRect.height - 12, 12);
+    const rawCandidates = getBubblePositionCandidates(targetRect, bubbleRect);
+    const preferredIndex = rawCandidates.findIndex(candidate => candidate.placement === placement);
+    const orderedCandidates = preferredIndex >= 0
+        ? [
+            rawCandidates[preferredIndex],
+            ...rawCandidates.slice(0, preferredIndex),
+            ...rawCandidates.slice(preferredIndex + 1)
+        ]
+        : rawCandidates;
 
-    const preferredPositions = {
-        "bottom-left": { left: targetRect.left, top: targetRect.bottom + BASIC_TUTORIAL_BUBBLE_GAP },
-        right: { left: targetRect.right + BASIC_TUTORIAL_BUBBLE_GAP, top: targetRect.top + ((targetRect.height - bubbleRect.height) / 2) },
-        top: { left: targetRect.left + ((targetRect.width - bubbleRect.width) / 2), top: targetRect.top - bubbleRect.height - BASIC_TUTORIAL_BUBBLE_GAP },
-        "top-left": { left: targetRect.left + 12, top: targetRect.top + 12 }
-    };
-    const preferred = preferredPositions[placement] ?? preferredPositions["bottom-left"];
+    return orderedCandidates
+        .map((candidate, index) => {
+            const clampedCandidate = {
+                left: Math.min(Math.max(candidate.left, 12), maxLeft),
+                top: Math.min(Math.max(candidate.top, 12), maxTop)
+            };
+            const candidateRect = {
+                ...clampedCandidate,
+                bottom: clampedCandidate.top + bubbleRect.height,
+                right: clampedCandidate.left + bubbleRect.width,
+                width: bubbleRect.width,
+                height: bubbleRect.height
+            };
 
+            return {
+                ...clampedCandidate,
+                score: scoreBubbleCandidate(candidateRect, obstacles) + index
+            };
+        })
+        .sort((left, right) => left.score - right.score)[0]
+        ?? { left: 12, top: 12 };
+}
+
+function getBubblePositionCandidates(targetRect, bubbleRect) {
+    const horizontalCenter = targetRect.left + ((targetRect.width - bubbleRect.width) / 2);
+    const verticalCenter = targetRect.top + ((targetRect.height - bubbleRect.height) / 2);
+    const right = targetRect.right + BASIC_TUTORIAL_BUBBLE_GAP;
+    const left = targetRect.left - bubbleRect.width - BASIC_TUTORIAL_BUBBLE_GAP;
+    const bottom = targetRect.bottom + BASIC_TUTORIAL_BUBBLE_GAP;
+    const top = targetRect.top - bubbleRect.height - BASIC_TUTORIAL_BUBBLE_GAP;
+
+    return [
+        { placement: "bottom-left", left: targetRect.left, top: bottom },
+        { placement: "bottom", left: horizontalCenter, top: bottom },
+        { placement: "bottom-right", left: targetRect.right - bubbleRect.width, top: bottom },
+        { placement: "top", left: horizontalCenter, top },
+        { placement: "top-left", left: targetRect.left, top },
+        { placement: "top-right", left: targetRect.right - bubbleRect.width, top },
+        { placement: "right", left: right, top: verticalCenter },
+        { placement: "right-top", left: right, top: targetRect.top },
+        { placement: "right-bottom", left: right, top: targetRect.bottom - bubbleRect.height },
+        { placement: "left", left, top: verticalCenter },
+        { placement: "left-top", left, top: targetRect.top },
+        { placement: "left-bottom", left, top: targetRect.bottom - bubbleRect.height },
+        { placement: "inside-top-left", left: targetRect.left + 12, top: targetRect.top + 12 }
+    ];
+}
+
+function scoreBubbleCandidate(candidateRect, obstacles) {
+    return obstacles.reduce((score, obstacle) => {
+        const overlap = getRectOverlapArea(candidateRect, obstacle.rect);
+        return score + (overlap * obstacle.weight);
+    }, 0);
+}
+
+function getRectOverlapArea(leftRect, rightRect) {
+    const width = Math.max(0, Math.min(leftRect.right, rightRect.right) - Math.max(leftRect.left, rightRect.left));
+    const height = Math.max(0, Math.min(leftRect.bottom, rightRect.bottom) - Math.max(leftRect.top, rightRect.top));
+
+    return width * height;
+}
+
+function inflateRect(rect, padding) {
     return {
-        left: Math.min(Math.max(preferred.left, 12), maxLeft),
-        top: Math.min(Math.max(preferred.top, 12), maxTop)
+        bottom: rect.bottom + padding,
+        height: rect.height + (padding * 2),
+        left: rect.left - padding,
+        right: rect.right + padding,
+        top: rect.top - padding,
+        width: rect.width + (padding * 2)
     };
+}
+
+function rectMatchesAny(rect, candidateRects) {
+    return candidateRects.some(candidateRect =>
+        Math.abs(rect.left - candidateRect.left) < 1 &&
+        Math.abs(rect.top - candidateRect.top) < 1 &&
+        Math.abs(rect.width - candidateRect.width) < 1 &&
+        Math.abs(rect.height - candidateRect.height) < 1
+    );
 }
 
 function countSatisfiedMappedEdges(structureEdges, mapping, boardEdgeSet) {
