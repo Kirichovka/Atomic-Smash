@@ -91,55 +91,76 @@
         },
         {
           "kind": "container",
-          "id": "controls",
+          "className": "topbar-actions",
           "children": [
             {
-              "kind": "button",
-              "id": "palette-toggle-btn",
-              "className": "secondary",
-              "attrs": {
-                "type": "button"
-              },
-              "text": "Hide Palette"
-            },
-            {
-              "kind": "button",
-              "id": "menu-btn",
-              "className": "secondary",
-              "attrs": {
-                "type": "button"
-              },
-              "text": "Menu"
-            },
-            {
-              "kind": "button",
-              "id": "journal-btn",
-              "className": "secondary",
-              "attrs": {
-                "type": "button"
-              },
-              "text": "Journal"
-            },
-            {
-              "kind": "button",
-              "id": "mix-btn",
-              "attrs": {
-                "type": "button"
-              },
-              "text": "Mix"
-            },
-            {
-              "kind": "button",
-              "id": "clear-btn",
-              "className": "secondary",
-              "attrs": {
-                "type": "button"
-              },
-              "text": "Clear Board"
+              "kind": "container",
+              "className": "topbar-group topbar-group-palette",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "palette-toggle-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Palette"
+                }
+              ]
             },
             {
               "kind": "container",
-              "id": "result"
+              "className": "topbar-group topbar-group-navigation",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "menu-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Menu"
+                },
+                {
+                  "kind": "button",
+                  "id": "journal-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Journal"
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "id": "controls",
+              "className": "topbar-group topbar-group-lab",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "mix-btn",
+                  "className": "primary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Mix"
+                },
+                {
+                  "kind": "button",
+                  "id": "clear-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Clear"
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "id": "result",
+              "className": "topbar-result"
             }
           ]
         }

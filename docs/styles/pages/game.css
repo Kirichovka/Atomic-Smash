@@ -41,6 +41,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 18px;
     padding: 14px 18px;
 }
 
@@ -48,6 +49,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 220px;
 }
 
 #level-indicator {
@@ -75,9 +77,39 @@
     color: #556575;
 }
 
+.topbar-actions {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.topbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    border: 3px solid rgba(7, 59, 76, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.54);
+}
+
+.topbar-group-navigation {
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.topbar-group-lab {
+    background: rgba(255, 209, 102, 0.16);
+}
+
+#sidebar:not(.collapsed) ~ #workspace .topbar-group-palette {
+    display: none;
+}
+
 #controls {
     display: flex;
-    gap: 10px;
     align-items: center;
 }
 
@@ -95,6 +127,14 @@
     text-transform: uppercase;
 }
 
+#game-screen #topbar button.compact {
+    padding: 8px 12px;
+    border-width: 3px;
+    border-radius: 14px;
+    box-shadow: 3px 4px 0 var(--game-shadow);
+    font-size: 13px;
+}
+
 #game-screen #topbar button.secondary,
 #game-screen .sidebar-toggle,
 #game-screen #theme-complete-close {
@@ -110,14 +150,19 @@
 }
 
 #result {
+    flex: 1 1 240px;
+    max-width: 380px;
     padding: 8px 12px;
     border: 3px solid var(--game-ink);
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.82);
     color: var(--game-ink);
     font-weight: 900;
-    min-width: 320px;
-    text-align: right;
+    min-width: 0;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #mix-zone {
