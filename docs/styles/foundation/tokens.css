@@ -48,6 +48,11 @@
     --color-glow-secondary: rgba(255, 209, 102, 0.2);
     --color-overlay: rgba(15, 23, 42, 0.45);
     --color-grid-line: rgba(0, 0, 0, 0.035);
+    --layout-readable-max-width: 1200px;
+    --layout-scene-max-width: 1180px;
+    --layout-game-workspace-max-width: none;
+    --layout-game-shell-height: auto;
+    --layout-game-shell-padding: 0px;
     --palette-surface: #f8fafc;
     --palette-surface-strong: #f1f5f9;
     --palette-node-surface: #ffffff;

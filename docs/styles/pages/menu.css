@@ -5,6 +5,7 @@ body[data-page="menu"] {
 #menu-screen {
     --home-sheet-clearance: 122px;
     --home-map-overflow: 34;
+    --home-scene-width: min(var(--layout-scene-max-width), 100%);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -31,7 +32,7 @@ body[data-page="menu"] {
     flex-direction: column;
     align-items: stretch;
     gap: 14px;
-    width: min(1180px, 100%);
+    width: var(--home-scene-width);
     margin: 0 auto;
     padding: 14px 18px 16px;
     border: 3px solid rgba(7, 59, 76, 0.92);
@@ -222,7 +223,7 @@ body[data-page="menu"] {
     position: relative;
     flex: 1 1 auto;
     z-index: 1;
-    width: min(1180px, 100%);
+    width: var(--home-scene-width);
     height: 100%;
     min-height: 0;
     margin: 20px auto 0;

@@ -182,6 +182,31 @@ For tutorial actions, prefer the game button style:
 - dark ink text
 - dark border/shadow
 
+## Large Screen Layout Rule
+
+2K/4K displays should not make interactive scenes stretch endlessly across the viewport.
+
+What broke:
+
+- game workspace and board chrome expanded to the full monitor width
+- `#mix-zone` used viewport-wide `left/right` offsets, so the board became visually over-wide on large displays
+- ordinary shells had fixed max-widths, while scene pages lacked a shared large-screen policy
+
+Current fix:
+
+- shared layout caps live in `docs/styles/foundation/tokens.css`
+- large-screen overrides live in `docs/styles/responsive.css`
+- menu/home uses `--layout-scene-max-width`
+- game workspace uses `--layout-game-workspace-max-width`
+- game shell height uses `--layout-game-shell-height` so tall displays do not make the board feel unbounded
+
+Safe rule:
+
+- cap and center scene shells before changing node math
+- do not solve 2K/4K layout by editing individual node sizes first
+- keep scene data coordinates independent from monitor resolution
+- use breakpoints/tokens for density and shell bounds, then only touch JS geometry if the data projection itself is wrong
+
 ## Menu Scene Notes
 
 ### What controls node size

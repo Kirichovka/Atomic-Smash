@@ -1,7 +1,11 @@
 #game-screen {
     display: flex;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
     height: 100vh;
     height: 100dvh;
+    padding: var(--layout-game-shell-padding);
     --game-ink: #073b4c;
     --game-paper: #fffdf4;
     --game-paper-soft: #f7f1da;
@@ -20,6 +24,8 @@
 #workspace {
     flex: 1;
     position: relative;
+    height: var(--layout-game-shell-height);
+    max-width: var(--layout-game-workspace-max-width);
     overflow: hidden;
     touch-action: auto;
     background:
