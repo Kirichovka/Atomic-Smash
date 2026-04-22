@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic Smash — Equation Balancer</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles/pages/equation-balancer.css" />
+</head>
+<body data-page="equation-balancer">
+
+    <!-- ── Shared app header ── -->
+    <header class="app-header">
+        <a href="index.html" class="app-brand">
+            <span class="app-brand-mark">⚛</span>
+            <div class="app-brand-text">
+                <strong>Atomic Smash</strong>
+                <span>Element puzzle lab</span>
+            </div>
+        </a>
+        <nav class="app-nav" aria-label="Primary">
+            <a href="index.html"            class="nav-link">Home</a>
+            <a href="game.html"             class="nav-link">Game</a>
+            <a href="journal.html"          class="nav-link">Journal</a>
+            <a href="themes.html"           class="nav-link">Themes</a>
+            <a href="equation-balancer.html" class="nav-link is-active">Balancer</a>
+        </nav>
+    </header>
+
+    <!-- ── Main screen ── -->
+    <section id="eq-screen" class="app-screen">
+        <div class="eq-shell">
+
+            <!-- Page header -->
+            <div class="eq-screen-header">
+                <div class="screen-hero">
+                    <div class="theme-kicker">Atomic Smash</div>
+                    <h1>Equation Balancer</h1>
+                    <p>Pick the right coefficients to balance each equation before time runs out.</p>
+                </div>
+                <div class="eq-pills">
+                    <div class="eq-pill">Round <span class="v" id="p-round">1 / 15</span></div>
+                    <div class="eq-pill">Score <span class="v" id="p-score">0</span></div>
+                    <div class="eq-pill">⏱ <span class="v" id="p-time">45</span>s</div>
+                    <div class="eq-pill">✓ <span class="v" id="p-correct">0</span></div>
+                    <button class="eq-back-btn" type="button" onclick="window.location.href='index.html'">← Menu</button>
+                </div>
+            </div>
+
+            <!-- Timer -->
+            <div class="timer-track">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+
+            <!-- Progress dots -->
+            <div class="eq-dots" id="eq-dots"></div>
+
+            <!-- ── Game card ── -->
+            <div id="game-area">
+                <div class="eq-card">
+                    <div>
+                        <div class="eq-card-kicker">Balance the equation</div>
+                        <div class="eq-card-title" id="eq-title">—</div>
+                    </div>
+
+                    <!-- Equation display -->
+                    <div class="eq-panel" id="eq-panel"></div>
+
+                    <!-- Coefficient picker -->
+                    <div id="picker-wrap">
+                        <div class="picker-label" id="picker-label">
+                            Select a number below, then click a blank to fill it in
+                        </div>
+                        <div class="picker-grid" id="picker-grid"></div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="action-row">
+                        <button type="button" id="btn-check">Check Answer</button>
+                        <button type="button" class="secondary" id="btn-hint">💡 Hint</button>
+                        <button type="button" class="secondary" id="btn-next" style="display:none">Next →</button>
+                    </div>
+
+                    <!-- Feedback message -->
+                    <div class="eq-feedback" id="eq-feedback"></div>
+                </div>
+            </div>
+
+            <!-- ── End screen ── -->
+            <div id="end-area">
+                <div class="end-card">
+                    <div class="end-icon"    id="end-icon">🧪</div>
+                    <div class="end-kicker">Equation Balancer Complete</div>
+                    <div class="end-heading" id="end-heading">Well done!</div>
+                    <div class="end-result"  id="end-result"></div>
+                    <div class="end-score-num" id="end-score">0</div>
+                    <div class="end-score-lbl">points</div>
+                    <div class="end-btns">
+                        <button type="button" id="btn-play-again">Play Again</button>
+                        <button type="button" class="secondary" onclick="window.location.href='index.html'">← Menu</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script defer src="./js/equation-balancer.js"></script>
+</body>
+</html>

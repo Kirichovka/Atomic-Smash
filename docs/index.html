@@ -22,6 +22,7 @@
         <a href="game.html" class="nav-link">Game</a>
         <a href="journal.html" class="nav-link">Journal</a>
         <a href="themes.html" class="nav-link">Themes</a>
+        <a href="equation-balancer.html" class="nav-link">Balancer</a>
     </nav>
 </header>
 
@@ -86,6 +87,16 @@
                     <div class="menu-card-description">Jump straight back into the active board and continue your current theme.</div>
                     <div id="menu-current-theme" class="menu-card-meta"></div>
                     <button id="menu-continue-btn" type="button">Continue Playing</button>
+                </article>
+
+                <article class="menu-card card-balancer" onclick="window.location.href='equation-balancer.html'" style="cursor:pointer;">
+                    <div class="menu-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    </div>
+                    <div class="menu-card-kicker">Mini Game</div>
+                    <div class="menu-card-title">Equation Balancer</div>
+                    <div class="menu-card-description">Pick the right coefficients to balance 15 real chemical equations before time runs out.</div>
+                    <button type="button" onclick="event.stopPropagation(); window.location.href='equation-balancer.html'">Play Balancer</button>
                 </article>
             </div>
         </div>

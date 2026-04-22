@@ -15,6 +15,7 @@
 .card-play { background-color: #06d6a0; }
 .card-archive { background-color: #118ab2; }
 .card-resume { background-color: #ef476f; }
+.card-balancer { background-color: #ffd166; }
 
 .menu-card:hover {
     transform: translate(6px, 8px);
