@@ -256,6 +256,25 @@
 .tutorial-bubble-action {
     margin-top: 12px;
     min-width: 104px;
+    border: 3px solid var(--game-ink);
+    border-radius: 14px;
+    background: var(--game-accent);
+    box-shadow: 4px 5px 0 var(--game-shadow);
+    color: var(--game-ink);
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.tutorial-bubble-action:hover,
+.tutorial-bubble-action:focus-visible {
+    background: #ffe29a;
+    outline: none;
+}
+
+.tutorial-bubble-action:active {
+    transform: translate(3px, 4px);
+    box-shadow: 1px 1px 0 var(--game-shadow);
 }
 
 .tutorial-arrow {

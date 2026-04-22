@@ -160,6 +160,28 @@ If a feature is interactive board logic, prefer:
 2. mechanic orchestration
 3. SVG/DOM as a render target, not the source of truth
 
+## Color / Visual System Rule
+
+Use the Atomic Smash palette for shared UI:
+
+- ink: `#073b4c`
+- warm accent: `#ffd166`
+- active teal: `#118ab2`
+- paper: `#fffdf4`
+
+Source of truth:
+
+- `docs/styles/foundation/tokens.css`
+- page-specific overrides such as `docs/styles/pages/game.css`
+
+Do not reintroduce purple as the global fallback accent. A previous issue made tutorial buttons inherit the old purple `--color-accent`, which made the `Next` button visually inconsistent with the game UI.
+
+For tutorial actions, prefer the game button style:
+
+- warm yellow background
+- dark ink text
+- dark border/shadow
+
 ## Menu Scene Notes
 
 ### What controls node size
