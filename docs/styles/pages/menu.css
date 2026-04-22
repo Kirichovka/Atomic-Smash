@@ -105,22 +105,26 @@ body[data-page="menu"] {
 .home-header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-end;
+    gap: 10px;
     flex-shrink: 0;
+    flex-wrap: nowrap;
 }
 
 .home-icon-button {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 42px;
+    min-height: 42px;
     padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid #073b4c;
-    border-radius: 18px;
-    background: #ffffff;
-    box-shadow: 0 8px 18px rgba(7, 59, 76, 0.15);
+    border: 2px solid #073b4c;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
     color: #073b4c;
+    font-size: 0.9rem;
+    font-weight: 900;
 }
 
 .home-icon-button svg {
@@ -136,7 +140,7 @@ body[data-page="menu"] {
 .home-header-strap {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 16px;
     flex-wrap: nowrap;
 }

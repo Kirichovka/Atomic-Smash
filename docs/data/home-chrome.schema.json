@@ -71,6 +71,28 @@
                                         "aria-label": "Settings"
                                     },
                                     "text": "\u2699"
+                                },
+                                {
+                                    "kind": "button",
+                                    "id": "menu-journal-btn",
+                                    "className": "home-header-link",
+                                    "on": {
+                                        "click": {
+                                            "action": "openJournalScreen"
+                                        }
+                                    },
+                                    "text": "Journal"
+                                },
+                                {
+                                    "kind": "button",
+                                    "id": "menu-continue-btn",
+                                    "classNames": ["home-header-link", "home-header-link-primary"],
+                                    "on": {
+                                        "click": {
+                                            "action": "resumeViewedTheme"
+                                        }
+                                    },
+                                    "text": "Continue"
                                 }
                             ]
                         }
@@ -82,12 +104,9 @@
                     "layout": {
                         "display": "flex",
                         "alignItems": "center",
-                        "justifyContent": "space-between",
+                        "justifyContent": "flex-start",
                         "flexDirection": "row",
                         "gap": 1.35
-                    },
-                    "styles": {
-                        "flexWrap": "wrap"
                     },
                     "children": [
                         {
@@ -125,43 +144,6 @@
                                             "text": "0/0 complete"
                                         }
                                     ]
-                                }
-                            ]
-                        },
-                        {
-                            "kind": "container",
-                            "className": "home-header-nav",
-                            "layout": {
-                                "display": "flex",
-                                "alignItems": "center",
-                                "flexDirection": "row",
-                                "gap": 0.85
-                            },
-                            "styles": {
-                                "flexWrap": "wrap"
-                            },
-                            "children": [
-                                {
-                                    "kind": "button",
-                                    "id": "menu-journal-btn",
-                                    "className": "home-header-link",
-                                    "on": {
-                                        "click": {
-                                            "action": "openJournalScreen"
-                                        }
-                                    },
-                                    "text": "Journal"
-                                },
-                                {
-                                    "kind": "button",
-                                    "id": "menu-continue-btn",
-                                    "classNames": ["home-header-link", "home-header-link-primary"],
-                                    "on": {
-                                        "click": {
-                                            "action": "resumeViewedTheme"
-                                        }
-                                    },
-                                    "text": "Continue"
                                 }
                             ]
                         }
