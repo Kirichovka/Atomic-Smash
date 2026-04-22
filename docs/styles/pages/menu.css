@@ -133,16 +133,12 @@ body[data-page="menu"] {
     stroke-width: 1.9;
 }
 
-.home-icon-button-profile {
-    background: #ffd166;
-}
-
 .home-header-strap {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .home-route-meta {
@@ -150,6 +146,7 @@ body[data-page="menu"] {
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .home-header-pill {
@@ -190,10 +187,15 @@ body[data-page="menu"] {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
 }
 
 .home-header-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 42px;
     padding: 8px 14px;
     border: 2px solid #073b4c;
@@ -204,6 +206,7 @@ body[data-page="menu"] {
     font-weight: 900;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .home-header-link-primary {

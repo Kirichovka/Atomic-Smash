@@ -247,6 +247,7 @@
     .home-header-strap {
         align-items: flex-start;
         gap: 10px;
+        flex-wrap: wrap;
     }
 
     .home-route-meta,
@@ -256,6 +257,7 @@
 
     .home-header-nav {
         justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .home-stage {

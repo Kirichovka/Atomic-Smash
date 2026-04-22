@@ -71,14 +71,6 @@
                                         "aria-label": "Settings"
                                     },
                                     "text": "\u2699"
-                                },
-                                {
-                                    "kind": "button",
-                                    "classNames": ["home-icon-button", "home-icon-button-profile"],
-                                    "attrs": {
-                                        "aria-label": "Profile"
-                                    },
-                                    "text": "\u25CC"
                                 }
                             ]
                         }

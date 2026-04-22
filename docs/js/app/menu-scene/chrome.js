@@ -111,11 +111,6 @@ function createHeaderSchema() {
                                 attrs: { "aria-label": "Settings" },
                                 className: "home-icon-button",
                                 text: "\u2699"
-                            }),
-                            sceneButton({
-                                attrs: { "aria-label": "Profile" },
-                                classNames: ["home-icon-button", "home-icon-button-profile"],
-                                text: "\u25CC"
                             })
                         ]
                     })
