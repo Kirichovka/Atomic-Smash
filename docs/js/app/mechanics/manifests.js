@@ -1,4 +1,5 @@
 import { createConnectionLabMechanic } from "./connection-lab/index.js";
+import { createBalanceLabMechanic } from "./balance-lab/index.js";
 import { createMechanicManifest } from "./manifest-factory.js";
 import { MECHANIC_CAPABILITY } from "./manifest-contracts.js";
 
@@ -15,6 +16,13 @@ export function createBuiltInMechanicManifests() {
                 MECHANIC_CAPABILITY.valencyValidation
             ],
             create: createConnectionLabMechanic
+        }),
+        createMechanicManifest({
+            id: "balance-lab",
+            capabilities: [
+                MECHANIC_CAPABILITY.activationLifecycle
+            ],
+            create: createBalanceLabMechanic
         })
     ];
 }

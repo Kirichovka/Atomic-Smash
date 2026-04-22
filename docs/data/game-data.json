@@ -1190,10 +1190,10 @@
             {
                 "id": "equations",
                 "name": "Equations",
-                "description": "Practice balancing formulas and understanding conservation in school reaction equations.",
+                "description": "Balance real chemical equations by choosing the right coefficients — atom counts must match on both sides.",
                 "schoolTopic": "Chemical equations",
                 "primaryMechanicId": "balance-lab",
-                "sheetStatus": "planned"
+                "sheetStatus": "ready"
             }
         ],
         "levels": [
@@ -1408,6 +1408,102 @@
                 "displayTitle": "Sulfur Trioxide",
                 "learningFocus": "Finish the sulfur branch with a larger oxide",
                 "mechanicId": "connection-lab"
+            },
+            {
+                "id": "eq-1",
+                "themeId": "equations",
+                "targetCompoundId": "water",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Water Synthesis",
+                "objective": "Balance: _H₂ + _O₂ → _H₂O",
+                "hint": "2H₂ + O₂ → 2H₂O",
+                "availableElementSymbols": ["H", "O"],
+                "learningFocus": "O₂ gives 2 O atoms, so 2 H₂O are needed, requiring 2 H₂. H: 4=4 ✓  O: 2=2 ✓",
+                "equation": {
+                    "parts": [null, "H₂", " + ", null, "O₂", " → ", null, "H₂O"],
+                    "answers": [2, 1, 2],
+                    "label": "H₂ + O₂ → H₂O"
+                }
+            },
+            {
+                "id": "eq-2",
+                "themeId": "equations",
+                "targetCompoundId": "ammonia",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Haber Process",
+                "objective": "Balance: N₂ + _H₂ ⇌ _NH₃",
+                "hint": "N₂ + 3H₂ ⇌ 2NH₃",
+                "availableElementSymbols": ["N", "H"],
+                "learningFocus": "N₂ + 3H₂ ⇌ 2NH₃. N: 2=2 ✓  H: 6=6 ✓  Conditions: 450°C, 200 atm, Fe catalyst.",
+                "equation": {
+                    "parts": ["N₂", " + ", null, "H₂", " ⇌ ", null, "NH₃"],
+                    "answers": [3, 2],
+                    "label": "N₂ + H₂ ⇌ NH₃"
+                }
+            },
+            {
+                "id": "eq-3",
+                "themeId": "equations",
+                "targetCompoundId": "magnesium-oxide",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Magnesium Burning",
+                "objective": "Balance: _Mg + O₂ → _MgO",
+                "hint": "2Mg + O₂ → 2MgO",
+                "availableElementSymbols": ["Mg", "O"],
+                "learningFocus": "2Mg + O₂ → 2MgO. Mg: 2=2 ✓  O: 2=2 ✓  Produces a brilliant white flame.",
+                "equation": {
+                    "parts": [null, "Mg", " + ", "O₂", " → ", null, "MgO"],
+                    "answers": [2, 2],
+                    "label": "Mg + O₂ → MgO"
+                }
+            },
+            {
+                "id": "eq-4",
+                "themeId": "equations",
+                "targetCompoundId": "iron-oxide",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Iron Rusting",
+                "objective": "Balance: _Fe + _O₂ → _Fe₂O₃",
+                "hint": "4Fe + 3O₂ → 2Fe₂O₃",
+                "availableElementSymbols": ["Fe", "O"],
+                "learningFocus": "4Fe + 3O₂ → 2Fe₂O₃. Fe: 4=4 ✓  O: 6=6 ✓",
+                "equation": {
+                    "parts": [null, "Fe", " + ", null, "O₂", " → ", null, "Fe₂O₃"],
+                    "answers": [4, 3, 2],
+                    "label": "Fe + O₂ → Fe₂O₃"
+                }
+            },
+            {
+                "id": "eq-5",
+                "themeId": "equations",
+                "targetCompoundId": "sulfur-trioxide",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Contact Process",
+                "objective": "Balance: _SO₂ + O₂ ⇌ _SO₃",
+                "hint": "2SO₂ + O₂ ⇌ 2SO₃",
+                "availableElementSymbols": ["S", "O"],
+                "learningFocus": "2SO₂ + O₂ ⇌ 2SO₃. S: 2=2 ✓  O: 6=6 ✓  V₂O₅ catalyst at ~450°C.",
+                "equation": {
+                    "parts": [null, "SO₂", " + ", "O₂", " ⇌ ", null, "SO₃"],
+                    "answers": [2, 2],
+                    "label": "SO₂ + O₂ ⇌ SO₃"
+                }
+            },
+            {
+                "id": "eq-6",
+                "themeId": "equations",
+                "targetCompoundId": "sodium-hydroxide",
+                "mechanicId": "balance-lab",
+                "displayTitle": "Sodium + Water",
+                "objective": "Balance: _Na + _H₂O → _NaOH + _H₂",
+                "hint": "2Na + 2H₂O → 2NaOH + H₂",
+                "availableElementSymbols": ["Na", "H", "O"],
+                "learningFocus": "2Na + 2H₂O → 2NaOH + H₂. Na: 2=2 ✓  O: 2=2 ✓  H: 4=4 ✓",
+                "equation": {
+                    "parts": [null, "Na", " + ", null, "H₂O", " → ", null, "NaOH", " + ", null, "H₂"],
+                    "answers": [2, 2, 2, 1],
+                    "label": "Na + H₂O → NaOH + H₂"
+                }
             }
         ],
         "mechanics": [

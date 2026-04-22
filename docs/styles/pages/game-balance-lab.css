@@ -1,0 +1,143 @@
+/* ═══════════════════════════════════════════════════════════
+   Balance Lab mechanic — equation panel rendered inside #mix-zone
+   Neo-brutalist palette: #073b4c | #ffd166 | #06d6a0 | #ef476f | #118ab2
+═══════════════════════════════════════════════════════════ */
+
+.bl-panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 24px;
+    overflow: auto;
+}
+
+/* ── Kicker label ── */
+.bl-kicker {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: #ef476f;
+    border: 3px solid #073b4c;
+    border-radius: 20px;
+    padding: 6px 16px;
+    box-shadow: 3px 3px 0 #073b4c;
+}
+
+/* ── Equation display ── */
+.bl-eq {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 24px;
+    border: 4px solid #073b4c;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 6px 8px 0 #073b4c;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(20px, 3vw, 28px);
+    max-width: 720px;
+    width: 100%;
+}
+
+.bl-sym {
+    color: #073b4c;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.bl-op {
+    color: #118ab2;
+    font-weight: 900;
+    font-size: 0.85em;
+    padding: 0 4px;
+}
+
+/* ── Coefficient blanks ── */
+.bl-blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 48px;
+    border: 4px dashed #073b4c;
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+}
+
+.bl-blank:hover       { border-style: solid; border-color: #118ab2; background: #e0f2fe; color: #073b4c; }
+.bl-blank.has-val     { border-style: solid; border-color: #118ab2; background: #e0f2fe; color: #073b4c; box-shadow: 3px 3px 0 #073b4c; }
+.bl-blank.correct     { border-style: solid; border-color: #073b4c; background: #06d6a0; color: #073b4c; box-shadow: 3px 3px 0 #073b4c; }
+.bl-blank.wrong       { border-style: solid; border-color: #073b4c; background: #ef476f; color: #ffffff;  box-shadow: 3px 3px 0 #073b4c; }
+
+/* ── Hint text ── */
+.bl-hint {
+    font-size: 13px;
+    font-weight: 700;
+    color: #073b4c;
+    text-align: center;
+    max-width: 480px;
+}
+
+.bl-hint--info {
+    padding: 12px 20px;
+    border: 3px solid #073b4c;
+    border-radius: 14px;
+    background: #ffd166;
+    box-shadow: 4px 4px 0 #073b4c;
+    font-size: 14px;
+    max-width: 580px;
+    line-height: 1.55;
+}
+
+/* ── Coefficient picker ── */
+.bl-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bl-pick {
+    width: 52px;
+    height: 48px;
+    border: 4px solid #073b4c;
+    border-radius: 12px;
+    background: #ffd166;
+    font-size: 20px;
+    font-weight: 900;
+    color: #073b4c;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 4px 5px 0 #073b4c;
+    min-height: unset;
+}
+
+.bl-pick:hover  { background: #ffb703; transform: translate(2px, 3px); box-shadow: 2px 2px 0 #073b4c; }
+.bl-pick:active { transform: translate(4px, 5px); box-shadow: 0 0 0 #073b4c; }
+.bl-pick.sel    { background: #118ab2; color: #ffffff; transform: translate(4px, 5px); box-shadow: 0 0 0 #073b4c; }
+
+/* ── Responsive ── */
+@media (max-width: 560px) {
+    .bl-eq     { font-size: 18px; padding: 14px 12px; gap: 7px; }
+    .bl-blank,
+    .bl-pick   { width: 44px; height: 40px; font-size: 17px; }
+}
