@@ -4,6 +4,63 @@ Atomic Smash is a small educational chemistry game built as a GitHub Pages proje
 
 The project is now organized not only as a single game, but as a foundation for future mini-games. Navigation, palette UI, progression, persistence, and board mechanics are separated so different teammates can work in parallel without constantly colliding in the same files.
 
+## Cloning On Windows
+
+Preferred clone command:
+
+```powershell
+git clone https://github.com/Kirichovka/Atomic-Smash.git
+```
+
+If Windows shows this error:
+
+```text
+error: LoadLibraryExW() failed with: An Application Control policy has blocked this file.
+fatal: failed to load library 'libcurl-4.dll'
+fatal: remote helper 'https' aborted session
+```
+
+the repository is not the problem. The local Windows machine is blocking Git for Windows' HTTPS helper DLL (`libcurl-4.dll`) through Application Control, WDAC, AppLocker, Smart App Control, antivirus policy, or a corporate security rule.
+
+Fast workaround, if SSH is allowed:
+
+```powershell
+git clone git@github.com:Kirichovka/Atomic-Smash.git
+```
+
+If SSH is not set up yet:
+
+```powershell
+ssh-keygen -t ed25519 -C "your-email@example.com"
+Get-Content "$env:USERPROFILE\.ssh\id_ed25519.pub"
+```
+
+Add the printed public key to GitHub under `Settings -> SSH and GPG keys`, then run the SSH clone command again.
+
+Recommended Windows fix:
+
+```powershell
+winget uninstall --id Git.Git -e
+winget install --id Git.Git -e --source winget
+git --version
+```
+
+If the same error still appears, ask the device administrator or IT policy owner to allow the official Git for Windows installation, especially:
+
+- `C:\Program Files\Git\mingw64\bin\libcurl-4.dll`
+- `C:\Program Files\Git\mingw64\libexec\git-core\git-remote-https.exe`
+- `C:\Program Files\Git\cmd\git.exe`
+
+Avoid using a portable Git copied from `Downloads`, OneDrive, a network drive, or an unsigned zip extract on locked-down Windows devices. Those locations are commonly blocked by Application Control rules.
+
+Temporary fallback when Git is blocked:
+
+- open [https://github.com/Kirichovka/Atomic-Smash](https://github.com/Kirichovka/Atomic-Smash)
+- use `Code -> Download ZIP`
+- extract the project locally
+
+The ZIP fallback is enough to run or inspect the project, but it is not a replacement for Git when contributing changes.
+
 ## Product Idea
 
 The core idea of Atomic Smash is to teach basic chemistry through construction and experimentation instead of static quizzes.

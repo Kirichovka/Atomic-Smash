@@ -326,6 +326,26 @@ Do this carefully and intentionally. Avoid random churn, but do not ignore cachi
 
 If browser behavior and code disagree, suspect cache before suspecting the math.
 
+## Clone / Git For Windows Issues
+
+Known external setup issue:
+
+- `fatal: failed to load library 'libcurl-4.dll'`
+- `remote helper 'https' aborted session`
+- `LoadLibraryExW() failed with: An Application Control policy has blocked this file`
+
+This is not caused by repository contents. It means the local Windows machine blocked Git for Windows' HTTPS runtime, usually through WDAC, AppLocker, Smart App Control, antivirus policy, or corporate device policy.
+
+Safe rule:
+
+- do not try to fix this by changing repository code or GitHub settings
+- document the workaround for contributors
+- prefer SSH clone when HTTPS Git is blocked
+- reinstall official Git for Windows into `C:\Program Files\Git`
+- if policy still blocks it, the device administrator must whitelist the official Git binaries/DLLs
+
+Recommended contributor commands are documented in `README.md` under `Cloning On Windows`.
+
 ## Where To Change Things
 
 ### If changing screen/card/modal UI
