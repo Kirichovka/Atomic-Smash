@@ -69,6 +69,16 @@ export function createMenuScenePlaceholderSchema(placeholder) {
 }
 
 export function resolveMenuSceneLevelNumber(levelId) {
-    const match = /^level-(\d+)$/.exec(levelId);
-    return match ? match[1] : levelId;
+    const standardMatch = /^level-(\d+)$/i.exec(levelId);
+    if (standardMatch) {
+        return standardMatch[1];
+    }
+
+    const themedMatch = /^[a-z]+-level-(\d+)$/i.exec(levelId);
+    if (themedMatch) {
+        return themedMatch[1];
+    }
+
+    const trailingNumberMatch = /(\d+)$/i.exec(levelId);
+    return trailingNumberMatch ? trailingNumberMatch[1] : levelId;
 }

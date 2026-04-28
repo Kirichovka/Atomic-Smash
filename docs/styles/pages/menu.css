@@ -4,7 +4,7 @@ body[data-page="menu"] {
 
 #menu-screen {
     --home-sheet-clearance: 122px;
-    --home-map-overflow: 34;
+    --home-map-overflow: 46;
     --home-scene-width: min(var(--layout-scene-max-width), 100%);
     position: relative;
     display: flex;
@@ -406,6 +406,18 @@ body[data-page="menu"] {
     transform: translate(-50%, -50%);
 }
 
+.home-level-node.level-size-lg {
+    --scene-node-width: 14.8%;
+}
+
+.home-level-node.level-size-md {
+    --scene-node-width: 11.2%;
+}
+
+.home-level-node.level-size-sm {
+    --scene-node-width: 8.6%;
+}
+
 .home-level-node.level-status-completed {
     background: linear-gradient(180deg, #fff8db 0%, #ffe39a 100%);
 }
@@ -457,11 +469,16 @@ button.home-level-node:hover {
 }
 
 .home-level-node.level-size-sm .home-level-formula {
-    font-size: 1.16rem;
+    font-size: 1rem;
+}
+
+.home-level-node.level-size-sm .home-level-index {
+    font-size: 0.58rem;
+    letter-spacing: 0.04em;
 }
 
 .home-level-node.level-size-sm .home-level-objective {
-    font-size: 0.74rem;
+    font-size: 0.66rem;
 }
 
 .home-level-node.level-status-locked .home-level-objective {
