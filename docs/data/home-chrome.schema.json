@@ -104,7 +104,6 @@
                                 "gap": 1.05
                             },
                             "styles": {
-                                "flexWrap": "wrap"
                             },
                             "children": [
                                 {
