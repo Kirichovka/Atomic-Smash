@@ -117,11 +117,16 @@ export class MenuSceneSpace {
     }
 
     getNodeWidthPx(node) {
+        const sizeKey = node?.size ?? "sm";
+        const baseSize =
+            MENU_SCENE_DEFAULTS.nodeSizePixels[sizeKey]
+            ?? MENU_SCENE_DEFAULTS.nodeSizePixels.sm;
+
         if (node?.isUnlocked) {
-            return MENU_SCENE_DEFAULTS.nodeStateSizePixels.interactive;
+            return baseSize;
         }
 
-        return MENU_SCENE_DEFAULTS.nodeStateSizePixels.locked;
+        return Math.round(baseSize * MENU_SCENE_DEFAULTS.nodeLockedScale);
     }
 }
 
