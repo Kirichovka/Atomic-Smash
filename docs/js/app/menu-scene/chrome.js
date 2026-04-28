@@ -66,10 +66,6 @@ export function createHomeChromeController({ refs, schemaConfig = null, actionRe
 function createHeaderSchema() {
     return sceneContainer({
         children: [
-            sceneContainer({
-                attrs: { "aria-hidden": "true" },
-                className: "home-header-bar"
-            }),
             sceneStack({
                 align: "center",
                 className: "home-header-row",
@@ -107,11 +103,6 @@ function createHeaderSchema() {
                         className: "home-header-actions",
                         gap: 1.05,
                         children: [
-                            sceneButton({
-                                attrs: { "aria-label": "Settings" },
-                                className: "home-icon-button",
-                                text: "\u2699"
-                            }),
                             sceneButton({
                                 className: "home-header-link",
                                 id: "menu-journal-btn",
