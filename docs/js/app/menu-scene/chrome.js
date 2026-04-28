@@ -111,16 +111,6 @@ function createHeaderSchema() {
                                 attrs: { "aria-label": "Settings" },
                                 className: "home-icon-button",
                                 text: "\u2699"
-                            }),
-                            sceneButton({
-                                className: "home-header-link",
-                                id: "menu-journal-btn",
-                                text: "Journal"
-                            }),
-                            sceneButton({
-                                classNames: ["home-header-link", "home-header-link-primary"],
-                                id: "menu-continue-btn",
-                                text: "Continue"
                             })
                         ]
                     })
@@ -130,7 +120,8 @@ function createHeaderSchema() {
                 align: "center",
                 className: "home-header-strap",
                 gap: 1.35,
-                justify: "flex-start",
+                justify: "space-between",
+                wrap: "wrap",
                 children: [
                     sceneStack({
                         align: "center",
@@ -156,6 +147,24 @@ function createHeaderSchema() {
                                         text: "0/0 complete"
                                     })
                                 ]
+                            })
+                        ]
+                    }),
+                    sceneStack({
+                        align: "center",
+                        className: "home-header-nav",
+                        gap: 0.85,
+                        wrap: "wrap",
+                        children: [
+                            sceneButton({
+                                className: "home-header-link",
+                                id: "menu-journal-btn",
+                                text: "Journal"
+                            }),
+                            sceneButton({
+                                classNames: ["home-header-link", "home-header-link-primary"],
+                                id: "menu-continue-btn",
+                                text: "Continue"
                             })
                         ]
                     })
