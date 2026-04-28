@@ -250,8 +250,9 @@ body[data-page="menu"] {
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    justify-content: space-between;
-    width: min(calc(130px + (var(--sheet-count, 1) * 28px)), calc(100% - 48px));
+    justify-content: center;
+    width: max-content;
+    max-width: calc(100% - 48px);
     min-height: 70px;
     padding: 10px 16px;
     box-sizing: border-box;
@@ -280,7 +281,7 @@ body[data-page="menu"] {
 }
 
 .home-sheet-dots {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
