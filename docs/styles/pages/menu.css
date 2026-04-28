@@ -468,6 +468,19 @@ button.home-level-node:hover {
     line-height: 1.18;
 }
 
+.home-level-node.level-size-md .home-level-index {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+}
+
+.home-level-node.level-size-md .home-level-formula {
+    font-size: 1.2rem;
+}
+
+.home-level-node.level-size-md .home-level-objective {
+    font-size: 0.72rem;
+}
+
 .home-level-node.level-size-sm .home-level-formula {
     font-size: 1rem;
 }

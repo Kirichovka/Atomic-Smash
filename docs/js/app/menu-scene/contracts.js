@@ -8,7 +8,7 @@ export const MENU_SCENE_DEFAULTS = Object.freeze({
     nodeLockedScale: 0.88,
     nodeSizePixels: Object.freeze({
         lg: 204,
-        md: 162,
+        md: 150,
         sm: 130
     })
 });
