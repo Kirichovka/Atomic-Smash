@@ -151,6 +151,14 @@ export async function loadLevelBriefsConfig() {
 }
 
 const VALENCY_METADATA = {
+    Al: {
+        valency: 3,
+        valencyTheory: "Aluminium is modeled with up to three single connections in this lab, which fits common chlorides and hydroxides."
+    },
+    Be: {
+        valency: 2,
+        valencyTheory: "Beryllium is treated as a two-connection metal in this simplified model."
+    },
     C: {
         valency: 4,
         valencyTheory: "Carbon is the most flexible builder here and is modeled with up to four single connections. That is why it can sit in the center of many molecules."
@@ -163,9 +171,17 @@ const VALENCY_METADATA = {
         valency: 1,
         valencyTheory: "Chlorine is treated as a one-bond halogen in this lab. It commonly completes its shell with one single connection."
     },
+    Cu: {
+        valency: 2,
+        valencyTheory: "Copper is simplified here to two single connections so common oxides, chlorides, and sulfides stay playable."
+    },
     Fe: {
         valency: 3,
         valencyTheory: "Iron can have multiple oxidation states, but in this lab it is simplified to up to three single connections for beginner oxide patterns."
+    },
+    F: {
+        valency: 1,
+        valencyTheory: "Fluorine is treated as a one-bond halogen in this lab, matching simple compounds like HF."
     },
     H: {
         valency: 1,
@@ -174,6 +190,10 @@ const VALENCY_METADATA = {
     K: {
         valency: 1,
         valencyTheory: "Potassium behaves like sodium in this model and is treated as a one-connection alkali metal."
+    },
+    Li: {
+        valency: 1,
+        valencyTheory: "Lithium is modeled as a one-connection alkali metal, much like sodium and potassium."
     },
     Mg: {
         valency: 2,
@@ -198,6 +218,10 @@ const VALENCY_METADATA = {
     S: {
         valency: 3,
         valencyTheory: "Sulfur can use several bonding patterns, but in this lab it is allowed up to three single connections so sulfur oxides can be built clearly."
+    },
+    Zn: {
+        valency: 2,
+        valencyTheory: "Zinc is treated as a two-connection metal so oxides, chlorides, sulfides, and carbonates remain consistent in the lab."
     }
 };
 

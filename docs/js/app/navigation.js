@@ -187,10 +187,15 @@ export function createNavigationController({
                 : element.name;
 
             return {
+                atomicNumber: element.atomicNumber,
+                category: element.chemicalCategory ?? "reference element",
                 description: element.journalDescription ?? element.description,
+                detailDescription: element.detailDescription ?? element.description,
+                fullName: element.name,
                 kicker: isUnlocked ? "Unlocked element" : "Reference available",
                 locked: !isUnlocked,
                 name: titleSuffix,
+                previewStatus: isUnlocked ? "Unlocked" : "Locked",
                 raw: element,
                 status: isUnlocked
                     ? "Unlocked for gameplay | Tap for full reference"

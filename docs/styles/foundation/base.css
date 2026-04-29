@@ -9,6 +9,8 @@ body {
     min-height: 100dvh;
     overflow: auto;
     background: var(--color-bg-app);
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 body[data-page="game"] {
