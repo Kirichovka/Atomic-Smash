@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    Balance Lab mechanic — equation panel rendered inside #mix-zone
-   Neo-brutalist palette: #073b4c | #ffd166 | #06d6a0 | #ef476f | #118ab2
+   Uses game CSS variables defined on #game-screen
 ═══════════════════════════════════════════════════════════ */
 
 .bl-panel {
@@ -23,10 +23,10 @@
     text-transform: uppercase;
     color: #ffffff;
     background: #ef476f;
-    border: 3px solid #073b4c;
+    border: 3px solid var(--game-ink);
     border-radius: 20px;
     padding: 6px 16px;
-    box-shadow: 3px 3px 0 #073b4c;
+    box-shadow: 3px 3px 0 var(--game-shadow);
 }
 
 /* ── Equation display ── */
@@ -37,10 +37,10 @@
     justify-content: center;
     gap: 10px;
     padding: 20px 24px;
-    border: 4px solid #073b4c;
+    border: 4px solid var(--game-ink);
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 6px 8px 0 #073b4c;
+    background: var(--game-panel-strong, #ffffff);
+    box-shadow: 6px 8px 0 var(--game-shadow);
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(20px, 3vw, 28px);
     max-width: 720px;
@@ -48,13 +48,13 @@
 }
 
 .bl-sym {
-    color: #073b4c;
+    color: var(--game-ink);
     font-weight: 700;
     line-height: 1;
 }
 
 .bl-op {
-    color: #118ab2;
+    color: var(--game-accent-strong, #118ab2);
     font-weight: 900;
     font-size: 0.85em;
     padding: 0 4px;
@@ -67,9 +67,9 @@
     justify-content: center;
     width: 52px;
     height: 48px;
-    border: 4px dashed #073b4c;
+    border: 4px dashed var(--game-ink);
     border-radius: 10px;
-    background: #ffffff;
+    background: var(--game-panel-strong, #ffffff);
     font-family: Arial, sans-serif;
     font-size: 22px;
     font-weight: 900;
@@ -79,26 +79,26 @@
     user-select: none;
 }
 
-.bl-blank:hover       { border-style: solid; border-color: #118ab2; background: #e0f2fe; color: #073b4c; }
-.bl-blank.has-val     { border-style: solid; border-color: #118ab2; background: #e0f2fe; color: #073b4c; box-shadow: 3px 3px 0 #073b4c; }
-.bl-blank.correct     { border-style: solid; border-color: #073b4c; background: #06d6a0; color: #073b4c; box-shadow: 3px 3px 0 #073b4c; }
-.bl-blank.wrong       { border-style: solid; border-color: #073b4c; background: #ef476f; color: #ffffff;  box-shadow: 3px 3px 0 #073b4c; }
+.bl-blank:hover   { border-style: solid; border-color: var(--game-accent-strong); background: #e0f2fe; color: var(--game-ink); }
+.bl-blank.has-val { border-style: solid; border-color: var(--game-accent-strong); background: #e0f2fe; color: var(--game-ink); box-shadow: 3px 3px 0 var(--game-shadow); }
+.bl-blank.correct { border-style: solid; border-color: var(--game-ink); background: #06d6a0; color: var(--game-ink); box-shadow: 3px 3px 0 var(--game-shadow); }
+.bl-blank.wrong   { border-style: solid; border-color: var(--game-ink); background: #ef476f; color: #ffffff;  box-shadow: 3px 3px 0 var(--game-shadow); }
 
 /* ── Hint text ── */
 .bl-hint {
     font-size: 13px;
     font-weight: 700;
-    color: #073b4c;
+    color: var(--game-ink);
     text-align: center;
     max-width: 480px;
 }
 
 .bl-hint--info {
     padding: 12px 20px;
-    border: 3px solid #073b4c;
+    border: 3px solid var(--game-ink);
     border-radius: 14px;
-    background: #ffd166;
-    box-shadow: 4px 4px 0 #073b4c;
+    background: var(--game-accent);
+    box-shadow: 4px 4px 0 var(--game-shadow);
     font-size: 14px;
     max-width: 580px;
     line-height: 1.55;
@@ -115,25 +115,25 @@
 .bl-pick {
     width: 52px;
     height: 48px;
-    border: 4px solid #073b4c;
+    border: 4px solid var(--game-ink);
     border-radius: 12px;
-    background: #ffd166;
+    background: var(--game-accent);
     font-size: 20px;
     font-weight: 900;
-    color: #073b4c;
+    color: var(--game-ink);
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;
-    box-shadow: 4px 5px 0 #073b4c;
+    box-shadow: 4px 5px 0 var(--game-shadow);
     min-height: unset;
 }
 
-.bl-pick:hover  { background: #ffb703; transform: translate(2px, 3px); box-shadow: 2px 2px 0 #073b4c; }
-.bl-pick:active { transform: translate(4px, 5px); box-shadow: 0 0 0 #073b4c; }
-.bl-pick.sel    { background: #118ab2; color: #ffffff; transform: translate(4px, 5px); box-shadow: 0 0 0 #073b4c; }
+.bl-pick:hover  { background: #ffb703; transform: translate(2px, 3px); box-shadow: 2px 2px 0 var(--game-shadow); }
+.bl-pick:active { transform: translate(4px, 5px); box-shadow: 0 0 0 var(--game-shadow); }
+.bl-pick.sel    { background: var(--game-accent-strong, #118ab2); color: #ffffff; transform: translate(4px, 5px); box-shadow: 0 0 0 var(--game-shadow); }
 
 /* ── Responsive ── */
 @media (max-width: 560px) {

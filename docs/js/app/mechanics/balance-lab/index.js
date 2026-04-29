@@ -5,6 +5,7 @@ export function createBalanceLabMechanic({ refs, state }) {
     let selectedCoeff = null;
     let currentLevelId = null;
     let panelEl = null;
+    let savedSidebarCollapsed = false;
 
     // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -16,6 +17,24 @@ export function createBalanceLabMechanic({ refs, state }) {
         return Boolean(refs.mixZone);
     }
 
+    // ── Sidebar ───────────────────────────────────────────────────────────
+
+    function setSidebarCollapsed(collapsed) {
+        state.ui.sidebarCollapsed = collapsed;
+        refs.sidebar?.classList.toggle("collapsed", collapsed);
+        if (refs.paletteToggleButton) {
+            refs.paletteToggleButton.textContent = collapsed ? "Show Palette" : "Hide Palette";
+            refs.paletteToggleButton.setAttribute("aria-expanded", String(!collapsed));
+        }
+        if (refs.sidebarCollapseButton) {
+            refs.sidebarCollapseButton.textContent = collapsed ? "Show" : "Hide";
+            refs.sidebarCollapseButton.setAttribute("aria-expanded", String(!collapsed));
+        }
+        if (refs.sidebarResizeHandle) {
+            refs.sidebarResizeHandle.disabled = collapsed;
+        }
+    }
+
     // ── Lifecycle ─────────────────────────────────────────────────────────
 
     function init() {
@@ -24,11 +43,14 @@ export function createBalanceLabMechanic({ refs, state }) {
     }
 
     function activate() {
+        savedSidebarCollapsed = state.ui.sidebarCollapsed;
+        setSidebarCollapsed(true);
         if (!isMounted()) return;
         renderPanel();
     }
 
     function deactivate() {
+        setSidebarCollapsed(savedSidebarCollapsed);
         removePanel();
     }
 
