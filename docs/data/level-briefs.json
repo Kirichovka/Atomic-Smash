@@ -33,8 +33,8 @@
                     "nodeTitle": "Ammonia",
                     "introTitle": "Nitrogen Basics",
                     "theory": "Ammonia introduces nitrogen as a central atom that can connect to several hydrogens. It is a good first example of a different central-node pattern.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Continue using bond placement, but focus on a new center atom with a three-connection pattern."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Choose the coefficients that make nitrogen and hydrogen atom counts match before ammonia is formed."
                 },
                 {
                     "levelId": "level-5",
@@ -65,8 +65,8 @@
                     "nodeTitle": "CaO",
                     "introTitle": "Calcium Oxides",
                     "theory": "Calcium oxide moves the route into basic metal oxides. It helps learners compare how oxygen combines with a different type of element.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Keep using the same spatial bond mechanic, but now apply it to a metal oxide family."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance calcium reacting with oxygen so both sides conserve every atom."
                 },
                 {
                     "levelId": "level-9",
@@ -97,8 +97,8 @@
                     "nodeTitle": "SO3",
                     "introTitle": "Sulfur Gases II",
                     "theory": "Sulfur trioxide extends the sulfur branch and closes the basic route with a larger oxide. It reinforces the idea that one topic can develop across multiple lessons.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Finish the route with a more advanced sulfur oxide that still uses the same core connection mechanic."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance sulfur dioxide turning into sulfur trioxide as the route's final oxide checkpoint."
                 }
             ]
         },
@@ -135,8 +135,8 @@
                     "nodeTitle": "HClO",
                     "introTitle": "Oxygen Changes The Acid",
                     "theory": "Hypochlorous acid shows how adding oxygen can change the behavior and identity of a chlorine-based acid. It pushes the acid branch into a larger pattern.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Move from a straight acid pair into a three-atom acid structure where oxygen becomes the bridge."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance chlorine reacting with water to produce hydrochloric and hypochlorous acids."
                 },
                 {
                     "levelId": "ab-level-5",
@@ -167,8 +167,8 @@
                     "nodeTitle": "HNO3",
                     "introTitle": "Nitric Acid Pattern",
                     "theory": "Nitric acid expands the acid branch into a nitrogen-oxygen framework. It is a strong example of how oxygen-rich acids create larger connection patterns.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Place a central nitrogen and arrange the oxygen atoms in the correct acid pattern."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance the oxygen-rich formation of nitric acid by matching N, H, and O counts."
                 },
                 {
                     "levelId": "ab-level-9",
@@ -199,8 +199,8 @@
                     "nodeTitle": "NaCl",
                     "introTitle": "Neutralization Result",
                     "theory": "Sodium chloride closes the route with a familiar salt. It acts as a simple endpoint after spending the route comparing acids, bases, and their patterns.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Finish the route by returning to a familiar neutral salt after the acid and base branches converge."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance a neutralization equation where acid and base produce salt and water."
                 }
             ]
         },
@@ -245,8 +245,8 @@
                     "nodeTitle": "MgCl2",
                     "introTitle": "Parallel Chloride Salt",
                     "theory": "Magnesium chloride gives another comparison inside the same chloride family. It reinforces how salts can repeat a structural idea while changing the center metal.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Repeat the same chloride pattern with a different metal center."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance magnesium reacting with chlorine to form a chloride salt."
                 },
                 {
                     "levelId": "so-level-6",
@@ -285,8 +285,8 @@
                     "nodeTitle": "Na2O2",
                     "introTitle": "Oxygen-Rich Oxides",
                     "theory": "Sodium peroxide shows that adding one more oxygen can create a noticeably different compound family. It gives the oxide route more depth than a simple one-oxygen pattern.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Use the same atoms as sodium oxide, but arrange them into the larger peroxide pattern."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance sodium peroxide formation and compare the atom ratio with simpler oxides."
                 },
                 {
                     "levelId": "so-level-11",
@@ -333,8 +333,8 @@
                     "nodeTitle": "SO3",
                     "introTitle": "Nonmetal Oxides II",
                     "theory": "Sulfur trioxide closes the route with a larger sulfur oxide. It works as a final capstone because it combines a familiar center atom with a more advanced oxygen-rich arrangement.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Finish the full salts-and-oxides route with the larger sulfur oxide structure."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance the final sulfur oxide equation before closing the salts-and-oxides route."
                 }
             ]
         }

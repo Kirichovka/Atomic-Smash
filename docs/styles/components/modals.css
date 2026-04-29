@@ -476,6 +476,101 @@
     opacity: 0.82;
 }
 
+.level-complete-shell {
+    max-width: 760px;
+    padding: 28px 8px 8px;
+}
+
+.level-complete-kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--color-surface-visual-start);
+    color: var(--color-accent);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.level-complete-heading {
+    margin-top: 16px;
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 900;
+    line-height: 1.02;
+    color: var(--color-text-dark);
+}
+
+.level-complete-description {
+    margin-top: 16px;
+    max-width: 720px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--color-text-primary);
+}
+
+.level-complete-next-panel {
+    margin-top: 24px;
+    padding: 22px 24px;
+    border: 1px solid var(--color-border-visual);
+    border-radius: 24px;
+    background: linear-gradient(180deg, var(--color-surface-visual-start) 0%, var(--color-surface-visual-end) 100%);
+    box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+}
+
+.level-complete-next-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.level-complete-next-title {
+    margin-top: 10px;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-text-dark);
+}
+
+.level-complete-next-meta {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+}
+
+.level-complete-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.level-complete-stay,
+.level-complete-next {
+    min-width: 180px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.level-complete-stay {
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface-solid);
+    color: var(--color-text-brand);
+}
+
+.level-complete-next {
+    border: 1px solid transparent;
+    background: var(--color-text-brand);
+    color: var(--color-surface-solid);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+}
+
 .help-modal-kicker {
     font-size: 13px;
     text-transform: uppercase;

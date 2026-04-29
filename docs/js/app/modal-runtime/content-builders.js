@@ -21,6 +21,7 @@ export function createModalRuntimeContentBuilder() {
         renderCompoundModalContent,
         renderElementModalContent,
         renderHelpModalContent,
+        renderLevelCompleteContent,
         renderLevelIntroContent,
         renderThemeCompleteContent,
         renderValencyModalContent
@@ -259,6 +260,75 @@ function renderCompoundModalContent({
     }
 
     container.replaceChildren(root);
+}
+
+function renderLevelCompleteContent({
+    completedLevelNumber,
+    compound,
+    container,
+    nextCompound,
+    nextLevel,
+    theme
+}) {
+    if (!container || !compound || !nextLevel || !theme) {
+        return;
+    }
+
+    const shell = document.createElement("section");
+    shell.className = "level-complete-shell";
+
+    const kicker = document.createElement("div");
+    kicker.className = "level-complete-kicker";
+    kicker.textContent = `${theme.name} | Level complete`;
+
+    const title = document.createElement("h2");
+    title.id = "level-complete-title";
+    title.className = "level-complete-heading";
+    title.textContent = `Level ${completedLevelNumber} cleared`;
+
+    const description = document.createElement("p");
+    description.className = "level-complete-description";
+    description.textContent =
+        `You built ${compound.formula} (${compound.name}). ` +
+        "Do you want to continue straight into the next level or stay here and keep experimenting?";
+
+    const nextPanel = document.createElement("section");
+    nextPanel.className = "level-complete-next-panel";
+
+    const nextLabel = document.createElement("div");
+    nextLabel.className = "level-complete-next-label";
+    nextLabel.textContent = "Next level";
+
+    const nextTitle = document.createElement("div");
+    nextTitle.className = "level-complete-next-title";
+    nextTitle.textContent = nextLevel.displayTitle ?? nextLevel.objective;
+
+    const nextMeta = document.createElement("div");
+    nextMeta.className = "level-complete-next-meta";
+    nextMeta.textContent = nextCompound
+        ? `Target: ${nextCompound.formula} (${nextCompound.name})`
+        : "A new chemistry target is ready.";
+
+    nextPanel.append(nextLabel, nextTitle, nextMeta);
+
+    const actions = document.createElement("div");
+    actions.className = "level-complete-actions";
+
+    const stayButton = document.createElement("button");
+    stayButton.type = "button";
+    stayButton.className = "level-complete-stay";
+    stayButton.dataset.levelCompleteAction = "stay";
+    stayButton.textContent = "Stay Here";
+
+    const nextButton = document.createElement("button");
+    nextButton.type = "button";
+    nextButton.className = "level-complete-next";
+    nextButton.dataset.levelCompleteAction = "next";
+    nextButton.textContent = "Next Level";
+
+    actions.append(stayButton, nextButton);
+    shell.append(kicker, title, description, nextPanel, actions);
+    container.replaceChildren(shell);
 }
 
 function renderThemeCompleteContent({

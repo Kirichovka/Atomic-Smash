@@ -46,8 +46,11 @@ export function createGameRuntime({
     let tutorialController;
     let mixZoneContextController;
 
-    const persistCurrentState = () => {
-        getActiveMechanic().captureState?.();
+    const persistCurrentState = (options = {}) => {
+        if (!options.skipCapture) {
+            getActiveMechanic().captureState?.();
+        }
+
         persistState(state);
     };
     const scheduleBasicTutorialSync = () => {
@@ -120,6 +123,7 @@ export function createGameRuntime({
                 || isModalVisible(refs.compoundModal)
                 || isModalVisible(refs.elementModal)
                 || isModalVisible(refs.helpModal)
+                || isModalVisible(refs.levelCompleteModal)
                 || isModalVisible(refs.themeCompleteModal)
                 || isModalVisible(refs.valencyModal),
             onPersist: persistCurrentState
@@ -295,8 +299,11 @@ function handleEscapeShortcut(mixZoneContextController, modalController, persist
         return;
     }
 
-    if (modalController.closeActiveModal()) {
-        persistCurrentState();
+    const modalCloseResult = modalController.closeActiveModal();
+    if (modalCloseResult?.closed) {
+        persistCurrentState({
+            skipCapture: Boolean(modalCloseResult.skipPersistCapture)
+        });
         scheduleBasicTutorialSync();
     }
 }

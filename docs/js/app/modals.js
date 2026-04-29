@@ -20,6 +20,12 @@ export function createModalController({
         kind: RUNTIME_CONTENT_BUILDER_KIND.modal,
         factory: createModalRuntimeContentBuilder
     });
+    let afterCompoundModalClose = null;
+    let levelCompleteHandlers = {
+        onAdvance: null,
+        onStay: null
+    };
+
     function bind() {
         bindIfPresent(refs.levelIntroClose, "click", closeLevelIntroModal);
         bindIfPresent(refs.levelIntroModal, "click", event => {
@@ -39,6 +45,19 @@ export function createModalController({
         bindIfPresent(refs.compoundModal, "click", event => {
             if (event.target.closest("[data-close-compound-modal='true']")) {
                 closeCompoundModal();
+            }
+        });
+
+        bindIfPresent(refs.levelCompleteClose, "click", () => settleLevelCompleteChoice("stay"));
+        bindIfPresent(refs.levelCompleteModal, "click", event => {
+            const actionButton = event.target.closest("[data-level-complete-action]");
+            if (actionButton) {
+                settleLevelCompleteChoice(actionButton.dataset.levelCompleteAction);
+                return;
+            }
+
+            if (event.target.closest("[data-close-level-complete-modal='true']")) {
+                settleLevelCompleteChoice("stay");
             }
         });
 
@@ -149,8 +168,66 @@ export function createModalController({
     }
 
     function closeCompoundModal() {
+        const handler = afterCompoundModalClose;
+        afterCompoundModalClose = null;
         closeModal(refs.compoundModal);
         onModalStateChanged?.();
+        handler?.();
+    }
+
+    function queueAfterCompoundModalClose(handler) {
+        afterCompoundModalClose = typeof handler === "function"
+            ? handler
+            : null;
+    }
+
+    function openLevelCompleteModal({
+        completedLevelNumber,
+        compound,
+        nextLevel,
+        onAdvance,
+        onStay,
+        theme
+    }) {
+        if (!compound || !nextLevel || !theme || !refs.levelCompleteContent || !refs.levelCompleteModal) {
+            return;
+        }
+
+        const nextCompound = getCompoundById(state, nextLevel.targetCompoundId);
+        levelCompleteHandlers = {
+            onAdvance: typeof onAdvance === "function" ? onAdvance : null,
+            onStay: typeof onStay === "function" ? onStay : null
+        };
+
+        modalContentBuilder.renderLevelCompleteContent({
+            completedLevelNumber,
+            compound,
+            container: refs.levelCompleteContent,
+            nextCompound,
+            nextLevel,
+            theme
+        });
+
+        openModal(refs.levelCompleteModal);
+        onModalStateChanged?.();
+    }
+
+    function closeLevelCompleteModal() {
+        levelCompleteHandlers = {
+            onAdvance: null,
+            onStay: null
+        };
+        closeModal(refs.levelCompleteModal);
+        onModalStateChanged?.();
+    }
+
+    function settleLevelCompleteChoice(action) {
+        const handler = action === "next"
+            ? levelCompleteHandlers.onAdvance
+            : levelCompleteHandlers.onStay;
+
+        closeLevelCompleteModal();
+        handler?.();
     }
 
     function openHelpModal() {
@@ -236,46 +313,61 @@ export function createModalController({
     function closeActiveModal() {
         if (isModalOpen(refs.levelIntroModal)) {
             closeLevelIntroModal();
-            return true;
+            return { closed: true };
+        }
+
+        if (isModalOpen(refs.levelCompleteModal)) {
+            settleLevelCompleteChoice("stay");
+            return {
+                closed: true,
+                skipPersistCapture: true
+            };
         }
 
         if (isModalOpen(refs.themeCompleteModal)) {
             closeThemeCompleteModal();
-            return true;
+            return { closed: true };
         }
 
         if (isModalOpen(refs.helpModal)) {
             closeHelpModal();
-            return true;
+            return { closed: true };
         }
 
         if (isModalOpen(refs.valencyModal)) {
             closeValencyModal();
-            return true;
+            return { closed: true };
         }
 
         if (isModalOpen(refs.compoundModal)) {
+            const shouldSkipPersistCapture = Boolean(afterCompoundModalClose);
             closeCompoundModal();
-            return true;
+            return {
+                closed: true,
+                skipPersistCapture: shouldSkipPersistCapture
+            };
         }
 
         if (isModalOpen(refs.elementModal)) {
             closeElementModal();
-            return true;
+            return { closed: true };
         }
 
-        return false;
+        return null;
     }
 
     return {
         bind,
         closeActiveModal,
         closeCompoundModal,
+        closeLevelCompleteModal,
         openCompoundModal,
         openElementModal,
         openHelpModal,
+        openLevelCompleteModal,
         openLevelIntroModal,
         openValencyModal,
+        queueAfterCompoundModalClose,
         openThemeCompleteModal
     };
 }

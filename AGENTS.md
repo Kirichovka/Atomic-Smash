@@ -128,6 +128,26 @@ Current main mechanic:
 
 - `docs/js/app/mechanics/connection-lab/index.js`
 
+Current secondary mechanic:
+
+- `docs/js/app/mechanics/balance-lab/index.js`
+
+Balance-lab route integration note:
+
+- what changed:
+  - selected ordinary theme levels now use `mechanicId: "balance-lab"` instead of keeping all non-`equations` theme levels on `connection-lab`
+  - current ready-theme mix is three balance levels per theme, with the remaining levels staying on connection lab
+- real cause:
+  - `balance-lab` is registered in the mechanics manifest and data catalog, but it only renders useful gameplay when the active level includes an `equation` block
+  - changing only `mechanicId` would activate the mechanic without giving it equation data
+- fix:
+  - balance-enabled levels in `docs/data/game-data.json` include both `mechanicId: "balance-lab"` and an `equation` object with `parts`, `answers`, and `label`
+  - matching entries in `docs/data/level-briefs.json` use `Balance Lab` copy so menu and intro text do not contradict the mechanic
+- safe rule:
+  - never route a level to `balance-lab` without adding a valid `equation`
+  - when switching a level mechanic, update both game data and level brief text together
+  - keep theme-level balance/connection proportions intentional, not accidental leftovers from copied levels
+
 ## Change Routing
 
 Use this map before editing:
