@@ -1,0 +1,72 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "paletteTile": {
+      "kind": "container",
+      "className": {
+        "bind": "tile.className"
+      },
+      "attrs": {
+        "title": {
+          "bind": "tile.title"
+        }
+      },
+      "data": {
+        "element": {
+          "bind": "tile.symbol"
+        }
+      },
+      "text": {
+        "bind": "tile.symbol"
+      }
+    },
+    "paletteEmptyState": {
+      "kind": "container",
+      "className": "empty-state",
+      "text": {
+        "bind": "message"
+      }
+    },
+    "elementCard": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "className": "element-card-symbol",
+          "text": {
+            "bind": "element.symbol"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "element-card-name",
+          "text": {
+            "bind": "element.name"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "element-card-meta",
+          "text": {
+            "bind": "element.meta"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "element-card-description",
+          "text": {
+            "bind": "element.description"
+          }
+        }
+      ]
+    },
+    "elementCardEmptyState": {
+      "kind": "container",
+      "className": "empty-state",
+      "text": {
+        "bind": "message"
+      }
+    }
+  }
+}

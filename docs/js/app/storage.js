@@ -1,6 +1,6 @@
 import { createPersistedStateSnapshot } from "./state.js";
 
-const STORAGE_KEY = "atomic-smash.app-state.v2";
+export const STORAGE_KEY = "atomic-smash.app-state.v2";
 
 export function loadStoredState() {
     try {
@@ -22,5 +22,13 @@ export function persistState(state) {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch (error) {
         console.warn("Failed to save Atomic Smash state.", error);
+    }
+}
+
+export function clearStoredState() {
+    try {
+        window.localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+        console.warn("Failed to clear saved Atomic Smash state.", error);
     }
 }

@@ -1,0 +1,43 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "compoundCard": {
+      "kind": "button",
+      "className": {
+        "bind": "compound.className"
+      },
+      "attrs": {
+        "type": "button"
+      },
+      "on": {
+        "click": {
+          "bind": "handlers.open"
+        }
+      },
+      "children": [
+        {
+          "kind": "container",
+          "className": "compound-formula",
+          "text": {
+            "bind": "compound.formula"
+          }
+        },
+        {
+          "kind": "container",
+          "className": "compound-name",
+          "text": {
+            "bind": "compound.name"
+          }
+        }
+      ]
+    },
+    "emptyState": {
+      "kind": "container",
+      "className": "empty-state",
+      "text": {
+        "bind": "message"
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ button {
     min-height: 44px;
     font-size: 14px;
     background: var(--color-accent);
-    color: white;
+    color: var(--color-text-on-accent);
 }
 
 button:disabled {
@@ -41,7 +41,8 @@ button:disabled {
 }
 
 button.secondary {
-    background: var(--color-text-subtle);
+    background: var(--color-surface-panel-strong);
+    color: var(--color-text-brand);
 }
 
 .zone-title {

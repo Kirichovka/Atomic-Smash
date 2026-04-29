@@ -1,5 +1,17 @@
 .theme-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+#theme-screen .theme-shell {
+    padding-top: 18px;
+}
+
+#theme-screen .screen-hero {
+    max-width: 780px;
+}
+
+#theme-screen .theme-grid {
+    align-items: stretch;
 }

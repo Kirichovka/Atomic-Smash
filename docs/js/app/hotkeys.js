@@ -1,3 +1,5 @@
+import { HOTKEY_ACTION_IDS } from "./contracts/action-ids.js";
+
 const EDITABLE_SELECTORS = "input, textarea, select, [contenteditable='true']";
 
 export function createHotkeysController({
@@ -11,11 +13,11 @@ export function createHotkeysController({
 }) {
     const bindings = normalizeBindings(config?.bindings ?? []);
     const actionHandlers = {
-        "delete-selected-node": onDeleteSelectedNode,
-        escape: onEscape,
-        "mix-board": onMixBoard,
-        "open-add-menu": onOpenAddMenu,
-        "refresh-board": onRefreshBoard
+        [HOTKEY_ACTION_IDS.deleteSelectedNode]: onDeleteSelectedNode,
+        [HOTKEY_ACTION_IDS.escape]: onEscape,
+        [HOTKEY_ACTION_IDS.mixBoard]: onMixBoard,
+        [HOTKEY_ACTION_IDS.openAddMenu]: onOpenAddMenu,
+        [HOTKEY_ACTION_IDS.refreshBoard]: onRefreshBoard
     };
 
     function bind() {

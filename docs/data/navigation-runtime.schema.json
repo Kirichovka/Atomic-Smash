@@ -1,0 +1,26 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "menuSheetDot": {
+      "kind": "button",
+      "className": {
+        "bind": "dot.className"
+      },
+      "attrs": {
+        "aria-label": {
+          "bind": "dot.ariaLabel"
+        },
+        "title": {
+          "bind": "dot.title"
+        },
+        "type": "button"
+      },
+      "on": {
+        "click": {
+          "bind": "handlers.open"
+        }
+      }
+    }
+  }
+}

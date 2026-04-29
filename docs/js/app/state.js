@@ -3,18 +3,22 @@ const CONNECTOR_POSITIONS = new Set(["left", "right", "top", "bottom"]);
 
 export function createState(gameData) {
     const compounds = gameData.compounds ?? [];
+    const mechanics = gameData.mechanics ?? [];
 
     return {
         catalog: {
             elements: gameData.elements ?? [],
             themes: gameData.themes ?? [],
             levels: gameData.levels ?? [],
+            mechanics: mechanics,
+            mechanicsById: new Map(mechanics.map(mechanic => [mechanic.id, mechanic])),
             compoundsByIngredients: buildCompoundsByIngredients(compounds),
             compoundsById: new Map(compounds.map(compound => [compound.id, compound]))
         },
         ui: {
             activeScreen: "menu",
             inspectedElementSymbol: null,
+            menuViewedThemeId: null,
             paletteSelectedElementSymbol: null,
             sidebarCollapsed: false,
             sidebarWidth: 287
@@ -33,7 +37,9 @@ export function createState(gameData) {
             savedNodes: [],
             savedConnections: [],
             nodes: new Map(),
+            nodeEntities: new Map(),
             connections: [],
+            edgeEntities: new Map(),
             selectedNodeId: null,
             selectedNodeIds: new Set(),
             dragElementType: null,
@@ -66,9 +72,13 @@ export function hydrateState(state, snapshot) {
     const inspectedElementSymbol = validElementSymbols.has(snapshot.ui?.inspectedElementSymbol)
         ? snapshot.ui.inspectedElementSymbol
         : paletteSelectedElementSymbol;
+    const menuViewedThemeId = validThemeIds.has(snapshot.ui?.menuViewedThemeId)
+        ? snapshot.ui.menuViewedThemeId
+        : null;
 
     state.ui.paletteSelectedElementSymbol = paletteSelectedElementSymbol;
     state.ui.inspectedElementSymbol = inspectedElementSymbol;
+    state.ui.menuViewedThemeId = menuViewedThemeId;
     state.ui.sidebarCollapsed = Boolean(snapshot.ui?.sidebarCollapsed);
     state.ui.sidebarWidth = Number.isFinite(snapshot.ui?.sidebarWidth)
         ? clampSidebarWidth(Number(snapshot.ui.sidebarWidth))
@@ -139,6 +149,7 @@ export function createPersistedStateSnapshot(state) {
     return {
         ui: {
             inspectedElementSymbol: state.ui.inspectedElementSymbol,
+            menuViewedThemeId: state.ui.menuViewedThemeId,
             paletteSelectedElementSymbol: state.ui.paletteSelectedElementSymbol,
             sidebarCollapsed: state.ui.sidebarCollapsed,
             sidebarWidth: clampSidebarWidth(state.ui.sidebarWidth)
@@ -219,6 +230,10 @@ export function getCurrentLevel(state) {
 
 export function getActiveMechanicId(state) {
     return getCurrentLevel(state)?.mechanicId ?? DEFAULT_MECHANIC_ID;
+}
+
+export function getMechanicById(state, mechanicId) {
+    return state.catalog.mechanicsById.get(mechanicId) ?? null;
 }
 
 export function isCurrentLevelTarget(state, compound) {

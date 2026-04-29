@@ -4,20 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Atomic Smash Journal</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260422-large-screen-layout" />
 </head>
 <body data-page="journal">
     <section id="journal-screen" class="app-screen">
+        <div class="journal-dynamic-bg pattern-bg" aria-hidden="true"></div>
         <div class="screen-shell">
             <div class="screen-header">
                 <div class="screen-hero">
-                    <div class="theme-kicker">Lab Journal</div>
-                    <h1>Discovery History</h1>
-                    <p>Open every unlocked element again and revisit all compounds you have already discovered.</p>
+                    <div class="theme-kicker">Lab Archive</div>
+                    <h1 class="comic-title">Discovery History</h1>
+                    <p class="comic-subtitle">Track discovered compounds, browse the full element library, and open each element for a richer chemistry reference card.</p>
                 </div>
                 <div class="screen-actions">
                     <button id="journal-menu-btn" class="secondary" type="button">Menu</button>
-                    <button id="journal-themes-btn" type="button">Themes</button>
                 </div>
             </div>
 
@@ -61,6 +61,6 @@
         </div>
     </div>
 
-    <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/main.js?v=20260411-connection-revert"></script>
 </body>
 </html>

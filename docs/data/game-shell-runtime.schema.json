@@ -1,0 +1,184 @@
+{
+  "kind": "atomic-smash.scene-ui-config",
+  "version": 1,
+  "definitions": {
+    "sidebarContent": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "className": "sidebar-header",
+          "children": [
+            {
+              "kind": "text",
+              "tagName": "h2",
+              "text": "Element Palette"
+            },
+            {
+              "kind": "button",
+              "id": "sidebar-collapse-btn",
+              "className": "sidebar-toggle",
+              "attrs": {
+                "aria-expanded": "true",
+                "type": "button"
+              },
+              "text": "Hide"
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "id": "element-list"
+        },
+        {
+          "kind": "container",
+          "className": "palette-actions",
+          "children": [
+            {
+              "kind": "button",
+              "id": "add-selected-btn",
+              "attrs": {
+                "type": "button"
+              },
+              "text": "Add Selected To Board"
+            },
+            {
+              "kind": "text",
+              "tagName": "p",
+              "className": "palette-tip",
+              "text": "On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom."
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "id": "element-info",
+          "tagName": "section",
+          "children": [
+            {
+              "kind": "container",
+              "className": "zone-title",
+              "text": "Selected Element"
+            },
+            {
+              "kind": "container",
+              "id": "element-card"
+            }
+          ]
+        }
+      ]
+    },
+    "topbar": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "id": "task-panel",
+          "children": [
+            {
+              "kind": "container",
+              "id": "level-indicator"
+            },
+            {
+              "kind": "container",
+              "id": "task"
+            },
+            {
+              "kind": "container",
+              "id": "hint"
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "className": "topbar-actions",
+          "children": [
+            {
+              "kind": "container",
+              "className": "topbar-group topbar-group-palette",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "palette-toggle-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Palette"
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "className": "topbar-group topbar-group-navigation",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "menu-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Menu"
+                },
+                {
+                  "kind": "button",
+                  "id": "journal-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Journal"
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "id": "controls",
+              "className": "topbar-group topbar-group-lab",
+              "children": [
+                {
+                  "kind": "button",
+                  "id": "mix-btn",
+                  "className": "primary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Mix"
+                },
+                {
+                  "kind": "button",
+                  "id": "clear-btn",
+                  "className": "secondary compact",
+                  "attrs": {
+                    "type": "button"
+                  },
+                  "text": "Clear"
+                }
+              ]
+            },
+            {
+              "kind": "container",
+              "id": "result",
+              "className": "topbar-result"
+            }
+          ]
+        }
+      ]
+    },
+    "compoundZone": {
+      "kind": "container",
+      "children": [
+        {
+          "kind": "container",
+          "className": "zone-title",
+          "text": "Discovered Compounds"
+        },
+        {
+          "kind": "container",
+          "id": "compound-list"
+        }
+      ]
+    }
+  }
+}
