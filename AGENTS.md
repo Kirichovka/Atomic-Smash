@@ -202,6 +202,35 @@ For tutorial actions, prefer the game button style:
 - dark ink text
 - dark border/shadow
 
+## Modal Styling Rule
+
+Shared modals should inherit the Atomic Smash visual system without changing their runtime structure.
+
+What broke:
+
+- the level intro modal looked generic compared with the game UI
+- PR-style changes attempted to bundle modal restyling with unrelated index/header edits
+
+Real cause:
+
+- modal shell styling still used neutral defaults while the rest of the app used ink, paper, warm accent, and active teal
+- broad PRs can accidentally touch page shell structure when only shared modal CSS needs to change
+
+Fix applied:
+
+- `docs/styles/components/modals.css`
+  - themes the modal backdrop, dialog, close button, level intro panels, and intro action button with Atomic Smash tokens
+- `docs/styles/responsive.css`
+  - keeps the level intro modal readable and tappable on small screens
+- `docs/index.html`
+  - bumps the stylesheet query intentionally after modal CSS changes
+
+Safe rule:
+
+- for modal visual changes, prefer shared CSS in `docs/styles/components/modals.css`
+- do not replace `docs/index.html` or add parallel CSS entrypoints just to restyle modals
+- preserve `./favicon.ico` and the current runtime menu structure when taking ideas from older PRs
+
 ## Large Screen Layout Rule
 
 2K/4K displays should not make interactive scenes stretch endlessly across the viewport.

@@ -576,6 +576,33 @@
     .modal-close {
         top: 12px;
         right: 12px;
+        min-height: 42px;
+        padding: 8px 14px;
+        border-radius: 14px;
+    }
+
+    .level-intro-title {
+        max-width: calc(100% - 96px);
+        font-size: clamp(2rem, 8vw, 2.8rem);
+    }
+
+    .level-intro-summary,
+    .level-intro-panel-text {
+        font-size: 15px;
+    }
+
+    .level-intro-panel {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .level-intro-actions {
+        flex-wrap: wrap;
+    }
+
+    .level-intro-action {
+        width: 100%;
+        min-width: 0;
     }
 
     .element-modal-symbol {
