@@ -1932,8 +1932,13 @@
                     "N"
                 ],
                 "displayTitle": "Ammonia",
-                "learningFocus": "Learn nitrogen-centered structures",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance nitrogen and hydrogen atom counts before studying ammonia",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": ["N₂", " + ", null, "H₂", " → ", null, "NH₃"],
+                    "answers": [3, 2],
+                    "label": "N₂ + H₂ → NH₃"
+                }
             },
             {
                 "id": "level-5",
@@ -2002,8 +2007,13 @@
                     "Ca"
                 ],
                 "displayTitle": "Calcium Oxide",
-                "learningFocus": "Introduce basic metal oxides",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance calcium burning in oxygen before comparing metal oxides",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Ca", " + ", "O₂", " → ", null, "CaO"],
+                    "answers": [2, 2],
+                    "label": "Ca + O₂ → CaO"
+                }
             },
             {
                 "id": "level-9",
@@ -2084,8 +2094,13 @@
                     "S"
                 ],
                 "displayTitle": "Sulfur Trioxide",
-                "learningFocus": "Finish the sulfur branch with a larger oxide",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance sulfur dioxide oxidation before closing the sulfur oxide branch",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "SO₂", " + ", "O₂", " → ", null, "SO₃"],
+                    "answers": [2, 2],
+                    "label": "SO₂ + O₂ → SO₃"
+                }
             },
             {
                 "id": "ab-level-1",
@@ -2145,8 +2160,13 @@
                     "Na"
                 ],
                 "displayTitle": "Hypochlorous Acid",
-                "learningFocus": "Compare chlorine acids and notice how oxygen changes the formula",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance a chlorine-in-water reaction before comparing chlorine acids",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Cl₂", " + ", null, "H₂O", " → ", null, "HCl", " + ", null, "HClO"],
+                    "answers": [1, 1, 1, 1],
+                    "label": "Cl₂ + H₂O → HCl + HClO"
+                }
             },
             {
                 "id": "ab-level-5",
@@ -2218,8 +2238,13 @@
                     "N"
                 ],
                 "displayTitle": "Nitric Acid",
-                "learningFocus": "Build a larger acid with a nitrogen-oxygen center",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance an oxygen-rich nitric acid formation equation",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "NO₂", " + ", null, "O₂", " + ", null, "H₂O", " → ", null, "HNO₃"],
+                    "answers": [4, 1, 2, 4],
+                    "label": "NO₂ + O₂ + H₂O → HNO₃"
+                }
             },
             {
                 "id": "ab-level-9",
@@ -2303,8 +2328,13 @@
                     "Mg"
                 ],
                 "displayTitle": "Salt",
-                "learningFocus": "Finish the route by returning acids and bases to a familiar neutral salt result",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance a neutralization equation that forms a familiar salt",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "HCl", " + ", null, "NaOH", " → ", null, "NaCl", " + ", null, "H₂O"],
+                    "answers": [1, 1, 1, 1],
+                    "label": "HCl + NaOH → NaCl + H₂O"
+                }
             },
             {
                 "id": "so-level-1",
@@ -2383,8 +2413,13 @@
                     "Mg"
                 ],
                 "displayTitle": "Magnesium Chloride",
-                "learningFocus": "Compare another chloride salt with a different metal center",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance a metal-chlorine salt formation equation",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Mg", " + ", null, "Cl₂", " → ", null, "MgCl₂"],
+                    "answers": [1, 1, 1],
+                    "label": "Mg + Cl₂ → MgCl₂"
+                }
             },
             {
                 "id": "so-level-6",
@@ -2476,8 +2511,13 @@
                     "S"
                 ],
                 "displayTitle": "Sodium Peroxide",
-                "learningFocus": "Show that adding one more oxygen can create a different oxide family",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance sodium peroxide formation and compare it with simpler oxides",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Na", " + ", null, "O₂", " → ", null, "Na₂O₂"],
+                    "answers": [2, 1, 1],
+                    "label": "Na + O₂ → Na₂O₂"
+                }
             },
             {
                 "id": "so-level-11",
@@ -2596,8 +2636,13 @@
                     "Fe"
                 ],
                 "displayTitle": "Sulfur Trioxide",
-                "learningFocus": "Finish the route with a larger sulfur oxide after comparing many salt and oxide families",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance sulfur trioxide formation as the final oxide checkpoint",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "SO₂", " + ", "O₂", " → ", null, "SO₃"],
+                    "answers": [2, 2],
+                    "label": "SO₂ + O₂ → SO₃"
+                }
             },
             {
                 "id": "eq-1",
