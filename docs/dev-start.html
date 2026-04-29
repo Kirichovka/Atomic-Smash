@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dev Start</title>
+</head>
+<body>
+<script>
+    const STORAGE_KEY = "atomic-smash.app-state.v2";
+
+    const params = new URLSearchParams(location.search);
+    const theme  = params.get("theme")  || "basic";
+    const level  = params.get("level")  || "level-4";
+
+    // Load existing state so we don't wipe other progress
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch (_) {}
+
+    const completedBefore = Array.isArray(saved.progress?.completedLevelIds)
+        ? saved.progress.completedLevelIds
+        : [];
+
+    // Mark every level that comes *before* the target as completed
+    // by fetching the catalog from data/game-data.json
+    fetch("./data/game-data.json")
+        .then(r => r.json())
+        .then(data => {
+            const levels = (data.tasks?.levels || []).filter(l => l.themeId === theme);
+            const targetIdx = levels.findIndex(l => l.id === level);
+            const toComplete = levels.slice(0, Math.max(targetIdx, 0)).map(l => l.id);
+
+            const merged = [...new Set([...completedBefore, ...toComplete])];
+
+            const next = Object.assign({}, saved, {
+                progress: Object.assign({}, saved.progress || {}, {
+                    currentThemeId: theme,
+                    completedLevelIds: merged,
+                    basicTutorialCompleted: true
+                })
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            window.location.replace("./game.html");
+        })
+        .catch(() => {
+            window.location.replace("./game.html");
+        });
+</script>
+<p>Starting dev session…</p>
+</body>
+</html>

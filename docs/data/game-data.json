@@ -1,4 +1,4 @@
-{
+﻿{
     "chemicalElements": [
         {
             "symbol": "H",
@@ -814,6 +814,34 @@
                 "description": "Hydrochloric acid is a strong acid found in stomach acid and used in many industrial processes."
             },
             {
+                "id": "hypochlorous-acid",
+                "ingredients": [
+                    "Cl",
+                    "H",
+                    "O"
+                ],
+                "name": "Hypochlorous Acid",
+                "formula": "HClO",
+                "description": "Hypochlorous acid is a reactive chlorine-containing acid used in disinfection chemistry and water treatment.",
+                "structure": {
+                    "nodes": [
+                        "Cl",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
                 "id": "salt",
                 "ingredients": [
                     "Cl",
@@ -822,6 +850,96 @@
                 "name": "Salt",
                 "formula": "NaCl",
                 "description": "Sodium chloride is table salt, a familiar mineral important in food and chemistry."
+            },
+            {
+                "id": "calcium-chloride",
+                "ingredients": [
+                    "Ca",
+                    "Cl",
+                    "Cl"
+                ],
+                "name": "Calcium Chloride",
+                "formula": "CaCl2",
+                "description": "Calcium chloride is a common salt used in drying, de-icing, and laboratory chemistry.",
+                "structure": {
+                    "nodes": [
+                        "Cl",
+                        "Ca",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "magnesium-chloride",
+                "ingredients": [
+                    "Cl",
+                    "Cl",
+                    "Mg"
+                ],
+                "name": "Magnesium Chloride",
+                "formula": "MgCl2",
+                "description": "Magnesium chloride is a salt used in chemistry, de-icing, and some industrial processes.",
+                "structure": {
+                    "nodes": [
+                        "Cl",
+                        "Mg",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "iron-chloride",
+                "ingredients": [
+                    "Cl",
+                    "Cl",
+                    "Cl",
+                    "Fe"
+                ],
+                "name": "Iron(III) Chloride",
+                "formula": "FeCl3",
+                "description": "Iron(III) chloride is a reactive salt used in etching, water treatment, and laboratory reactions.",
+                "structure": {
+                    "nodes": [
+                        "Fe",
+                        "Cl",
+                        "Cl",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ]
+                    ]
+                }
             },
             {
                 "id": "sodium-hydroxide",
@@ -852,6 +970,114 @@
                 }
             },
             {
+                "id": "potassium-hydroxide",
+                "ingredients": [
+                    "H",
+                    "K",
+                    "O"
+                ],
+                "name": "Potassium Hydroxide",
+                "formula": "KOH",
+                "description": "Potassium hydroxide is a strong base used in laboratory work, cleaning chemistry, and industry.",
+                "structure": {
+                    "nodes": [
+                        "K",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "calcium-hydroxide",
+                "ingredients": [
+                    "Ca",
+                    "H",
+                    "H",
+                    "O",
+                    "O"
+                ],
+                "name": "Calcium Hydroxide",
+                "formula": "Ca(OH)2",
+                "description": "Calcium hydroxide, also called slaked lime, is a base used in building materials, water treatment, and classroom chemistry.",
+                "structure": {
+                    "nodes": [
+                        "Ca",
+                        "O",
+                        "O",
+                        "H",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            1,
+                            3
+                        ],
+                        [
+                            2,
+                            4
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "magnesium-hydroxide",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "Mg",
+                    "O",
+                    "O"
+                ],
+                "name": "Magnesium Hydroxide",
+                "formula": "Mg(OH)2",
+                "description": "Magnesium hydroxide is a mild base used in chemistry and in some everyday antacid products.",
+                "structure": {
+                    "nodes": [
+                        "Mg",
+                        "O",
+                        "O",
+                        "H",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            1,
+                            3
+                        ],
+                        [
+                            2,
+                            4
+                        ]
+                    ]
+                }
+            },
+            {
                 "id": "sodium-oxide",
                 "ingredients": [
                     "Na",
@@ -866,6 +1092,34 @@
                         "Na",
                         "O",
                         "Na"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "potassium-oxide",
+                "ingredients": [
+                    "K",
+                    "K",
+                    "O"
+                ],
+                "name": "Potassium Oxide",
+                "formula": "K2O",
+                "description": "Potassium oxide is a reactive metal oxide used mainly in advanced chemistry and materials discussions.",
+                "structure": {
+                    "nodes": [
+                        "K",
+                        "O",
+                        "K"
                     ],
                     "edges": [
                         [
@@ -976,7 +1230,79 @@
                 ],
                 "name": "Carbonic Acid",
                 "formula": "H2CO3",
-                "description": "Carbonic acid forms when carbon dioxide dissolves in water and helps make drinks fizzy."
+                "description": "Carbonic acid forms when carbon dioxide dissolves in water and helps make drinks fizzy.",
+                "structure": {
+                    "nodes": [
+                        "C",
+                        "O",
+                        "O",
+                        "O",
+                        "H",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ],
+                        [
+                            1,
+                            4
+                        ],
+                        [
+                            2,
+                            5
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "nitric-acid",
+                "ingredients": [
+                    "H",
+                    "N",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Nitric Acid",
+                "formula": "HNO3",
+                "description": "Nitric acid is a strong acid used in fertilizers, etching, and many industrial chemical processes.",
+                "structure": {
+                    "nodes": [
+                        "N",
+                        "O",
+                        "O",
+                        "O",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ],
+                        [
+                            1,
+                            4
+                        ]
+                    ]
+                }
             },
             {
                 "id": "ammonia",
@@ -1034,6 +1360,52 @@
                 "description": "Nitrogen dioxide is a brown reactive gas often linked to air pollution."
             },
             {
+                "id": "sulfurous-acid",
+                "ingredients": [
+                    "H",
+                    "H",
+                    "O",
+                    "O",
+                    "O",
+                    "S"
+                ],
+                "name": "Sulfurous Acid",
+                "formula": "H2SO3",
+                "description": "Sulfurous acid is a sulfur-based acid discussed in solution chemistry and acid-rain contexts.",
+                "structure": {
+                    "nodes": [
+                        "S",
+                        "O",
+                        "O",
+                        "O",
+                        "H",
+                        "H"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            2
+                        ],
+                        [
+                            0,
+                            3
+                        ],
+                        [
+                            1,
+                            4
+                        ],
+                        [
+                            2,
+                            5
+                        ]
+                    ]
+                }
+            },
+            {
                 "id": "sulfur-dioxide",
                 "ingredients": [
                     "O",
@@ -1089,6 +1461,44 @@
                 "description": "Potassium chloride is a common salt used in fertilizers and chemistry."
             },
             {
+                "id": "sodium-sulfide",
+                "ingredients": [
+                    "Na",
+                    "Na",
+                    "S"
+                ],
+                "name": "Sodium Sulfide",
+                "formula": "Na2S",
+                "description": "Sodium sulfide is a sulfur-containing salt used in chemical processing and laboratory work.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "S",
+                        "Na"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "calcium-sulfide",
+                "ingredients": [
+                    "Ca",
+                    "S"
+                ],
+                "name": "Calcium Sulfide",
+                "formula": "CaS",
+                "description": "Calcium sulfide is a salt discussed in inorganic chemistry and phosphorescent material contexts."
+            },
+            {
                 "id": "calcium-oxide",
                 "ingredients": [
                     "Ca",
@@ -1131,6 +1541,274 @@
                 "description": "Phosphine is a toxic phosphorus-containing gas used in specialized chemistry."
             },
             {
+                "id": "sodium-hypochlorite",
+                "ingredients": [
+                    "Na",
+                    "Cl",
+                    "O"
+                ],
+                "name": "Sodium Hypochlorite",
+                "formula": "NaClO",
+                "description": "Sodium hypochlorite is the active ingredient in many bleach solutions and a familiar chlorine-oxygen salt.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "potassium-hypochlorite",
+                "ingredients": [
+                    "K",
+                    "Cl",
+                    "O"
+                ],
+                "name": "Potassium Hypochlorite",
+                "formula": "KClO",
+                "description": "Potassium hypochlorite is a hypochlorite salt that mirrors sodium hypochlorite with a different alkali metal.",
+                "structure": {
+                    "nodes": [
+                        "K",
+                        "O",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "calcium-hypochlorite",
+                "ingredients": [
+                    "Ca",
+                    "Cl",
+                    "Cl",
+                    "O",
+                    "O"
+                ],
+                "name": "Calcium Hypochlorite",
+                "formula": "Ca(ClO)2",
+                "description": "Calcium hypochlorite is a chlorine disinfectant used in pool chemistry and bleaching powders.",
+                "structure": {
+                    "nodes": [
+                        "Cl",
+                        "O",
+                        "Ca",
+                        "O",
+                        "Cl"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ],
+                        [
+                            3,
+                            4
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "calcium-carbonate",
+                "ingredients": [
+                    "Ca",
+                    "C",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Calcium Carbonate",
+                "formula": "CaCO3",
+                "description": "Calcium carbonate is the main material in chalk, limestone, shells, and many mineral structures.",
+                "structure": {
+                    "nodes": [
+                        "Ca",
+                        "O",
+                        "C",
+                        "O",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ],
+                        [
+                            2,
+                            4
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "magnesium-carbonate",
+                "ingredients": [
+                    "Mg",
+                    "C",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Magnesium Carbonate",
+                "formula": "MgCO3",
+                "description": "Magnesium carbonate appears in minerals, lab chemistry, and some sports chalk formulations.",
+                "structure": {
+                    "nodes": [
+                        "Mg",
+                        "O",
+                        "C",
+                        "O",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ],
+                        [
+                            2,
+                            4
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sodium-carbonate",
+                "ingredients": [
+                    "Na",
+                    "Na",
+                    "C",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Sodium Carbonate",
+                "formula": "Na2CO3",
+                "description": "Sodium carbonate, also called soda ash, is used in glassmaking, cleaning, and classic acid-base chemistry.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "C",
+                        "O",
+                        "Na",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ],
+                        [
+                            3,
+                            4
+                        ],
+                        [
+                            2,
+                            5
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sodium-bicarbonate",
+                "ingredients": [
+                    "Na",
+                    "H",
+                    "C",
+                    "O",
+                    "O",
+                    "O"
+                ],
+                "name": "Sodium Bicarbonate",
+                "formula": "NaHCO3",
+                "description": "Sodium bicarbonate is baking soda, a gentle base used in food, cleaning, and acid-neutralization demos.",
+                "structure": {
+                    "nodes": [
+                        "Na",
+                        "O",
+                        "C",
+                        "O",
+                        "H",
+                        "O"
+                    ],
+                    "edges": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            1,
+                            2
+                        ],
+                        [
+                            2,
+                            3
+                        ],
+                        [
+                            3,
+                            4
+                        ],
+                        [
+                            2,
+                            5
+                        ]
+                    ]
+                }
+            },
+            {
                 "id": "iron-oxide",
                 "ingredients": [
                     "Fe",
@@ -1160,16 +1838,16 @@
                 "name": "Acids & Bases",
                 "description": "School chemistry around acids, bases, indicators, neutralization, and everyday examples.",
                 "schoolTopic": "Acids, bases, and pH",
-                "primaryMechanicId": "theory-quiz",
-                "sheetStatus": "planned"
+                "primaryMechanicId": "connection-lab",
+                "sheetStatus": "ready"
             },
             {
                 "id": "salts-oxides",
                 "name": "Salts & Oxides",
                 "description": "Learn how metals and nonmetals form salts, oxides, and related mineral compounds.",
                 "schoolTopic": "Inorganic compound families",
-                "primaryMechanicId": "classification-lab",
-                "sheetStatus": "planned"
+                "primaryMechanicId": "connection-lab",
+                "sheetStatus": "ready"
             },
             {
                 "id": "metals-reactivity",
@@ -1190,7 +1868,7 @@
             {
                 "id": "equations",
                 "name": "Equations",
-                "description": "Balance real chemical equations by choosing the right coefficients — atom counts must match on both sides.",
+                "description": "Balance real chemical equations by choosing the right coefficients â€” atom counts must match on both sides.",
                 "schoolTopic": "Chemical equations",
                 "primaryMechanicId": "balance-lab",
                 "sheetStatus": "ready"
@@ -1246,7 +1924,7 @@
                 "themeId": "basic",
                 "targetCompoundId": "ammonia",
                 "objective": "Study ammonia",
-                "hint": "Target compound: NH3",
+                "hint": "You need 3 H₂ and 2 NH₃. Balanced: N₂ + 3H₂ → 2NH₃",
                 "availableElementSymbols": [
                     "H",
                     "O",
@@ -1254,8 +1932,13 @@
                     "N"
                 ],
                 "displayTitle": "Ammonia",
-                "learningFocus": "Learn nitrogen-centered structures",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance nitrogen and hydrogen atom counts before studying ammonia",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": ["N₂", " + ", null, "H₂", " → ", null, "NH₃"],
+                    "answers": [3, 2],
+                    "label": "N₂ + H₂ → NH₃"
+                }
             },
             {
                 "id": "level-5",
@@ -1313,7 +1996,7 @@
                 "themeId": "basic",
                 "targetCompoundId": "calcium-oxide",
                 "objective": "Study calcium oxide",
-                "hint": "Target compound: CaO",
+                "hint": "You need 2 Ca and 2 CaO. Balanced: 2Ca + O₂ → 2CaO",
                 "availableElementSymbols": [
                     "H",
                     "O",
@@ -1324,8 +2007,13 @@
                     "Ca"
                 ],
                 "displayTitle": "Calcium Oxide",
-                "learningFocus": "Introduce basic metal oxides",
-                "mechanicId": "connection-lab"
+                "learningFocus": "Balance calcium burning in oxygen before comparing metal oxides",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Ca", " + ", "O₂", " → ", null, "CaO"],
+                    "answers": [2, 2],
+                    "label": "Ca + O₂ → CaO"
+                }
             },
             {
                 "id": "level-9",
@@ -1393,7 +2081,7 @@
                 "themeId": "basic",
                 "targetCompoundId": "sulfur-trioxide",
                 "objective": "Study sulfur trioxide",
-                "hint": "Target compound: SO3",
+                "hint": "You need 2 SO₂ and 2 SO₃. Balanced: 2SO₂ + O₂ → 2SO₃",
                 "availableElementSymbols": [
                     "H",
                     "O",
@@ -1406,8 +2094,555 @@
                     "S"
                 ],
                 "displayTitle": "Sulfur Trioxide",
-                "learningFocus": "Finish the sulfur branch with a larger oxide",
+                "learningFocus": "Balance sulfur dioxide oxidation before closing the sulfur oxide branch",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "SO₂", " + ", "O₂", " → ", null, "SO₃"],
+                    "answers": [2, 2],
+                    "label": "SO₂ + O₂ → SO₃"
+                }
+            },
+            {
+                "id": "ab-level-1",
+                "themeId": "acids-bases",
+                "targetCompoundId": "water",
+                "objective": "Study neutral water",
+                "hint": "Target compound: H2O",
+                "availableElementSymbols": [
+                    "H",
+                    "O"
+                ],
+                "displayTitle": "Water",
+                "learningFocus": "Use water as the neutral starting point before splitting into acids and bases",
                 "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-2",
+                "themeId": "acids-bases",
+                "targetCompoundId": "hydrochloric-acid",
+                "objective": "Study hydrochloric acid",
+                "hint": "Target compound: HCl",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl"
+                ],
+                "displayTitle": "Hydrochloric Acid",
+                "learningFocus": "Start the acid branch with a simple strong acid",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-3",
+                "themeId": "acids-bases",
+                "targetCompoundId": "sodium-hydroxide",
+                "objective": "Study sodium hydroxide",
+                "hint": "Target compound: NaOH",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na"
+                ],
+                "displayTitle": "Sodium Hydroxide",
+                "learningFocus": "Open the base branch with a classic strong hydroxide",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-4",
+                "themeId": "acids-bases",
+                "targetCompoundId": "hypochlorous-acid",
+                "objective": "Study hypochlorous acid",
+                "hint": "All coefficients are 1. Balanced: Cl₂ + H₂O → HCl + HClO",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na"
+                ],
+                "displayTitle": "Hypochlorous Acid",
+                "learningFocus": "Balance a chlorine-in-water reaction before comparing chlorine acids",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Cl₂", " + ", null, "H₂O", " → ", null, "HCl", " + ", null, "HClO"],
+                    "answers": [1, 1, 1, 1],
+                    "label": "Cl₂ + H₂O → HCl + HClO"
+                }
+            },
+            {
+                "id": "ab-level-5",
+                "themeId": "acids-bases",
+                "targetCompoundId": "carbonic-acid",
+                "objective": "Study carbonic acid",
+                "hint": "Target compound: H2CO3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C"
+                ],
+                "displayTitle": "Carbonic Acid",
+                "learningFocus": "Move from simple acids into a larger oxygen-rich acid pattern",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-6",
+                "themeId": "acids-bases",
+                "targetCompoundId": "potassium-hydroxide",
+                "objective": "Study potassium hydroxide",
+                "hint": "Target compound: KOH",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K"
+                ],
+                "displayTitle": "Potassium Hydroxide",
+                "learningFocus": "Compare one strong base metal with another in the same hydroxide pattern",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-7",
+                "themeId": "acids-bases",
+                "targetCompoundId": "ammonia",
+                "objective": "Study ammonia as a base",
+                "hint": "Target compound: NH3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N"
+                ],
+                "displayTitle": "Ammonia",
+                "learningFocus": "Add a weak base that is built around nitrogen instead of a metal hydroxide",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-8",
+                "themeId": "acids-bases",
+                "targetCompoundId": "nitric-acid",
+                "objective": "Study nitric acid",
+                "hint": "You need 4 NO₂, 1 O₂, 2 H₂O, and 4 HNO₃. Balanced: 4NO₂ + O₂ + 2H₂O → 4HNO₃",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N"
+                ],
+                "displayTitle": "Nitric Acid",
+                "learningFocus": "Balance an oxygen-rich nitric acid formation equation",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "NO₂", " + ", null, "O₂", " + ", null, "H₂O", " → ", null, "HNO₃"],
+                    "answers": [4, 1, 2, 4],
+                    "label": "NO₂ + O₂ + H₂O → HNO₃"
+                }
+            },
+            {
+                "id": "ab-level-9",
+                "themeId": "acids-bases",
+                "targetCompoundId": "sulfurous-acid",
+                "objective": "Study sulfurous acid",
+                "hint": "Target compound: H2SO3",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N",
+                    "S"
+                ],
+                "displayTitle": "Sulfurous Acid",
+                "learningFocus": "Expand the acid branch into sulfur-containing solution chemistry",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-10",
+                "themeId": "acids-bases",
+                "targetCompoundId": "calcium-hydroxide",
+                "objective": "Study calcium hydroxide",
+                "hint": "Target compound: Ca(OH)2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N",
+                    "S",
+                    "Ca"
+                ],
+                "displayTitle": "Calcium Hydroxide",
+                "learningFocus": "Scale the base branch into a larger hydroxide with two OH groups",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-11",
+                "themeId": "acids-bases",
+                "targetCompoundId": "magnesium-hydroxide",
+                "objective": "Study magnesium hydroxide",
+                "hint": "Target compound: Mg(OH)2",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N",
+                    "S",
+                    "Ca",
+                    "Mg"
+                ],
+                "displayTitle": "Magnesium Hydroxide",
+                "learningFocus": "Compare another metal hydroxide and see the same base pattern with a new metal",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "ab-level-12",
+                "themeId": "acids-bases",
+                "targetCompoundId": "salt",
+                "objective": "Study sodium chloride as a neutralization product",
+                "hint": "All coefficients are 1. Balanced: HCl + NaOH → NaCl + H₂O",
+                "availableElementSymbols": [
+                    "H",
+                    "O",
+                    "Cl",
+                    "Na",
+                    "C",
+                    "K",
+                    "N",
+                    "S",
+                    "Ca",
+                    "Mg"
+                ],
+                "displayTitle": "Salt",
+                "learningFocus": "Balance a neutralization equation that forms a familiar salt",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "HCl", " + ", null, "NaOH", " → ", null, "NaCl", " + ", null, "H₂O"],
+                    "answers": [1, 1, 1, 1],
+                    "label": "HCl + NaOH → NaCl + H₂O"
+                }
+            },
+            {
+                "id": "so-level-1",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "salt",
+                "objective": "Study sodium chloride",
+                "hint": "Target compound: NaCl",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl"
+                ],
+                "displayTitle": "Salt",
+                "learningFocus": "Open the route with the most familiar example of a simple salt",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-2",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "potassium-chloride",
+                "objective": "Study potassium chloride",
+                "hint": "Target compound: KCl",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K"
+                ],
+                "displayTitle": "Potassium Chloride",
+                "learningFocus": "Compare one simple salt with another by changing the metal",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-3",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "sodium-oxide",
+                "objective": "Study sodium oxide",
+                "hint": "Target compound: Na2O",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O"
+                ],
+                "displayTitle": "Sodium Oxide",
+                "learningFocus": "Open the oxide branch with a reactive metal oxide",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-4",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "calcium-chloride",
+                "objective": "Study calcium chloride",
+                "hint": "Target compound: CaCl2",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca"
+                ],
+                "displayTitle": "Calcium Chloride",
+                "learningFocus": "Scale the salt branch into a larger metal-halogen pattern",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-5",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "magnesium-chloride",
+                "objective": "Study magnesium chloride",
+                "hint": "All coefficients are 1. Balanced: Mg + Cl₂ → MgCl₂",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg"
+                ],
+                "displayTitle": "Magnesium Chloride",
+                "learningFocus": "Balance a metal-chlorine salt formation equation",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Mg", " + ", null, "Cl₂", " → ", null, "MgCl₂"],
+                    "answers": [1, 1, 1],
+                    "label": "Mg + Cl₂ → MgCl₂"
+                }
+            },
+            {
+                "id": "so-level-6",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "calcium-oxide",
+                "objective": "Study calcium oxide",
+                "hint": "Target compound: CaO",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg"
+                ],
+                "displayTitle": "Calcium Oxide",
+                "learningFocus": "Move deeper into oxides by changing the metal while keeping oxygen",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-7",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "magnesium-oxide",
+                "objective": "Study magnesium oxide",
+                "hint": "Target compound: MgO",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg"
+                ],
+                "displayTitle": "Magnesium Oxide",
+                "learningFocus": "Keep comparing compact metal oxides inside the same family",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-8",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "sodium-sulfide",
+                "objective": "Study sodium sulfide",
+                "hint": "Target compound: Na2S",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S"
+                ],
+                "displayTitle": "Sodium Sulfide",
+                "learningFocus": "Extend the salt branch beyond chlorides into sulfur salts",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-9",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "potassium-oxide",
+                "objective": "Study potassium oxide",
+                "hint": "Target compound: K2O",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S"
+                ],
+                "displayTitle": "Potassium Oxide",
+                "learningFocus": "Return to oxides and compare another alkali-metal oxygen pattern",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-10",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "sodium-peroxide",
+                "objective": "Study sodium peroxide",
+                "hint": "You need 2 Na, 1 O₂, and 1 Na₂O₂. Balanced: 2Na + O₂ → Na₂O₂",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S"
+                ],
+                "displayTitle": "Sodium Peroxide",
+                "learningFocus": "Balance sodium peroxide formation and compare it with simpler oxides",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "Na", " + ", null, "O₂", " → ", null, "Na₂O₂"],
+                    "answers": [2, 1, 1],
+                    "label": "Na + O₂ → Na₂O₂"
+                }
+            },
+            {
+                "id": "so-level-11",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "iron-chloride",
+                "objective": "Study iron(III) chloride",
+                "hint": "Target compound: FeCl3",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Iron(III) Chloride",
+                "learningFocus": "Bring a transition metal into the salt branch with a denser structure",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-12",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "iron-monoxide",
+                "objective": "Study iron(II) oxide",
+                "hint": "Target compound: FeO",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Iron(II) Oxide",
+                "learningFocus": "Open the transition-metal oxide branch with a smaller iron oxide",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-13",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "calcium-sulfide",
+                "objective": "Study calcium sulfide",
+                "hint": "Target compound: CaS",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Calcium Sulfide",
+                "learningFocus": "Return to salts with a simple metal-sulfur comparison point",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-14",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "sulfur-dioxide",
+                "objective": "Study sulfur dioxide",
+                "hint": "Target compound: SO2",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Sulfur Dioxide",
+                "learningFocus": "Move from metal oxides into nonmetal oxides in the same route",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-15",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "iron-oxide",
+                "objective": "Study iron(III) oxide",
+                "hint": "Target compound: Fe2O3",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Iron(III) Oxide",
+                "learningFocus": "Scale the iron oxide family into a denser capstone structure",
+                "mechanicId": "connection-lab"
+            },
+            {
+                "id": "so-level-16",
+                "themeId": "salts-oxides",
+                "targetCompoundId": "sulfur-trioxide",
+                "objective": "Study sulfur trioxide",
+                "hint": "You need 2 SO₂ and 2 SO₃. Balanced: 2SO₂ + O₂ → 2SO₃",
+                "availableElementSymbols": [
+                    "Na",
+                    "Cl",
+                    "K",
+                    "O",
+                    "Ca",
+                    "Mg",
+                    "S",
+                    "Fe"
+                ],
+                "displayTitle": "Sulfur Trioxide",
+                "learningFocus": "Balance sulfur trioxide formation as the final oxide checkpoint",
+                "mechanicId": "balance-lab",
+                "equation": {
+                    "parts": [null, "SO₂", " + ", "O₂", " → ", null, "SO₃"],
+                    "answers": [2, 2],
+                    "label": "SO₂ + O₂ → SO₃"
+                }
             },
             {
                 "id": "eq-1",
@@ -1416,7 +2651,7 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Water Synthesis",
                 "objective": "Balance: _H₂ + _O₂ → _H₂O",
-                "hint": "2H₂ + O₂ → 2H₂O",
+                "hint": "You need 2 H₂, 1 O₂, and 2 H₂O. Balanced: 2H₂ + O₂ → 2H₂O",
                 "availableElementSymbols": ["H", "O"],
                 "learningFocus": "O₂ gives 2 O atoms, so 2 H₂O are needed, requiring 2 H₂. H: 4=4 ✓  O: 2=2 ✓",
                 "equation": {
@@ -1432,7 +2667,7 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Haber Process",
                 "objective": "Balance: N₂ + _H₂ ⇌ _NH₃",
-                "hint": "N₂ + 3H₂ ⇌ 2NH₃",
+                "hint": "You need 3 H₂ and 2 NH₃. Balanced: N₂ + 3H₂ ⇌ 2NH₃",
                 "availableElementSymbols": ["N", "H"],
                 "learningFocus": "N₂ + 3H₂ ⇌ 2NH₃. N: 2=2 ✓  H: 6=6 ✓  Conditions: 450°C, 200 atm, Fe catalyst.",
                 "equation": {
@@ -1448,7 +2683,7 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Magnesium Burning",
                 "objective": "Balance: _Mg + O₂ → _MgO",
-                "hint": "2Mg + O₂ → 2MgO",
+                "hint": "You need 2 Mg and 2 MgO. Balanced: 2Mg + O₂ → 2MgO",
                 "availableElementSymbols": ["Mg", "O"],
                 "learningFocus": "2Mg + O₂ → 2MgO. Mg: 2=2 ✓  O: 2=2 ✓  Produces a brilliant white flame.",
                 "equation": {
@@ -1464,7 +2699,7 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Iron Rusting",
                 "objective": "Balance: _Fe + _O₂ → _Fe₂O₃",
-                "hint": "4Fe + 3O₂ → 2Fe₂O₃",
+                "hint": "You need 4 Fe, 3 O₂, and 2 Fe₂O₃. Balanced: 4Fe + 3O₂ → 2Fe₂O₃",
                 "availableElementSymbols": ["Fe", "O"],
                 "learningFocus": "4Fe + 3O₂ → 2Fe₂O₃. Fe: 4=4 ✓  O: 6=6 ✓",
                 "equation": {
@@ -1480,7 +2715,7 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Contact Process",
                 "objective": "Balance: _SO₂ + O₂ ⇌ _SO₃",
-                "hint": "2SO₂ + O₂ ⇌ 2SO₃",
+                "hint": "You need 2 SO₂ and 2 SO₃. Balanced: 2SO₂ + O₂ ⇌ 2SO₃",
                 "availableElementSymbols": ["S", "O"],
                 "learningFocus": "2SO₂ + O₂ ⇌ 2SO₃. S: 2=2 ✓  O: 6=6 ✓  V₂O₅ catalyst at ~450°C.",
                 "equation": {
@@ -1496,15 +2731,14 @@
                 "mechanicId": "balance-lab",
                 "displayTitle": "Sodium + Water",
                 "objective": "Balance: _Na + _H₂O → _NaOH + _H₂",
-                "hint": "2Na + 2H₂O → 2NaOH + H₂",
+                "hint": "You need 2 Na, 2 H₂O, 2 NaOH, and 1 H₂. Balanced: 2Na + 2H₂O → 2NaOH + H₂",
                 "availableElementSymbols": ["Na", "H", "O"],
                 "learningFocus": "2Na + 2H₂O → 2NaOH + H₂. Na: 2=2 ✓  O: 2=2 ✓  H: 4=4 ✓",
                 "equation": {
                     "parts": [null, "Na", " + ", null, "H₂O", " → ", null, "NaOH", " + ", null, "H₂"],
                     "answers": [2, 2, 2, 1],
                     "label": "Na + H₂O → NaOH + H₂"
-                }
-            }
+                }            }
         ],
         "mechanics": [
             {
@@ -1535,3 +2769,4 @@
         ]
     }
 }
+
