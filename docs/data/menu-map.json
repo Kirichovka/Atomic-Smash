@@ -1,59 +1,639 @@
-{
-    "themes": {
-        "basic": {
-            "routeLabel": "Basic route",
-            "nodes": [
-                { "levelId": "level-1", "x": 50, "y": 22, "size": "lg", "edgeTo": ["level-2", "level-3"] },
-                { "levelId": "level-2", "x": 28, "y": 39, "size": "md", "edgeTo": ["level-4", "level-5"] },
-                { "levelId": "level-3", "x": 72, "y": 39, "size": "md", "edgeTo": ["level-6", "level-7"] },
-                { "levelId": "level-4", "x": 15, "y": 60, "size": "sm", "edgeTo": ["level-8"] },
-                { "levelId": "level-5", "x": 39, "y": 60, "size": "sm", "edgeTo": ["level-9"] },
-                { "levelId": "level-6", "x": 61, "y": 60, "size": "sm", "edgeTo": ["level-10"] },
-                { "levelId": "level-7", "x": 85, "y": 60, "size": "sm", "edgeTo": ["level-11"] },
-                { "levelId": "level-8", "x": 8, "y": 87, "size": "sm", "edgeTo": [] },
-                { "levelId": "level-9", "x": 30, "y": 87, "size": "sm", "edgeTo": [] },
-                { "levelId": "level-10", "x": 50, "y": 87, "size": "sm", "edgeTo": ["level-11"] },
-                { "levelId": "level-11", "x": 72, "y": 87, "size": "sm", "edgeTo": ["level-12"] },
-                { "levelId": "level-12", "x": 92, "y": 87, "size": "sm", "edgeTo": [] }
-            ]
-        },
-        "acids-bases": {
-            "routeLabel": "Acids and bases route",
-            "nodes": [
-                { "levelId": "ab-level-1", "x": 50, "y": 20, "size": "lg", "edgeTo": ["ab-level-2", "ab-level-3"] },
-                { "levelId": "ab-level-2", "x": 28, "y": 38, "size": "md", "edgeTo": ["ab-level-4", "ab-level-5"] },
-                { "levelId": "ab-level-3", "x": 72, "y": 38, "size": "md", "edgeTo": ["ab-level-6", "ab-level-7"] },
-                { "levelId": "ab-level-4", "x": 14, "y": 57, "size": "sm", "edgeTo": ["ab-level-8"] },
-                { "levelId": "ab-level-5", "x": 40, "y": 57, "size": "sm", "edgeTo": ["ab-level-9"] },
-                { "levelId": "ab-level-6", "x": 60, "y": 57, "size": "sm", "edgeTo": ["ab-level-10"] },
-                { "levelId": "ab-level-7", "x": 86, "y": 57, "size": "sm", "edgeTo": ["ab-level-11"] },
-                { "levelId": "ab-level-8", "x": 10, "y": 75, "size": "sm", "edgeTo": ["ab-level-12"] },
-                { "levelId": "ab-level-9", "x": 32, "y": 75, "size": "sm", "edgeTo": ["ab-level-12"] },
-                { "levelId": "ab-level-10", "x": 68, "y": 75, "size": "sm", "edgeTo": ["ab-level-12"] },
-                { "levelId": "ab-level-11", "x": 90, "y": 75, "size": "sm", "edgeTo": ["ab-level-12"] },
-                { "levelId": "ab-level-12", "x": 50, "y": 90, "size": "md", "edgeTo": [] }
-            ]
-        },
-        "salts-oxides": {
-            "routeLabel": "Salts and oxides route",
-            "nodes": [
-                { "levelId": "so-level-1", "x": 50, "y": 18, "size": "lg", "edgeTo": ["so-level-2", "so-level-3"] },
-                { "levelId": "so-level-2", "x": 27, "y": 33, "size": "md", "edgeTo": ["so-level-4", "so-level-5"] },
-                { "levelId": "so-level-3", "x": 73, "y": 33, "size": "md", "edgeTo": ["so-level-6", "so-level-7"] },
-                { "levelId": "so-level-4", "x": 14, "y": 49, "size": "sm", "edgeTo": ["so-level-8"] },
-                { "levelId": "so-level-5", "x": 40, "y": 49, "size": "sm", "edgeTo": ["so-level-9"] },
-                { "levelId": "so-level-6", "x": 60, "y": 49, "size": "sm", "edgeTo": ["so-level-10"] },
-                { "levelId": "so-level-7", "x": 86, "y": 49, "size": "sm", "edgeTo": ["so-level-11"] },
-                { "levelId": "so-level-8", "x": 12, "y": 65, "size": "sm", "edgeTo": ["so-level-12"] },
-                { "levelId": "so-level-9", "x": 34, "y": 65, "size": "sm", "edgeTo": ["so-level-13"] },
-                { "levelId": "so-level-10", "x": 56, "y": 65, "size": "sm", "edgeTo": ["so-level-14"] },
-                { "levelId": "so-level-11", "x": 88, "y": 65, "size": "sm", "edgeTo": ["so-level-15"] },
-                { "levelId": "so-level-12", "x": 18, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
-                { "levelId": "so-level-13", "x": 38, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
-                { "levelId": "so-level-14", "x": 62, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
-                { "levelId": "so-level-15", "x": 82, "y": 82, "size": "sm", "edgeTo": ["so-level-16"] },
-                { "levelId": "so-level-16", "x": 50, "y": 100, "size": "md", "edgeTo": [] }
-            ]
-        }
-    }
+﻿{
+    "themes":  {
+                   "basic":  {
+                                 "routeLabel":  "Basic route",
+                                 "nodes":  [
+                                               {
+                                                   "levelId":  "level-1",
+                                                   "x":  50,
+                                                   "y":  14,
+                                                   "size":  "lg",
+                                                   "edgeTo":  [
+                                                                  "level-2",
+                                                                  "level-3"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-2",
+                                                   "x":  30,
+                                                   "y":  29,
+                                                   "size":  "md",
+                                                   "edgeTo":  [
+                                                                  "level-4",
+                                                                  "level-5"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-3",
+                                                   "x":  70,
+                                                   "y":  29,
+                                                   "size":  "md",
+                                                   "edgeTo":  [
+                                                                  "level-6",
+                                                                  "level-7"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-4",
+                                                   "x":  14,
+                                                   "y":  45,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-8"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-5",
+                                                   "x":  38,
+                                                   "y":  45,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-9"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-6",
+                                                   "x":  62,
+                                                   "y":  45,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-10"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-7",
+                                                   "x":  86,
+                                                   "y":  45,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-11"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-8",
+                                                   "x":  14,
+                                                   "y":  61,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-12"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-9",
+                                                   "x":  38,
+                                                   "y":  61,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-13"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-10",
+                                                   "x":  62,
+                                                   "y":  61,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-14"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-11",
+                                                   "x":  86,
+                                                   "y":  61,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-15"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-12",
+                                                   "x":  14,
+                                                   "y":  77,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-13",
+                                                   "x":  38,
+                                                   "y":  77,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-16"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-14",
+                                                   "x":  62,
+                                                   "y":  77,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+                                                                  "level-16"
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-15",
+                                                   "x":  86,
+                                                   "y":  77,
+                                                   "size":  "sm",
+                                                   "edgeTo":  [
+
+                                                              ]
+                                               },
+                                               {
+                                                   "levelId":  "level-16",
+                                                   "x":  50,
+                                                   "y":  93,
+                                                   "size":  "md",
+                                                   "edgeTo":  [
+
+                                                              ]
+                                               }
+                                           ]
+                             },
+                   "acids-bases":  {
+                                       "routeLabel":  "Acids and bases route",
+                                       "nodes":  [
+                                                     {
+                                                         "levelId":  "ab-level-1",
+                                                         "x":  50,
+                                                         "y":  14,
+                                                         "size":  "lg",
+                                                         "edgeTo":  [
+                                                                        "ab-level-2",
+                                                                        "ab-level-3"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-2",
+                                                         "x":  30,
+                                                         "y":  29,
+                                                         "size":  "md",
+                                                         "edgeTo":  [
+                                                                        "ab-level-4",
+                                                                        "ab-level-5"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-3",
+                                                         "x":  70,
+                                                         "y":  29,
+                                                         "size":  "md",
+                                                         "edgeTo":  [
+                                                                        "ab-level-6",
+                                                                        "ab-level-7"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-4",
+                                                         "x":  14,
+                                                         "y":  45,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-8"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-5",
+                                                         "x":  38,
+                                                         "y":  45,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-9"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-6",
+                                                         "x":  62,
+                                                         "y":  45,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-10"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-7",
+                                                         "x":  86,
+                                                         "y":  45,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-11"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-8",
+                                                         "x":  14,
+                                                         "y":  61,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-12"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-9",
+                                                         "x":  38,
+                                                         "y":  61,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-13"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-10",
+                                                         "x":  62,
+                                                         "y":  61,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-14"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-11",
+                                                         "x":  86,
+                                                         "y":  61,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-15"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-12",
+                                                         "x":  14,
+                                                         "y":  77,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-13",
+                                                         "x":  38,
+                                                         "y":  77,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-16"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-14",
+                                                         "x":  62,
+                                                         "y":  77,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+                                                                        "ab-level-16"
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-15",
+                                                         "x":  86,
+                                                         "y":  77,
+                                                         "size":  "sm",
+                                                         "edgeTo":  [
+
+                                                                    ]
+                                                     },
+                                                     {
+                                                         "levelId":  "ab-level-16",
+                                                         "x":  50,
+                                                         "y":  93,
+                                                         "size":  "md",
+                                                         "edgeTo":  [
+
+                                                                    ]
+                                                     }
+                                                 ]
+                                   },
+                   "salts-oxides":  {
+                                        "routeLabel":  "Salts and oxides route",
+                                        "nodes":  [
+                                                      {
+                                                          "levelId":  "so-level-1",
+                                                          "x":  50,
+                                                          "y":  12,
+                                                          "size":  "lg",
+                                                          "edgeTo":  [
+                                                                         "so-level-2",
+                                                                         "so-level-3"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-2",
+                                                          "x":  30,
+                                                          "y":  26,
+                                                          "size":  "md",
+                                                          "edgeTo":  [
+                                                                         "so-level-4",
+                                                                         "so-level-5"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-3",
+                                                          "x":  70,
+                                                          "y":  26,
+                                                          "size":  "md",
+                                                          "edgeTo":  [
+                                                                         "so-level-6",
+                                                                         "so-level-7"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-4",
+                                                          "x":  14,
+                                                          "y":  41,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-8"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-5",
+                                                          "x":  38,
+                                                          "y":  41,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-9"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-6",
+                                                          "x":  62,
+                                                          "y":  41,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-10"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-7",
+                                                          "x":  86,
+                                                          "y":  41,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-11"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-8",
+                                                          "x":  14,
+                                                          "y":  56,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-12"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-9",
+                                                          "x":  38,
+                                                          "y":  56,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-13"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-10",
+                                                          "x":  62,
+                                                          "y":  56,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-14"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-11",
+                                                          "x":  86,
+                                                          "y":  56,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-15"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-12",
+                                                          "x":  14,
+                                                          "y":  72,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-16"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-13",
+                                                          "x":  38,
+                                                          "y":  72,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-17"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-14",
+                                                          "x":  62,
+                                                          "y":  72,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-18"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-15",
+                                                          "x":  86,
+                                                          "y":  72,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+                                                                         "so-level-19"
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-16",
+                                                          "x":  14,
+                                                          "y":  89,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-17",
+                                                          "x":  38,
+                                                          "y":  89,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-18",
+                                                          "x":  62,
+                                                          "y":  89,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+
+                                                                     ]
+                                                      },
+                                                      {
+                                                          "levelId":  "so-level-19",
+                                                          "x":  86,
+                                                          "y":  89,
+                                                          "size":  "sm",
+                                                          "edgeTo":  [
+
+                                                                     ]
+                                                      }
+                                                  ]
+                                    },
+                   "metals-reactivity":  {
+                                             "routeLabel":  "Metals reactivity route",
+                                             "nodes":  [
+                                                           {
+                                                               "levelId":  "mr-level-1",
+                                                               "x":  50,
+                                                               "y":  14,
+                                                               "size":  "lg",
+                                                               "edgeTo":  [
+                                                                              "mr-level-2",
+                                                                              "mr-level-3"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-2",
+                                                               "x":  29,
+                                                               "y":  31,
+                                                               "size":  "md",
+                                                               "edgeTo":  [
+                                                                              "mr-level-4",
+                                                                              "mr-level-5"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-3",
+                                                               "x":  71,
+                                                               "y":  31,
+                                                               "size":  "md",
+                                                               "edgeTo":  [
+                                                                              "mr-level-6",
+                                                                              "mr-level-7"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-4",
+                                                               "x":  11,
+                                                               "y":  50,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-8"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-5",
+                                                               "x":  37,
+                                                               "y":  50,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-9"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-6",
+                                                               "x":  63,
+                                                               "y":  50,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-10"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-7",
+                                                               "x":  89,
+                                                               "y":  50,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-11"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-8",
+                                                               "x":  11,
+                                                               "y":  70,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-12"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-9",
+                                                               "x":  37,
+                                                               "y":  70,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-13"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-10",
+                                                               "x":  63,
+                                                               "y":  70,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-14"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-11",
+                                                               "x":  89,
+                                                               "y":  70,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-15"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-12",
+                                                               "x":  11,
+                                                               "y":  90,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-13",
+                                                               "x":  37,
+                                                               "y":  90,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-16"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-14",
+                                                               "x":  63,
+                                                               "y":  90,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+                                                                              "mr-level-16"
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-15",
+                                                               "x":  89,
+                                                               "y":  90,
+                                                               "size":  "sm",
+                                                               "edgeTo":  [
+
+                                                                          ]
+                                                           },
+                                                           {
+                                                               "levelId":  "mr-level-16",
+                                                               "x":  50,
+                                                               "y":  111,
+                                                               "size":  "md",
+                                                               "edgeTo":  [
+
+                                                                          ]
+                                                           }
+                                                       ]
+                                         }
+               }
 }

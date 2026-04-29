@@ -4,6 +4,353 @@
     gap: 20px;
 }
 
+#journal-element-list.journal-grid {
+    display: block;
+}
+
+.periodic-library {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.periodic-library-meta {
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) minmax(320px, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.periodic-library-intro {
+    padding: 18px 18px 16px;
+    border: 4px solid #073b4c;
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 209, 102, 0.45), transparent 42%),
+        linear-gradient(180deg, #f7fbff 0%, #edf7ff 100%);
+    box-shadow: 6px 8px 0 rgba(7, 59, 76, 0.2);
+}
+
+.periodic-library-kicker {
+    display: inline-flex;
+    padding: 6px 10px;
+    border: 3px solid #073b4c;
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0f3c53;
+}
+
+.periodic-library-title {
+    margin: 12px 0 8px;
+    font-size: 27px;
+    line-height: 1.02;
+    color: #0f3c53;
+}
+
+.periodic-library-copy {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #486176;
+}
+
+.periodic-preview-card {
+    width: 100%;
+    padding: 18px;
+    border: 4px solid #073b4c;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 8px 10px 0 rgba(7, 59, 76, 0.2);
+    text-align: left;
+    color: #073b4c;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.periodic-preview-card:hover,
+.periodic-preview-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 10px 14px 0 rgba(7, 59, 76, 0.22);
+}
+
+.periodic-preview-card.locked {
+    background:
+        linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
+}
+
+.periodic-preview-card.unlocked.tone-alkali,
+.periodic-tile.unlocked.tone-alkali {
+    --element-accent: #f97316;
+    --element-soft: #ffedd5;
+}
+
+.periodic-preview-card.unlocked.tone-earth,
+.periodic-tile.unlocked.tone-earth {
+    --element-accent: #eab308;
+    --element-soft: #fef9c3;
+}
+
+.periodic-preview-card.unlocked.tone-transition,
+.periodic-tile.unlocked.tone-transition {
+    --element-accent: #0f766e;
+    --element-soft: #ccfbf1;
+}
+
+.periodic-preview-card.unlocked.tone-post,
+.periodic-tile.unlocked.tone-post {
+    --element-accent: #0f766e;
+    --element-soft: #d1fae5;
+}
+
+.periodic-preview-card.unlocked.tone-metalloid,
+.periodic-tile.unlocked.tone-metalloid {
+    --element-accent: #2563eb;
+    --element-soft: #dbeafe;
+}
+
+.periodic-preview-card.unlocked.tone-halogen,
+.periodic-tile.unlocked.tone-halogen {
+    --element-accent: #8b5cf6;
+    --element-soft: #ede9fe;
+}
+
+.periodic-preview-card.unlocked.tone-noble,
+.periodic-tile.unlocked.tone-noble {
+    --element-accent: #ec4899;
+    --element-soft: #fce7f3;
+}
+
+.periodic-preview-card.unlocked.tone-lanthanide,
+.periodic-tile.unlocked.tone-lanthanide {
+    --element-accent: #0891b2;
+    --element-soft: #cffafe;
+}
+
+.periodic-preview-card.unlocked.tone-actinide,
+.periodic-tile.unlocked.tone-actinide {
+    --element-accent: #dc2626;
+    --element-soft: #fee2e2;
+}
+
+.periodic-preview-card.unlocked.tone-nonmetal,
+.periodic-tile.unlocked.tone-nonmetal {
+    --element-accent: #16a34a;
+    --element-soft: #dcfce7;
+}
+
+.periodic-preview-card.unlocked.tone-reference,
+.periodic-tile.unlocked.tone-reference {
+    --element-accent: #475569;
+    --element-soft: #e2e8f0;
+}
+
+.periodic-preview-card.unlocked {
+    background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--element-accent, #2563eb) 20%, white), transparent 38%),
+        linear-gradient(180deg, #ffffff 0%, var(--element-soft, #eff6ff) 100%);
+}
+
+.periodic-preview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.periodic-preview-badge,
+.periodic-preview-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border: 3px solid #073b4c;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.periodic-preview-badge {
+    background: var(--element-soft, #edf2f7);
+    color: var(--element-accent, #475569);
+}
+
+.periodic-preview-chip {
+    background: #ffffff;
+    color: #073b4c;
+}
+
+.periodic-preview-main {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.periodic-preview-symbol {
+    min-width: 88px;
+    min-height: 88px;
+    display: grid;
+    place-items: center;
+    border: 4px solid #073b4c;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.88);
+    font-size: 42px;
+    font-weight: 900;
+    color: #073b4c;
+    box-shadow: 5px 6px 0 rgba(7, 59, 76, 0.16);
+}
+
+.periodic-preview-name {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    color: #073b4c;
+}
+
+.periodic-preview-category {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--element-accent, #64748b) 84%, #073b4c);
+}
+
+.periodic-preview-description {
+    margin: 16px 0 0;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #486176;
+}
+
+.periodic-preview-footer {
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+}
+
+.periodic-table-wrap {
+    min-width: 0;
+    overflow: hidden;
+    padding-bottom: 4px;
+}
+
+.periodic-table-board {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+    gap: clamp(4px, 0.45vw, 10px);
+    padding: clamp(12px, 1vw, 20px);
+    border: 4px solid #073b4c;
+    border-radius: 28px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 249, 255, 0.97)),
+        repeating-linear-gradient(
+            90deg,
+            rgba(15, 60, 83, 0.04) 0,
+            rgba(15, 60, 83, 0.04) 1px,
+            transparent 1px,
+            transparent calc(100% / 18)
+        );
+    box-shadow: inset 0 0 0 1px rgba(7, 59, 76, 0.08);
+}
+
+.periodic-tile {
+    position: relative;
+    grid-column: var(--periodic-column);
+    grid-row: var(--periodic-row);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-content: stretch;
+    justify-items: start;
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    overflow: hidden;
+    gap: clamp(2px, 0.2vw, 5px);
+    padding: clamp(7px, 0.55vw, 11px);
+    border: 3px solid #073b4c;
+    border-radius: 18px;
+    background:
+        linear-gradient(180deg, #ffffff 0%, var(--element-soft, #edf2f7) 100%);
+    color: #073b4c;
+    box-shadow: 4px 5px 0 rgba(7, 59, 76, 0.16);
+    text-align: left;
+    transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+.periodic-row-label {
+    grid-column: 1 / span 3;
+    grid-row: var(--periodic-row);
+    align-self: center;
+    padding-right: 10px;
+    font-size: clamp(10px, 0.72vw, 12px);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5b7184;
+}
+
+.periodic-tile:hover,
+.periodic-tile:focus-visible {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 8px 10px 0 rgba(7, 59, 76, 0.2);
+    z-index: 2;
+}
+
+.periodic-tile.locked {
+    --element-accent: #94a3b8;
+    --element-soft: #eef2f7;
+    filter: saturate(0.25);
+    opacity: 0.88;
+}
+
+.periodic-tile-number {
+    display: block;
+    font-size: clamp(10px, 0.72vw, 12px);
+    font-weight: 800;
+    line-height: 1;
+    color: #64748b;
+}
+
+.periodic-tile-symbol {
+    display: block;
+    align-self: center;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: clamp(18px, 1.45vw, 26px);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--element-accent, #073b4c) 82%, #073b4c);
+}
+
+.periodic-tile.symbol-double .periodic-tile-symbol {
+    font-size: clamp(15px, 1.2vw, 22px);
+    letter-spacing: -0.02em;
+}
+
+.periodic-tile-name {
+    display: none;
+    align-self: end;
+    overflow: hidden;
+    font-size: clamp(9px, 0.7vw, 12px);
+    font-weight: 800;
+    line-height: 1.08;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    color: #334155;
+}
+
 #journal-screen .screen-shell {
     padding-top: 18px;
 }

@@ -30,6 +30,10 @@
         min-height: min(620px, calc(100dvh - 230px));
     }
 
+    .periodic-tile-name {
+        display: -webkit-box;
+    }
+
     #game-screen {
         align-items: center;
     }
@@ -483,6 +487,34 @@
     .theme-grid,
     .journal-grid {
         grid-template-columns: 1fr;
+    }
+
+    .periodic-library {
+        grid-template-columns: 1fr;
+    }
+
+    .periodic-library-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .periodic-table-wrap {
+        overflow-x: auto;
+    }
+
+    .periodic-table-board {
+        min-width: 820px;
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .periodic-preview-symbol {
+        min-width: 74px;
+        min-height: 74px;
+        font-size: 34px;
+    }
+
+    .periodic-preview-name {
+        font-size: 24px;
     }
 
     .menu-card,
