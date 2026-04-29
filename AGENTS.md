@@ -293,6 +293,30 @@ Important fix:
 
 Without this, debugging layout is misleading because deleted nodes silently reappear.
 
+### Modal theming
+
+Shared modals should inherit the Atomic Smash look through palette, borders, and button treatment even when their structure stays unchanged.
+
+What broke:
+
+- the level intro modal felt visually generic compared with the rest of the game
+
+Real cause:
+
+- the base modal shell and intro panels leaned on neutral defaults instead of the project’s ink, paper, warm accent, and teal accent system
+
+Fix applied:
+
+- `docs/styles/components/modals.css`
+  - rethemed the modal shell, close button, panel cards, and action button around the Atomic Smash palette
+- `docs/styles/responsive.css`
+  - tuned the same modal styling for smaller screens
+
+Safe rule:
+
+- when restyling shared modals, prefer thematic changes in shared CSS before changing runtime structure
+- keep the Atomic Smash palette central: ink `#073b4c`, warm accent `#ffd166`, active teal `#118ab2`, paper `#fffdf4`
+
 ## Board / Connection Notes
 
 ### Most important bug class we hit
