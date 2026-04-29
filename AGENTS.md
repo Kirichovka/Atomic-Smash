@@ -356,6 +356,30 @@ Safe rule:
 - treat the menu header as four visual groups with explicit spacing contracts
 - when header items start colliding, adjust flex basis, gaps, and wrapping before changing copy or using absolute positioning
 
+### Modal theming
+
+Shared modals should inherit the Atomic Smash look through palette, borders, and button treatment even when their structure stays unchanged.
+
+What broke:
+
+- the level intro modal felt visually generic compared with the rest of the game
+
+Real cause:
+
+- the base modal shell and intro panels leaned on neutral defaults instead of the project’s ink, paper, warm accent, and teal accent system
+
+Fix applied:
+
+- `docs/styles/components/modals.css`
+  - rethemed the modal shell, close button, panel cards, and action button around the Atomic Smash palette
+- `docs/styles/responsive.css`
+  - tuned the same modal styling for smaller screens
+
+Safe rule:
+
+- when restyling shared modals, prefer thematic changes in shared CSS before changing runtime structure
+- keep the Atomic Smash palette central: ink `#073b4c`, warm accent `#ffd166`, active teal `#118ab2`, paper `#fffdf4`
+
 ## Board / Connection Notes
 
 ### Most important bug class we hit
