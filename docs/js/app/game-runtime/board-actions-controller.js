@@ -83,12 +83,12 @@ export function createBoardActionsController({
         }
 
         const compound = evaluation.compound;
-        onAddDiscoveredCompound?.(compound);
+        const isNewDiscovery = onAddDiscoveredCompound?.(compound) === true;
 
         if (isCurrentLevelTarget(state, compound)) {
-            onLevelTargetComplete?.(compound);
-            onPersistState?.();
-            onTutorialSync?.();
+            onLevelTargetComplete?.(compound, {
+                isNewDiscovery
+            });
             return;
         }
 
