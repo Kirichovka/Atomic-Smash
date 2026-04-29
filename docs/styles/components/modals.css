@@ -33,6 +33,10 @@
     background: var(--color-text-brand);
 }
 
+.modal-close:hover {
+    background: var(--color-text-primary);
+}
+
 .level-intro-kicker {
     font-size: 13px;
     text-transform: uppercase;
