@@ -131,6 +131,8 @@ export function createProgressionController({
         if (isNewDiscovery) {
             modalController.openCompoundModal(compound);
         }
+
+        return isNewDiscovery;
     }
 
     function renderDiscoveredCompounds() {
@@ -181,7 +183,7 @@ export function createProgressionController({
             `${currentLevel.learningFocus ?? targetCompound?.formula ?? currentLevel.hint ?? "No target formula"}`;
     }
 
-    function handleLevelComplete(compound) {
+    function handleLevelComplete(compound, options = {}) {
         const currentLevel = getCurrentLevel(state);
         const currentTheme = getCurrentTheme(state);
 
@@ -191,48 +193,76 @@ export function createProgressionController({
 
         const themeLevels = getLevelsForTheme(state, currentTheme.id);
         const completedLevelNumber = themeLevels.findIndex(level => level.id === currentLevel.id) + 1;
-        const hadRemainingThemeLevels = themeLevels.some(level =>
+        const nextLevel = themeLevels.find(level =>
             level.id !== currentLevel.id && !state.progress.completedLevelIds.has(level.id)
-        );
+        ) ?? null;
 
         state.progress.failedAttempts = 0;
+        getActiveMechanic().captureState?.();
         state.progress.completedLevelIds.add(currentLevel.id);
-        mechanicsRegistry.resetAll();
 
         if (currentTheme.id === BASIC_TUTORIAL_THEME_ID && currentLevel.id === BASIC_TUTORIAL_FIRST_LEVEL_ID) {
             onTutorialLevelCompleted?.("after-mix");
         }
 
-        if (hadRemainingThemeLevels) {
+        if (nextLevel) {
+            refreshMetaViews();
+            const openNextLevelPrompt = () => {
+                modalController.openLevelCompleteModal({
+                    completedLevelNumber,
+                    compound,
+                    nextLevel,
+                    onAdvance: () => {
+                        mechanicsRegistry.resetAll();
+                        startTheme(currentTheme.id);
+                    },
+                    onStay: () => {
+                        onTutorialSync?.();
+                    },
+                    theme: currentTheme
+                });
+            };
+
+            if (refs.result) {
+                refs.result.textContent =
+                    `${currentTheme.name} task ${completedLevelNumber} complete! ` +
+                    `You built ${compound.formula} (${compound.name}).`;
+            }
+
+            if (options.isNewDiscovery) {
+                modalController.queueAfterCompoundModalClose(openNextLevelPrompt);
+            } else {
+                openNextLevelPrompt();
+            }
+
+            onPersistState?.({ skipCapture: true });
+            onTutorialSync?.();
+            return;
+        }
+
+        state.progress.currentThemeId = null;
+        const openThemeComplete = () => {
+            mechanicsRegistry.resetAll();
             mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
-                reason: "advance-level",
+                reason: "theme-complete",
                 themeId: currentTheme.id
             });
             refreshMetaViews();
             paletteController.render();
             renderCurrentLevel();
             if (refs.result) {
-                refs.result.textContent =
-                    `${currentTheme.name} task ${completedLevelNumber} complete! ` +
-                    `You built ${compound.formula} (${compound.name}).`;
+                refs.result.textContent = "";
             }
-            onTutorialSync?.();
-            return;
+            modalController.openThemeCompleteModal(currentTheme);
+        };
+
+        if (options.isNewDiscovery) {
+            modalController.queueAfterCompoundModalClose(openThemeComplete);
+        } else {
+            openThemeComplete();
         }
 
-        state.progress.currentThemeId = null;
-        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
-            reason: "theme-complete",
-            themeId: currentTheme.id
-        });
-        refreshMetaViews();
-        paletteController.render();
-        renderCurrentLevel();
-        if (refs.result) {
-            refs.result.textContent = "";
-        }
-        modalController.closeCompoundModal();
-        modalController.openThemeCompleteModal(currentTheme);
+        onPersistState?.(options.isNewDiscovery ? { skipCapture: true } : undefined);
         onTutorialSync?.();
     }
 

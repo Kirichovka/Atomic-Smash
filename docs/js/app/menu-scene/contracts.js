@@ -5,9 +5,11 @@ export const MENU_SCENE_ENTITY_KIND = Object.freeze({
 
 export const MENU_SCENE_DEFAULTS = Object.freeze({
     overflowRatio: 34,
-    nodeStateSizePixels: Object.freeze({
-        interactive: 200,
-        locked: 170
+    nodeLockedScale: 0.88,
+    nodeSizePixels: Object.freeze({
+        lg: 204,
+        md: 150,
+        sm: 130
     })
 });
 

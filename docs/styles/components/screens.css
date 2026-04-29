@@ -16,7 +16,8 @@
 .theme-shell {
     position: relative;
     z-index: 2;
-    max-width: 1200px;
+    width: min(100%, var(--layout-readable-max-width));
+    max-width: none;
     margin: 0 auto;
 }
 
@@ -77,7 +78,7 @@
 .theme-hero p {
     margin: 0;
     font-size: 18px;
-    color: var(--color-text-muted);
+    color: var(--color-screen-start);
 }
 
 .screen-actions {

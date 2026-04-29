@@ -66,12 +66,17 @@ function createMenuSceneEdgePath(fromNodeElement, toNodeElement, mapRect) {
         Math.min(mapRect.width, mapRect.height) * 0.038
     );
     const shallowCurveThreshold = mapRect.height * 0.08;
-    const shallowCurveLift = Math.min(mapRect.width, mapRect.height) * 0.03;
+    const shallowCurveLift = Math.max(
+        Math.min(mapRect.width, mapRect.height) * 0.04,
+        Math.abs(horizontalDistance) * 0.12
+    );
 
     if (Math.abs(verticalDistance) < shallowCurveThreshold) {
         const controlX1 = start.x + (horizontalDistance * 0.3);
         const controlX2 = end.x - (horizontalDistance * 0.3);
-        const controlY = start.y - shallowCurveLift;
+        const controlY = end.y >= start.y
+            ? Math.max(start.y, end.y) + shallowCurveLift
+            : Math.min(start.y, end.y) - shallowCurveLift;
         return `M ${start.x} ${start.y} C ${controlX1} ${controlY}, ${controlX2} ${controlY}, ${end.x} ${end.y}`;
     }
 

@@ -67,12 +67,10 @@ function renderJournalElementCards({
                     className: buildClassName("journal-card", element.locked ? ["locked"] : [])
                 },
                 handlers: {
-                    open: element.locked
-                        ? null
-                        : () => {
-                            onSelectElement?.(element.symbol);
-                            onOpenElementModal?.(element.raw);
-                        }
+                    open: () => {
+                        onSelectElement?.(element.symbol);
+                        onOpenElementModal?.(element.raw);
+                    }
                 }
             })
         );

@@ -50,9 +50,6 @@
     "journalElementCard": {
       "kind": "button",
       "className": { "bind": "element.className" },
-      "attrs": {
-        "disabled": { "bind": "element.locked" }
-      },
       "on": {
         "click": { "bind": "handlers.open" }
       },

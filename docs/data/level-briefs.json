@@ -33,8 +33,8 @@
                     "nodeTitle": "Ammonia",
                     "introTitle": "Nitrogen Basics",
                     "theory": "Ammonia introduces nitrogen as a central atom that can connect to several hydrogens. It is a good first example of a different central-node pattern.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Continue using bond placement, but focus on a new center atom with a three-connection pattern."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Choose the coefficients that make nitrogen and hydrogen atom counts match before ammonia is formed."
                 },
                 {
                     "levelId": "level-5",
@@ -65,8 +65,8 @@
                     "nodeTitle": "CaO",
                     "introTitle": "Calcium Oxides",
                     "theory": "Calcium oxide moves the route into basic metal oxides. It helps learners compare how oxygen combines with a different type of element.",
-                    "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Keep using the same spatial bond mechanic, but now apply it to a metal oxide family."
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance calcium reacting with oxygen so both sides conserve every atom."
                 },
                 {
                     "levelId": "level-9",
@@ -97,8 +97,244 @@
                     "nodeTitle": "SO3",
                     "introTitle": "Sulfur Gases II",
                     "theory": "Sulfur trioxide extends the sulfur branch and closes the basic route with a larger oxide. It reinforces the idea that one topic can develop across multiple lessons.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance sulfur dioxide turning into sulfur trioxide as the route's final oxide checkpoint."
+                }
+            ]
+        },
+        "acids-bases": {
+            "title": "Acids, Bases, and pH",
+            "overview": "This route starts from neutral water, splits into acid and base branches, and then reconnects them through familiar school-level neutralization ideas.",
+            "levels": [
+                {
+                    "levelId": "ab-level-1",
+                    "nodeTitle": "Water",
+                    "introTitle": "Neutral Starting Point",
+                    "theory": "Water is the natural baseline for acid-base chemistry. It gives the route a neutral starting point before stronger acids and bases begin to branch away.",
                     "mechanicName": "Connection Lab",
-                    "mechanicSummary": "Finish the route with a more advanced sulfur oxide that still uses the same core connection mechanic."
+                    "mechanicSummary": "Build the neutral reference molecule first so later acid and base patterns have something to compare against."
+                },
+                {
+                    "levelId": "ab-level-2",
+                    "nodeTitle": "HCl",
+                    "introTitle": "Strong Acid Entry",
+                    "theory": "Hydrochloric acid is a classic strong acid in school chemistry. It is a simple first step into the acid branch because the formula is compact and easy to recognize.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use a short two-atom build to open the acid side of the route."
+                },
+                {
+                    "levelId": "ab-level-3",
+                    "nodeTitle": "NaOH",
+                    "introTitle": "Strong Base Entry",
+                    "theory": "Sodium hydroxide is a classic strong base. It gives the route a clean comparison against the acid branch while still using a small formula.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a simple hydroxide pattern and compare it with the acid lesson beside it."
+                },
+                {
+                    "levelId": "ab-level-4",
+                    "nodeTitle": "HClO",
+                    "introTitle": "Oxygen Changes The Acid",
+                    "theory": "Hypochlorous acid shows how adding oxygen can change the behavior and identity of a chlorine-based acid. It pushes the acid branch into a larger pattern.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance chlorine reacting with water to produce hydrochloric and hypochlorous acids."
+                },
+                {
+                    "levelId": "ab-level-5",
+                    "nodeTitle": "H2CO3",
+                    "introTitle": "Acids In Water",
+                    "theory": "Carbonic acid forms when carbon dioxide dissolves in water. It is a good school example of how gases, solutions, and acidity can connect.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a larger oxygen-rich acid and notice how the structure becomes more branch-like."
+                },
+                {
+                    "levelId": "ab-level-6",
+                    "nodeTitle": "KOH",
+                    "introTitle": "Another Hydroxide Base",
+                    "theory": "Potassium hydroxide extends the same base family as sodium hydroxide. It helps learners compare how similar hydroxides can swap the metal while keeping the main pattern.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Reuse the hydroxide idea with a new metal to reinforce the pattern."
+                },
+                {
+                    "levelId": "ab-level-7",
+                    "nodeTitle": "Ammonia",
+                    "introTitle": "Weak Base Direction",
+                    "theory": "Ammonia introduces a base that is not a metal hydroxide. It broadens the route and shows that base behavior is not limited to one kind of formula.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a nitrogen-centered base pattern and compare it with the hydroxides."
+                },
+                {
+                    "levelId": "ab-level-8",
+                    "nodeTitle": "HNO3",
+                    "introTitle": "Nitric Acid Pattern",
+                    "theory": "Nitric acid expands the acid branch into a nitrogen-oxygen framework. It is a strong example of how oxygen-rich acids create larger connection patterns.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance the oxygen-rich formation of nitric acid by matching N, H, and O counts."
+                },
+                {
+                    "levelId": "ab-level-9",
+                    "nodeTitle": "H2SO3",
+                    "introTitle": "Sulfur Acid Branch",
+                    "theory": "Sulfurous acid connects sulfur chemistry with acidity. It gives the learner another oxygen-rich acid family to compare against carbonic and nitric acids.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a sulfur-centered acid structure with multiple oxygen branches."
+                },
+                {
+                    "levelId": "ab-level-10",
+                    "nodeTitle": "Ca(OH)2",
+                    "introTitle": "Larger Metal Base",
+                    "theory": "Calcium hydroxide scales the base branch into a bigger hydroxide with two OH groups. It helps learners notice repeated groups inside one compound.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use one central metal with two hydroxide branches to make a larger base structure."
+                },
+                {
+                    "levelId": "ab-level-11",
+                    "nodeTitle": "Mg(OH)2",
+                    "introTitle": "Comparing Metal Hydroxides",
+                    "theory": "Magnesium hydroxide keeps the same overall base idea but swaps the center metal. It reinforces comparison inside one chemistry family.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Repeat the two-branch hydroxide pattern with a different metal center."
+                },
+                {
+                    "levelId": "ab-level-12",
+                    "nodeTitle": "NaCl",
+                    "introTitle": "Neutralization Result",
+                    "theory": "Sodium chloride closes the route with a familiar salt. It acts as a simple endpoint after spending the route comparing acids, bases, and their patterns.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance a neutralization equation where acid and base produce salt and water."
+                }
+            ]
+        },
+        "salts-oxides": {
+            "title": "Salts and Oxides",
+            "overview": "This route compares salt families and oxide families side by side, then expands into sulfur and iron examples so the learner sees how broad inorganic chemistry can become.",
+            "levels": [
+                {
+                    "levelId": "so-level-1",
+                    "nodeTitle": "NaCl",
+                    "introTitle": "Salt Entry Point",
+                    "theory": "Sodium chloride is the classic school example of a salt. It gives the route a familiar start before the player branches into more varied salts and oxides.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Begin with the simplest familiar salt so the rest of the route has a strong comparison point."
+                },
+                {
+                    "levelId": "so-level-2",
+                    "nodeTitle": "KCl",
+                    "introTitle": "Simple Salt Comparison",
+                    "theory": "Potassium chloride helps learners compare one simple chloride salt with another. The main structure stays compact while the metal changes.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Swap one metal for another and notice how the salt family pattern stays recognizable."
+                },
+                {
+                    "levelId": "so-level-3",
+                    "nodeTitle": "Na2O",
+                    "introTitle": "First Metal Oxide",
+                    "theory": "Sodium oxide opens the oxide branch. It shows that the same metal can form a very different compound once oxygen replaces chlorine.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Start the oxide side of the route with a small but reactive sodium compound."
+                },
+                {
+                    "levelId": "so-level-4",
+                    "nodeTitle": "CaCl2",
+                    "introTitle": "Larger Salt Pattern",
+                    "theory": "Calcium chloride expands the salt branch into a larger pattern. It helps learners notice that one metal can pair with more than one nonmetal atom.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a three-atom salt where the center metal connects to two matching halogens."
+                },
+                {
+                    "levelId": "so-level-5",
+                    "nodeTitle": "MgCl2",
+                    "introTitle": "Parallel Chloride Salt",
+                    "theory": "Magnesium chloride gives another comparison inside the same chloride family. It reinforces how salts can repeat a structural idea while changing the center metal.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance magnesium reacting with chlorine to form a chloride salt."
+                },
+                {
+                    "levelId": "so-level-6",
+                    "nodeTitle": "CaO",
+                    "introTitle": "Calcium Oxide",
+                    "theory": "Calcium oxide is one of the classic school oxides and an important material in industry. It helps the route shift into stronger metal-oxygen comparisons.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Keep the mechanic simple while moving the oxide branch to a new metal."
+                },
+                {
+                    "levelId": "so-level-7",
+                    "nodeTitle": "MgO",
+                    "introTitle": "Magnesium Oxide",
+                    "theory": "Magnesium oxide keeps the oxide branch compact and comparable. It reinforces that metal oxides form a clear family with related but distinct compounds.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build another small metal oxide and compare it directly with calcium oxide."
+                },
+                {
+                    "levelId": "so-level-8",
+                    "nodeTitle": "Na2S",
+                    "introTitle": "Sulfur Salt Branch",
+                    "theory": "Sodium sulfide expands the route beyond chlorides and introduces sulfur as the nonmetal partner in a salt. This broadens the salt family without changing the overall lesson structure.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Use a compact sulfur-centered salt to show that salts are more than just metal chlorides."
+                },
+                {
+                    "levelId": "so-level-9",
+                    "nodeTitle": "K2O",
+                    "introTitle": "Second Alkali Oxide",
+                    "theory": "Potassium oxide compares directly with sodium oxide. It helps the learner see a repeating oxide idea inside the alkali metals.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build another alkali-metal oxide and compare how familiar the pattern already feels."
+                },
+                {
+                    "levelId": "so-level-10",
+                    "nodeTitle": "Na2O2",
+                    "introTitle": "Oxygen-Rich Oxides",
+                    "theory": "Sodium peroxide shows that adding one more oxygen can create a noticeably different compound family. It gives the oxide route more depth than a simple one-oxygen pattern.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance sodium peroxide formation and compare the atom ratio with simpler oxides."
+                },
+                {
+                    "levelId": "so-level-11",
+                    "nodeTitle": "FeCl3",
+                    "introTitle": "Transition-Metal Salt",
+                    "theory": "Iron(III) chloride brings a transition metal into the salt branch. It is a useful bridge from simple salts toward denser inorganic structures.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a larger chloride salt with one central iron and three surrounding chlorine atoms."
+                },
+                {
+                    "levelId": "so-level-12",
+                    "nodeTitle": "FeO",
+                    "introTitle": "Transition-Metal Oxide I",
+                    "theory": "Iron(II) oxide starts the iron oxide family in a compact form. It prepares the learner for a more complex iron oxide later in the route.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Introduce iron into the oxide branch with the smaller oxide first."
+                },
+                {
+                    "levelId": "so-level-13",
+                    "nodeTitle": "CaS",
+                    "introTitle": "Another Sulfur Salt",
+                    "theory": "Calcium sulfide continues the sulfur-salt branch with a different metal. It strengthens comparison across the salt family without changing the overall mechanic.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Build a compact sulfur salt and compare it with sodium sulfide."
+                },
+                {
+                    "levelId": "so-level-14",
+                    "nodeTitle": "SO2",
+                    "introTitle": "Nonmetal Oxides I",
+                    "theory": "Sulfur dioxide expands the oxide branch from metal oxides into nonmetal oxides. It shows that oxide chemistry includes gases and reactive molecular compounds too.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Shift into sulfur-centered oxide chemistry while keeping the same bond-building mechanic."
+                },
+                {
+                    "levelId": "so-level-15",
+                    "nodeTitle": "Fe2O3",
+                    "introTitle": "Transition-Metal Oxide II",
+                    "theory": "Iron(III) oxide expands the iron branch into a denser pattern. It demonstrates how one oxide family can grow in complexity without changing the theme.",
+                    "mechanicName": "Connection Lab",
+                    "mechanicSummary": "Return to iron and build the larger oxide pattern after the simpler FeO step."
+                },
+                {
+                    "levelId": "so-level-16",
+                    "nodeTitle": "SO3",
+                    "introTitle": "Nonmetal Oxides II",
+                    "theory": "Sulfur trioxide closes the route with a larger sulfur oxide. It works as a final capstone because it combines a familiar center atom with a more advanced oxygen-rich arrangement.",
+                    "mechanicName": "Balance Lab",
+                    "mechanicSummary": "Balance the final sulfur oxide equation before closing the salts-and-oxides route."
                 }
             ]
         }

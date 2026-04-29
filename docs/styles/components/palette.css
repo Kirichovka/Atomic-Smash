@@ -3,6 +3,7 @@
     flex: 0 0 auto;
     box-sizing: border-box;
     position: relative;
+    height: var(--layout-game-shell-height);
     border-right: 4px solid #073b4c;
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 238, 0.98));

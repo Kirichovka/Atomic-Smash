@@ -128,6 +128,26 @@ Current main mechanic:
 
 - `docs/js/app/mechanics/connection-lab/index.js`
 
+Current secondary mechanic:
+
+- `docs/js/app/mechanics/balance-lab/index.js`
+
+Balance-lab route integration note:
+
+- what changed:
+  - selected ordinary theme levels now use `mechanicId: "balance-lab"` instead of keeping all non-`equations` theme levels on `connection-lab`
+  - current ready-theme mix is three balance levels per theme, with the remaining levels staying on connection lab
+- real cause:
+  - `balance-lab` is registered in the mechanics manifest and data catalog, but it only renders useful gameplay when the active level includes an `equation` block
+  - changing only `mechanicId` would activate the mechanic without giving it equation data
+- fix:
+  - balance-enabled levels in `docs/data/game-data.json` include both `mechanicId: "balance-lab"` and an `equation` object with `parts`, `answers`, and `label`
+  - matching entries in `docs/data/level-briefs.json` use `Balance Lab` copy so menu and intro text do not contradict the mechanic
+- safe rule:
+  - never route a level to `balance-lab` without adding a valid `equation`
+  - when switching a level mechanic, update both game data and level brief text together
+  - keep theme-level balance/connection proportions intentional, not accidental leftovers from copied levels
+
 ## Change Routing
 
 Use this map before editing:
@@ -181,6 +201,31 @@ For tutorial actions, prefer the game button style:
 - warm yellow background
 - dark ink text
 - dark border/shadow
+
+## Large Screen Layout Rule
+
+2K/4K displays should not make interactive scenes stretch endlessly across the viewport.
+
+What broke:
+
+- game workspace and board chrome expanded to the full monitor width
+- `#mix-zone` used viewport-wide `left/right` offsets, so the board became visually over-wide on large displays
+- ordinary shells had fixed max-widths, while scene pages lacked a shared large-screen policy
+
+Current fix:
+
+- shared layout caps live in `docs/styles/foundation/tokens.css`
+- large-screen overrides live in `docs/styles/responsive.css`
+- menu/home uses `--layout-scene-max-width`
+- game workspace uses `--layout-game-workspace-max-width`
+- game shell height uses `--layout-game-shell-height` so tall displays do not make the board feel unbounded
+
+Safe rule:
+
+- cap and center scene shells before changing node math
+- do not solve 2K/4K layout by editing individual node sizes first
+- keep scene data coordinates independent from monitor resolution
+- use breakpoints/tokens for density and shell bounds, then only touch JS geometry if the data projection itself is wrong
 
 ## Menu Scene Notes
 

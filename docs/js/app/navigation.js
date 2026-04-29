@@ -182,18 +182,21 @@ export function createNavigationController({
 
         const elements = state.catalog.elements.map(element => {
             const isUnlocked = unlockedSymbols.has(element.symbol);
+            const titleSuffix = Number.isFinite(element.atomicNumber)
+                ? `${element.name} | #${element.atomicNumber}`
+                : element.name;
 
             return {
-                description: isUnlocked
-                    ? element.description
-                    : "Complete more tasks to unlock this element in the lab.",
-                kicker: isUnlocked ? "Unlocked element" : "Locked element",
+                description: element.journalDescription ?? element.description,
+                kicker: isUnlocked ? "Unlocked element" : "Reference available",
                 locked: !isUnlocked,
-                name: element.name,
+                name: titleSuffix,
                 raw: element,
-                status: isUnlocked ? "Unlocked for your current progress" : "Locked",
+                status: isUnlocked
+                    ? "Unlocked for gameplay | Tap for full reference"
+                    : "Locked for gameplay | Tap to read the reference card",
                 symbol: element.symbol,
-                title: isUnlocked ? element.symbol : "?"
+                title: element.symbol
             };
         });
 
