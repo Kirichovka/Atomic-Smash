@@ -1,6 +1,6 @@
 import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
 import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
-import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js";
+import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260506-compact-modals";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 

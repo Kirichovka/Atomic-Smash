@@ -64,36 +64,17 @@ function renderLevelIntroContent({
 
     const panelsSlot = root.querySelector("[data-level-intro-panels-slot='true']");
     if (panelsSlot) {
-        [
-            {
-                body: themeOverview ?? "This theme groups related beginner chemistry lessons into one route.",
-                title: "Theme Context"
-            },
-            {
-                body: compound
-                    ? `${level.learningFocus ?? level.displayTitle ?? level.objective}. Target compound: ${compound.formula} (${compound.name}).`
-                    : `${level.learningFocus ?? level.displayTitle ?? level.objective}.`,
-                title: "Level Goal"
-            },
-            {
-                body: briefing?.theory
-                    ?? theme.description
-                    ?? "This lesson introduces a new chemistry concept for the current route.",
-                title: "Lesson Theory"
-            },
-            {
-                body: briefing?.mechanicSummary
-                    ?? mechanic?.description
-                    ?? "This lesson currently uses the Connection Lab mechanic.",
-                title: "Mechanic"
-            }
-        ].forEach(panel => {
-            panelsSlot.appendChild(
-                createSchemaElement(schemaConfig?.levelIntroPanel, {
-                    panel
-                })
-            );
-        });
+        panelsSlot.appendChild(
+            createSchemaElement(schemaConfig?.levelIntroPanel, {
+                panel: {
+                    body: briefing?.mechanicSummary
+                        ?? level.learningFocus
+                        ?? mechanic?.description
+                        ?? "Open the level and complete the current chemistry challenge.",
+                    title: "Goal"
+                }
+            })
+        );
     }
 
     container.replaceChildren(root);
@@ -413,32 +394,22 @@ function renderValencyModalContent({
 
     const root = createSchemaElement(schemaConfig?.valencyModal, {
         valency: {
-            description:
-                "The atoms can stay on the board, but this mix cannot be evaluated until each element follows its allowed number of single connections.",
+            description: "Fix the highlighted atom before mixing.",
             kicker: "Valency check failed",
-            title: "This structure breaks valency rules"
+            title: "Too many bonds"
         }
     });
 
     const panelsSlot = root.querySelector("[data-valency-panels-slot='true']");
     if (panelsSlot) {
         appendValencyPanel({
-            body: "These atoms currently have more single connections than the simplified lab rules allow.",
+            body: "Remove or rearrange one connection, then try again.",
             container: panelsSlot,
             items: validation.issues ?? [],
             listClassName: "valency-issue-list",
             mode: "issue",
             schemaConfig,
-            title: "What is wrong"
-        });
-        appendValencyPanel({
-            body: "In this lab each line counts as one bond. Compare the current number of links with the allowed valency for each element below.",
-            container: panelsSlot,
-            items: validation.elements ?? [],
-            listClassName: "valency-theory-list",
-            mode: "theory",
-            schemaConfig,
-            title: "Valency theory"
+            title: "Check this atom"
         });
     }
 
@@ -494,9 +465,9 @@ function appendValencyPanel({
             itemsSlot?.appendChild(
                 createSchemaElement(schemaConfig?.valencyIssueItem, {
                     issue: {
-                        body: `Node ${issue.nodeId} exceeds the allowed valency by ${issue.actualBonds - issue.allowedBonds}. Remove or rearrange some links before mixing.`,
+                        body: `Allowed: ${issue.allowedBonds}. Current: ${issue.actualBonds}.`,
                         symbol: issue.symbol,
-                        title: `${issue.elementName} has ${issue.actualBonds} connections, but only ${issue.allowedBonds} are allowed`
+                        title: `${issue.elementName} has too many bonds`
                     }
                 })
             );

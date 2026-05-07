@@ -1,4 +1,4 @@
-import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js";
+import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js?v=20260507-menu-spacing";
 import {
     createSceneNodeStatus,
     createSceneNodeSubtitle,

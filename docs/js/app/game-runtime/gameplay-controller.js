@@ -1,9 +1,10 @@
-import { createBoardActionsController } from "./board-actions-controller.js";
-import { createProgressionController } from "./progression-controller.js";
+import { createBoardActionsController } from "./board-actions-controller.js?v=20260507-game-level-intro";
+import { createProgressionController } from "./progression-controller.js?v=20260507-menu-navigation";
 
 export function createGameplayController({
     refs,
     state,
+    currentPage,
     getActiveMechanic,
     mechanicsRegistry,
     navigationController,
@@ -12,6 +13,7 @@ export function createGameplayController({
     progressionSchemaConfig,
     onBeforeBoardReset,
     onPersistState,
+    onRunAfterTutorialHints,
     onTutorialLevelCompleted,
     onTutorialReset,
     onTutorialSync
@@ -19,6 +21,7 @@ export function createGameplayController({
     const progressionController = createProgressionController({
         refs,
         state,
+        currentPage,
         mechanicsRegistry,
         navigationController,
         paletteController,
@@ -26,6 +29,7 @@ export function createGameplayController({
         schemaConfig: progressionSchemaConfig,
         getActiveMechanic,
         onPersistState,
+        onRunAfterTutorialHints,
         onTutorialLevelCompleted,
         onTutorialReset,
         onTutorialSync
@@ -36,13 +40,13 @@ export function createGameplayController({
         state,
         getActiveMechanic,
         modalController,
-        onAddDiscoveredCompound: compound => progressionController.addDiscoveredCompound(compound),
+        onAddDiscoveredCompound: (compound, options) => progressionController.addDiscoveredCompound(compound, options),
         onApplyInteractionContext: context => applyInteractionContext(context),
         onClearBoardRuntime: () => {
             onBeforeBoardReset?.();
             mechanicsRegistry.resetAll();
         },
-        onLevelTargetComplete: compound => progressionController.handleLevelComplete(compound),
+        onLevelTargetComplete: (compound, options) => progressionController.handleLevelComplete(compound, options),
         onPersistState,
         onTutorialSync
     });

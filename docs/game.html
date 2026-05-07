@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Atomic Smash Lab</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-    <link rel="stylesheet" href="./styles.css?v=20260422-large-screen-layout" />
+    <link rel="stylesheet" href="./styles.css?v=20260507-centered-modals" />
 </head>
 <body data-page="game">
     <div id="game-screen" class="app-screen">
@@ -67,6 +67,14 @@
         </div>
     </div>
 
+    <div id="level-intro-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-level-intro-modal="true"></div>
+        <div class="modal-dialog level-intro-dialog" role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
+            <button id="level-intro-close" class="modal-close" type="button">Close</button>
+            <div id="level-intro-content"></div>
+        </div>
+    </div>
+
     <div id="level-complete-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" data-close-level-complete-modal="true"></div>
         <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="level-complete-title">
@@ -85,7 +93,7 @@
 
     <div id="valency-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" data-close-valency-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="valency-modal-title">
+        <div class="modal-dialog valency-dialog" role="dialog" aria-modal="true" aria-labelledby="valency-modal-title">
             <button id="valency-modal-close" class="modal-close" type="button">Close</button>
             <div id="valency-modal-content"></div>
         </div>
@@ -99,6 +107,6 @@
         </div>
     </div>
 
-    <script type="module" src="./js/main.js?v=20260411-connection-revert"></script>
+    <script type="module" src="./js/main.js?v=20260507-menu-navigation"></script>
 </body>
 </html>

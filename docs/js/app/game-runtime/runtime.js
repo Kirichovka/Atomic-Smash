@@ -1,13 +1,13 @@
 import { createHotkeysController } from "../hotkeys.js";
-import { createModalController } from "../modals.js";
-import { createNavigationController } from "../navigation.js";
+import { createModalController } from "../modals.js?v=20260506-compact-modals";
+import { createNavigationController } from "../navigation.js?v=20260507-menu-navigation";
 import { createPaletteController } from "../palette.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js";
 import { persistState } from "../storage.js";
 import { getActiveMechanicId } from "../state.js";
-import { createBasicTutorialController } from "./basic-tutorial-controller.js";
-import { createGameplayController } from "./gameplay-controller.js";
+import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260507-game-level-intro";
+import { createGameplayController } from "./gameplay-controller.js?v=20260507-menu-navigation";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";
 import { createRuntimeController } from "./controller-factory.js";
@@ -120,6 +120,7 @@ export function createGameRuntime({
             currentPage,
             isOverlayBlocked: () =>
                 mixZoneContextController?.isOpen()
+                || isModalVisible(refs.levelIntroModal)
                 || isModalVisible(refs.compoundModal)
                 || isModalVisible(refs.elementModal)
                 || isModalVisible(refs.helpModal)
@@ -136,6 +137,7 @@ export function createGameRuntime({
         context: {
             refs,
             state,
+            currentPage,
             getActiveMechanic,
             mechanicsRegistry,
             navigationController,
@@ -144,6 +146,7 @@ export function createGameRuntime({
             progressionSchemaConfig: progressionRuntimeSchemaConfig,
             onBeforeBoardReset: () => mixZoneContextController?.closeContextMenu({ restorePreview: false }),
             onPersistState: persistCurrentState,
+            onRunAfterTutorialHints: handler => tutorialController?.runAfterPostLevelHints(handler),
             onTutorialLevelCompleted: stageId => tutorialController?.setPostLevelStage(stageId),
             onTutorialReset: () => tutorialController?.resetProgress(),
             onTutorialSync: scheduleBasicTutorialSync

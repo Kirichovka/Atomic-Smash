@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260411-connection-revert";
+import { initGame } from "./game.js?v=20260507-menu-navigation";
 
 initGame().catch(error => {
     console.error(error);

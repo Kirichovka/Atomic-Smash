@@ -17,6 +17,7 @@ const BASIC_TUTORIAL_FIRST_LEVEL_ID = "level-1";
 export function createProgressionController({
     refs,
     state,
+    currentPage,
     mechanicsRegistry,
     navigationController,
     paletteController,
@@ -24,6 +25,7 @@ export function createProgressionController({
     schemaConfig,
     getActiveMechanic,
     onPersistState,
+    onRunAfterTutorialHints,
     onTutorialLevelCompleted,
     onTutorialReset,
     onTutorialSync
@@ -57,6 +59,11 @@ export function createProgressionController({
     }
 
     function openJournalScreen() {
+        if (currentPage !== "journal") {
+            navigationController.showJournalScreen();
+            return;
+        }
+
         mechanicsRegistry.deactivateActiveMechanic({
             reason: "open-journal-screen"
         });
@@ -65,6 +72,11 @@ export function createProgressionController({
     }
 
     function openMainMenu() {
+        if (currentPage !== "menu") {
+            navigationController.showMenuScreen();
+            return;
+        }
+
         mechanicsRegistry.deactivateActiveMechanic({
             reason: "open-main-menu"
         });
@@ -116,7 +128,8 @@ export function createProgressionController({
         onTutorialSync?.();
     }
 
-    function addDiscoveredCompound(compound) {
+    function addDiscoveredCompound(compound, options = {}) {
+        const { openModal = true } = options;
         const isNewDiscovery = !state.progress.discoveredCompounds.has(compound.id);
         state.progress.discoveredCompounds.add(compound.id);
 
@@ -128,7 +141,7 @@ export function createProgressionController({
         renderDiscoveredCompounds();
         navigationController.renderJournal();
 
-        if (isNewDiscovery) {
+        if (isNewDiscovery && openModal) {
             modalController.openCompoundModal(compound);
         }
 
@@ -208,19 +221,39 @@ export function createProgressionController({
         if (nextLevel) {
             refreshMetaViews();
             const openNextLevelPrompt = () => {
+                const openNextLevelIntro = () => {
+                    modalController.openLevelIntroModal(currentTheme, nextLevel, {
+                        isCurrent: true,
+                        isUnlocked: true
+                    });
+                };
                 modalController.openLevelCompleteModal({
                     completedLevelNumber,
                     compound,
                     nextLevel,
                     onAdvance: () => {
-                        mechanicsRegistry.resetAll();
-                        startTheme(currentTheme.id);
+                        if (shouldRunPostLevelTutorialBeforeAdvance(currentTheme, currentLevel)) {
+                            onRunAfterTutorialHints?.(openNextLevelIntro);
+                            onTutorialSync?.();
+                            return;
+                        }
+
+                        openNextLevelIntro();
                     },
                     onStay: () => {
                         onTutorialSync?.();
                     },
                     theme: currentTheme
                 });
+            };
+            const openDiscoveryThenNextLevelPrompt = () => {
+                if (!options.isNewDiscovery) {
+                    openNextLevelPrompt();
+                    return;
+                }
+
+                modalController.queueAfterCompoundModalClose(openNextLevelPrompt);
+                modalController.openCompoundModal(compound);
             };
 
             if (refs.result) {
@@ -229,12 +262,18 @@ export function createProgressionController({
                     `You built ${compound.formula} (${compound.name}).`;
             }
 
-            if (options.isNewDiscovery) {
-                modalController.queueAfterCompoundModalClose(openNextLevelPrompt);
-            } else {
-                openNextLevelPrompt();
+            if (shouldRunPostLevelTutorialBeforeAdvance(currentTheme, currentLevel)) {
+                if (typeof onRunAfterTutorialHints === "function") {
+                    onRunAfterTutorialHints(openDiscoveryThenNextLevelPrompt);
+                } else {
+                    openDiscoveryThenNextLevelPrompt();
+                }
+                onPersistState?.({ skipCapture: true });
+                onTutorialSync?.();
+                return;
             }
 
+            openDiscoveryThenNextLevelPrompt();
             onPersistState?.({ skipCapture: true });
             onTutorialSync?.();
             return;
@@ -256,10 +295,24 @@ export function createProgressionController({
             modalController.openThemeCompleteModal(currentTheme);
         };
 
-        if (options.isNewDiscovery) {
+        const openDiscoveryThenThemeComplete = () => {
+            if (!options.isNewDiscovery) {
+                openThemeComplete();
+                return;
+            }
+
             modalController.queueAfterCompoundModalClose(openThemeComplete);
+            modalController.openCompoundModal(compound);
+        };
+
+        if (shouldRunPostLevelTutorialBeforeAdvance(currentTheme, currentLevel)) {
+            if (typeof onRunAfterTutorialHints === "function") {
+                onRunAfterTutorialHints(openDiscoveryThenThemeComplete);
+            } else {
+                openDiscoveryThenThemeComplete();
+            }
         } else {
-            openThemeComplete();
+            openDiscoveryThenThemeComplete();
         }
 
         onPersistState?.(options.isNewDiscovery ? { skipCapture: true } : undefined);
@@ -278,4 +331,8 @@ export function createProgressionController({
         resumeCurrentTheme,
         startTheme
     };
+}
+
+function shouldRunPostLevelTutorialBeforeAdvance(theme, completedLevel) {
+    return theme?.id === BASIC_TUTORIAL_THEME_ID && completedLevel?.id === BASIC_TUTORIAL_FIRST_LEVEL_ID;
 }

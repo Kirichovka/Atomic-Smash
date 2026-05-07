@@ -12,6 +12,7 @@ export function createBasicTutorialController({
     onPersist
 }) {
     const tutorialState = {
+        afterPostLevelHints: null,
         postLevelStage: null,
         syncFrame: null
     };
@@ -59,6 +60,22 @@ export function createBasicTutorialController({
 
     function setPostLevelStage(stageId) {
         tutorialState.postLevelStage = stageId;
+    }
+
+    function runAfterPostLevelHints(handler) {
+        if (typeof handler !== "function") {
+            tutorialState.afterPostLevelHints = null;
+            return;
+        }
+
+        if (state.progress.basicTutorialCompleted) {
+            handler();
+            return;
+        }
+
+        tutorialState.afterPostLevelHints = handler;
+        tutorialState.postLevelStage = tutorialState.postLevelStage ?? "after-mix";
+        scheduleSync();
     }
 
     function getStage() {
@@ -195,8 +212,11 @@ export function createBasicTutorialController({
                         onAction: () => {
                             tutorialState.postLevelStage = null;
                             state.progress.basicTutorialCompleted = true;
+                            const afterPostLevelHints = tutorialState.afterPostLevelHints;
+                            tutorialState.afterPostLevelHints = null;
                             onPersist?.();
                             hide();
+                            afterPostLevelHints?.();
                         },
                         placement: "bottom-left",
                         targetRect: refs.menuButton.getBoundingClientRect(),
@@ -372,6 +392,14 @@ export function createBasicTutorialController({
             stage.targetRect,
             stage.secondaryTargetRect
         ].filter(Boolean);
+        const chromeRects = [
+            document.getElementById("topbar"),
+            refs.controls,
+            refs.sidebar
+        ]
+            .filter(Boolean)
+            .map(element => element.getBoundingClientRect())
+            .filter(rect => !rectMatchesAny(rect, ignoredRects));
         const nodeRects = refs.mixZone
             ? [...refs.mixZone.querySelectorAll(".node")]
                 .map(node => node.getBoundingClientRect())
@@ -385,6 +413,7 @@ export function createBasicTutorialController({
             : [];
 
         return [
+            ...chromeRects.map(rect => ({ rect: inflateRect(rect, 10), weight: 24 })),
             ...nodeRects.map(rect => ({ rect: inflateRect(rect, 8), weight: 8 })),
             ...lineRects.map(rect => ({ rect, weight: 4 }))
         ];
@@ -497,6 +526,7 @@ export function createBasicTutorialController({
         bind,
         hide,
         resetProgress,
+        runAfterPostLevelHints,
         scheduleSync,
         setPostLevelStage
     };

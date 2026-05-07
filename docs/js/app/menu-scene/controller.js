@@ -1,5 +1,5 @@
-import { MenuSceneSheetBuilder } from "./builders.js";
-import { createMenuSceneLayoutRuntime } from "./layout-runtime.js";
+import { MenuSceneSheetBuilder } from "./builders.js?v=20260507-menu-spacing";
+import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260507-menu-spacing";
 import {
     createMenuSceneNodeBindings,
     createMenuSceneNodeSchema,

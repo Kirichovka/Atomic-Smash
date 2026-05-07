@@ -4,9 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Atomic Smash Prototype</title>
-
-    <link rel="stylesheet" href="./styles.css?v=20260429-modal-theme-v2" />
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="./styles.css?v=20260507-centered-modals" />
 </head>
 <body data-page="menu">
     <section id="menu-screen" class="app-screen">
@@ -28,12 +27,12 @@
 
     <div id="level-intro-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" data-close-level-intro-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
+        <div class="modal-dialog level-intro-dialog" role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
             <button id="level-intro-close" class="modal-close" type="button">Close</button>
             <div id="level-intro-content"></div>
         </div>
     </div>
 
-    <script type="module" src="./js/main.js?v=20260411-connection-revert"></script>
+    <script type="module" src="./js/main.js?v=20260507-menu-navigation"></script>
 </body>
 </html>

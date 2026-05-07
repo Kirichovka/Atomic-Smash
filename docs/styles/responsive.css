@@ -30,10 +30,6 @@
         min-height: min(620px, calc(100dvh - 230px));
     }
 
-    .periodic-tile-name {
-        display: -webkit-box;
-    }
-
     #game-screen {
         align-items: center;
     }
@@ -173,10 +169,8 @@
     }
 
     #result {
-        flex-basis: 100%;
-        max-width: none;
-        min-width: 0;
-        text-align: left;
+        top: 18vh;
+        width: min(380px, calc(100vw - 24px));
     }
 
     .compound-modal-hero {
@@ -193,6 +187,10 @@
 }
 
 @media (max-width: 820px) {
+    .periodic-tile-number {
+        display: none;
+    }
+
     body[data-page="game"] {
         overflow: auto;
     }
@@ -286,7 +284,7 @@
     }
 
     #result {
-        width: 100%;
+        width: min(360px, calc(100vw - 24px));
     }
 
     #mix-zone {
@@ -605,6 +603,33 @@
         border-radius: 20px;
     }
 
+    #compound-modal .modal-dialog,
+    #level-complete-modal .modal-dialog,
+    #element-modal .modal-dialog,
+    #help-modal .modal-dialog,
+    #theme-complete-modal .modal-dialog {
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: calc(100vw - 24px);
+        max-height: calc(100dvh - 24px);
+        padding: 18px;
+        transform: translate(-50%, -50%);
+    }
+
+    .level-intro-dialog,
+    .valency-dialog {
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: min(520px, calc(100vw - 24px));
+        max-height: calc(100dvh - 24px);
+        padding: 20px;
+        transform: translate(-50%, -50%);
+    }
+
     .modal-close {
         top: 12px;
         right: 12px;
@@ -614,8 +639,13 @@
     }
 
     .level-intro-title {
-        max-width: calc(100% - 96px);
-        font-size: clamp(2rem, 8vw, 2.8rem);
+        max-width: calc(100% - 88px);
+        font-size: clamp(1.8rem, 8vw, 2.4rem);
+    }
+
+    .valency-modal-title {
+        max-width: calc(100% - 88px);
+        font-size: 26px;
     }
 
     .level-intro-summary,
@@ -685,6 +715,11 @@
 }
 
 @media (max-width: 480px) {
+    .periodic-tile-symbol,
+    .periodic-tile.symbol-double .periodic-tile-symbol {
+        font-size: 15px;
+    }
+
     #mix-zone {
         --mix-node-width: 94px;
         --mix-node-height: 56px;

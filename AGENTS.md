@@ -148,6 +148,24 @@ Balance-lab route integration note:
   - when switching a level mechanic, update both game data and level brief text together
   - keep theme-level balance/connection proportions intentional, not accidental leftovers from copied levels
 
+Balance-lab mechanic UX note:
+
+- what changed:
+  - `balance-lab` now supports dragging coefficient buttons onto blanks, while keeping the original click-to-select flow
+  - the panel has local `Reset` and `Check Answer` controls so players do not need the generic mix/clear controls for equation rounds
+  - repeated wrong answers can show a hint banner, and right-click/context menu actions can clear or fill blanks
+- real cause:
+  - the first balance-lab UI depended too much on the shared game controls and a click-only picker
+  - PR-style data changes bundled with mechanic fixes can accidentally roll back current level catalogs
+- fix:
+  - mechanic-only changes were applied in `docs/js/app/mechanics/balance-lab/index.js`
+  - matching visual states were applied in `docs/styles/pages/game-balance-lab.css`
+  - `docs/data/game-data.json` and `docs/data/menu-map.json` were intentionally not taken from the old PR because they conflicted with current level data
+- safe rule:
+  - keep balance-lab interaction improvements in the mechanic and its page CSS
+  - do not merge old `game-data.json` wholesale just to pick up mechanic fixes
+  - after changing balance-lab controls, manually verify click fill, drag/drop fill, reset, check, wrong-answer feedback, and returning to connection-lab levels
+
 ## Change Routing
 
 Use this map before editing:
@@ -231,6 +249,198 @@ Safe rule:
 - do not replace `docs/index.html` or add parallel CSS entrypoints just to restyle modals
 - preserve `./favicon.ico` and the current runtime menu structure when taking ideas from older PRs
 
+Level intro modal compactness note:
+
+What broke:
+
+- level intro briefings expanded into a near-fullscreen document with four large information panels
+- the dialog sat against the viewport edges on large monitors instead of reading as a centered pre-level prompt
+
+Real cause:
+
+- the shared `.modal-dialog` default uses wide `inset` positioning for rich discovery/help modals
+- level intro content reused that large shell and rendered theme context, level goal, lesson theory, and mechanic details at once
+
+Fix applied:
+
+- `docs/index.html` marks the level intro dialog with `level-intro-dialog`
+- `docs/styles/components/modals.css` and `docs/styles/responsive.css` center and cap the level intro dialog separately from other modals
+- `docs/js/app/modal-runtime/content-builders.js` now renders one concise `Goal` panel instead of four briefing panels
+- `docs/data/modal-runtime.schema.json` gives level intro content a `level-intro-shell` class for scoped sizing
+
+Safe rule:
+
+- keep level intro as a short centered prompt, not a lesson document
+- put deeper theory in journal/help/discovery surfaces, not the pre-level start modal
+- do not shrink all `.modal-dialog` instances just to fix level intros
+
+Valency modal compactness note:
+
+What broke:
+
+- valency errors opened as a large explanation modal with both issue details and theory
+- the modal reused the broad shared dialog shell, so a simple validation failure felt like a full-screen lesson
+
+Real cause:
+
+- `renderValencyModalContent(...)` appended both the active issue panel and the valency theory panel every time
+- `#valency-modal` used the generic `.modal-dialog` sizing instead of a scoped compact dialog class
+
+Fix applied:
+
+- `docs/game.html` marks the valency modal shell with `valency-dialog`
+- `docs/styles/components/modals.css` and `docs/styles/responsive.css` center and cap the valency dialog separately
+- `docs/js/app/modal-runtime/content-builders.js` now renders a short error summary and only the current invalid atom list
+- `docs/data/modal-runtime.schema.json` gives the valency content a `valency-modal-shell` class for scoped sizing
+
+Safe rule:
+
+- keep validation errors short and action-oriented
+- do not show theory by default in blocking error modals
+- use scoped dialog classes for compact workflow prompts instead of shrinking every shared modal
+
+Centered workflow modal note:
+
+What broke:
+
+- discovery, level-complete, element/help/theme modals reused the broad shared `.modal-dialog` inset shell
+- on large screens they looked like full pages pinned near viewport edges instead of centered prompts
+
+Real cause:
+
+- the default modal dialog still used `inset: 40px`, which expands with monitor size
+- compound and level-complete content was styled generously, so the oversized shell made simple workflow prompts feel huge
+
+Fix applied:
+
+- `docs/styles/components/modals.css` centers and caps `#compound-modal`, `#level-complete-modal`, `#element-modal`, `#help-modal`, and `#theme-complete-modal`
+- compound and level-complete typography, visual cards, and panel spacing were reduced to fit the smaller centered shell
+- `docs/styles/responsive.css` preserves centered sizing on small screens instead of falling back to edge-to-edge inset
+
+Safe rule:
+
+- keep workflow modals centered and capped; do not let them stretch to the full 2K/4K viewport
+- prefer scoped modal selectors by modal id instead of shrinking every `.modal-dialog`, because level intro and valency already have their own compact shells
+
+Discovery-before-level modal order note:
+
+What broke:
+
+- after completing a level with a newly discovered compound, the `Level cleared` modal opened on top of the compound discovery information
+- the player saw the next-level prompt before reading the discovery card
+
+Real cause:
+
+- `board-actions-controller` passed `{ isNewDiscovery }` to `onLevelTargetComplete(...)`
+- `progression-controller` already used that flag to queue the level-complete modal after the compound modal closes
+- `gameplay-controller` dropped the second `options` argument and called `handleLevelComplete(compound)` only
+
+Fix applied:
+
+- `docs/js/app/game-runtime/gameplay-controller.js` forwards `(compound, options)` into `progressionController.handleLevelComplete(compound, options)`
+
+Safe rule:
+
+- preserve completion metadata between board actions, gameplay, and progression controllers
+- when modal ordering depends on a flag, verify the flag is forwarded through every controller boundary
+
+Next-level briefing order note:
+
+What broke:
+
+- pressing `Next Level` in the level-complete modal started the next task immediately
+- the player skipped the next level's intro/briefing information
+
+Real cause:
+
+- `progression-controller` wired the level-complete `onAdvance` handler directly to `startTheme(currentTheme.id)`
+- that reused progression state correctly, but bypassed `modalController.openLevelIntroModal(...)`
+
+Fix applied:
+
+- `docs/js/app/game-runtime/progression-controller.js` now opens the next level intro modal from `onAdvance`
+- the level starts only when the player uses the action inside the intro modal
+
+Safe rule:
+
+- level transitions should go `discovery info -> level complete prompt -> next level intro -> start level`
+- do not call `startTheme(...)` directly from the level-complete next button unless intentionally skipping briefings
+
+Tutorial-gated next-level note:
+
+What broke:
+
+- on the first tutorial level, pressing `Next Level` could try to advance while post-level tutorial hints still needed to be shown
+- the next level flow felt stuck or out of order because tutorial completion and level advancement were separate actions
+
+Real cause:
+
+- the level-complete `Next Level` handler opened the next level intro immediately
+- `basic-tutorial-controller` had post-level stages, but no callback queue for "continue after all tutorial hints"
+
+Fix applied:
+
+- `docs/js/app/game-runtime/basic-tutorial-controller.js` now supports `runAfterPostLevelHints(...)`
+- `docs/js/app/game-runtime/progression-controller.js` uses that queue for the first tutorial level before opening the next level intro
+- `docs/js/app/game-runtime/board-actions-controller.js` suppresses immediate discovery modals for target compounds so progression can order `tutorial hints -> discovery modal -> level complete modal`
+- `docs/js/app/game-runtime/progression-controller.js` falls back to the normal modal flow if the tutorial continuation callback is unavailable, so `Next Level` never becomes a no-op
+- `docs/game.html` includes `#level-intro-modal`, because next-level intro can now be opened from inside the game screen
+- `docs/js/app/game-runtime/runtime.js` treats level-intro modals as tutorial-overlay blockers
+
+Safe rule:
+
+- tutorial level advancement should wait for post-level tutorial hints to finish
+- for target compounds, let progression own modal sequencing; do not open discovery modals directly from board action flow
+- any page that can call `openLevelIntroModal(...)` must include the level intro modal DOM shell
+- when a tutorial flow gates navigation, put the continuation in the tutorial controller instead of starting the next level directly
+- when changing nested ES module behavior, bump every import URL in the chain; stale nested modules can preserve old `Next Level` behavior even when page HTML has a fresh query string
+
+Game-to-menu navigation flicker note:
+
+What broke:
+
+- pressing `Menu` from a balance-lab level could briefly show the ordinary game palette/topbar before the browser landed on the menu page
+
+Real cause:
+
+- `openMainMenu()` deactivated the active mechanic before cross-page navigation
+- `balance-lab.deactivate()` restores shared game controls and removes its panel, so one frame of the underlying connection-lab-style shell could paint before `window.location.assign(...)`
+
+Fix applied:
+
+- `docs/js/app/game-runtime/progression-controller.js` now navigates immediately when the current HTML page is not already the destination page
+- current-page context is passed from runtime into gameplay/progression so same-page rendering can still deactivate and render normally
+
+Safe rule:
+
+- for cross-page navigation, start navigation/persistence before tearing down page-specific mechanics
+- only deactivate and re-render mechanics in place when staying on the same HTML page
+- verify balance-lab navigation because it hides/restores shared controls during activate/deactivate
+
+Mix result toast note:
+
+What broke:
+
+- transient mix feedback such as `Unknown compound.` rendered as a wide topbar field
+- the message looked like permanent chrome instead of temporary feedback
+
+Real cause:
+
+- board mix actions wrote directly into `refs.result.textContent`
+- `#result` was styled as a flex item inside the topbar, so every short status inherited the topbar layout
+
+Fix applied:
+
+- `docs/js/app/game-runtime/board-actions-controller.js` uses a timed result toast helper for mix feedback
+- `docs/styles/pages/game.css` styles `#result` as a fixed centered popup card
+- `docs/styles/responsive.css` keeps the toast constrained on smaller screens
+
+Safe rule:
+
+- use temporary toast behavior for short mix feedback
+- keep persistent progress/state in the topbar, not transient error text
+- clear toast timers when replacing or clearing feedback
+
 ## Large Screen Layout Rule
 
 2K/4K displays should not make interactive scenes stretch endlessly across the viewport.
@@ -284,6 +494,59 @@ That means:
 
 - if size looks wrong, inspect inline style first
 - CSS width is usually not the real source of truth here
+
+### Menu map auto-fit
+
+The menu scene should calculate its visible layout from node bounds instead of hand-tuning individual level coordinates for each viewport.
+
+What broke:
+
+- lower route nodes, especially capstone nodes such as `so-level-16`, could sit with their center near the bottom edge of the stage
+- because node radius was not included in the camera range, the bottom half of the node and its incoming lines could be clipped
+
+Real cause:
+
+- `x`/`y` coordinates from `menu-map.json` were projected directly into viewport percentages
+- the layout range came from CSS `--home-map-overflow`, while actual node size, locked-node scale, and map bounds were not included in the fit calculation
+
+Fix applied:
+
+- `docs/js/app/menu-scene/entities.js`
+  - `MenuSceneSpace` now computes node and edge-path bounds, fit scale, offsets, virtual height, and overflow from the actual sheet
+- `docs/js/app/menu-scene/layout-runtime.js`
+  - camera range now comes from computed layout overflow instead of raw CSS overflow
+- `docs/js/app/menu-scene/renderers.js`
+  - node positions are rendered in fitted pixels after projection
+
+Safe rule:
+
+- do not fix edge clipping by moving one node in `menu-map.json` unless the route itself is wrong
+- first verify the computed node bounds, edge bounds, scale, and virtual height in `MenuSceneSpace`
+- keep `menu-map.json` as route design data and let runtime fit it to the viewport
+
+### Menu unlocked-node spacing
+
+What broke:
+
+- completed/current levels grew to their unlocked runtime size and began overlapping lower locked nodes in the same route column
+- the issue was most visible after several levels were completed, because the stored `menu-map.json` centers stayed fixed while rendered node radii changed
+
+Real cause:
+
+- `MenuSceneSpace.updateLayout(...)` used actual node radii for outer bounds but still projected each node from the original percentage coordinates
+- there was no spacing pass between map data and viewport projection, so state-driven size changes could invalidate the original center distances
+
+Fix applied:
+
+- `docs/js/app/menu-scene/entities.js` now creates a spaced raw-node layout before bounds and projection
+- nodes in the same visual column are pushed downward when their center distance is smaller than both radii plus the configured gap
+- `project(...)` reads the adjusted positions so nodes and edge paths stay aligned
+
+Safe rule:
+
+- do not solve completed-node overlap by shrinking completed nodes or editing individual route coordinates
+- keep size/state decisions on the node entity, then let `MenuSceneSpace` recalculate spacing from the actual radii
+- when changing menu node sizes, verify completed/open/locked mixes, not only the fresh locked route
 
 ### Important past issue
 
@@ -448,6 +711,27 @@ Safe rule:
 - do not hard-code the first tutorial to a single specific node pair if several H-O mappings are valid
 - tutorial bubble placement should consider board nodes and existing connections as obstacles, not just the highlighted target
 
+Tutorial bubble chrome-overlap note:
+
+What broke:
+
+- the post-mix tutorial bubble could overlap the top panel while explaining where mix results appear
+- the highlighted result area was visible, but the instructional bubble sat over persistent chrome
+
+Real cause:
+
+- tutorial bubble scoring considered board nodes and SVG connection lines as obstacles
+- it did not include fixed game chrome such as `#topbar`, controls, or sidebar in the obstacle set
+
+Fix applied:
+
+- `docs/js/app/game-runtime/basic-tutorial-controller.js` adds topbar, controls, and sidebar rectangles to tutorial placement obstacles with higher weight
+
+Safe rule:
+
+- tutorial placement must avoid persistent chrome as well as board objects
+- when adding tutorial targets near topbar/sidebar/controls, include those UI areas in obstacle scoring before hand-tuning a single placement
+
 ### Current caution
 
 Connection creation has been unstable during refactors. Treat this area as sensitive until manually re-verified in-browser.
@@ -481,6 +765,72 @@ If a fix appears correct in code but not in browser:
 Do this carefully and intentionally. Avoid random churn, but do not ignore caching as a debugging variable.
 
 If browser behavior and code disagree, suspect cache before suspecting the math.
+
+Journal element cache-busting note:
+
+What broke:
+
+- after merging fresh `main`, the journal could appear without the expected periodic element library even though `game-data.json` and `element-reference.json` contained element data
+
+Real cause:
+
+- only some page-level stylesheet/script query strings were bumped
+- `docs/js/main.js` still imported an older `game.js` URL, and `docs/js/game.js` still imported older `data.js`/runtime URLs
+- ES module caching can keep stale nested modules alive even when the top-level HTML file changes
+
+Fix applied:
+
+- bumped cache query strings consistently in `docs/index.html`, `docs/game.html`, `docs/journal.html`, `docs/themes.html`, `docs/js/main.js`, `docs/js/game.js`, and the journal CSS import in `docs/styles.css`
+
+Safe rule:
+
+- when a merge changes data normalization, screen runtime rendering, or page-specific CSS, bust the full import chain, not just the page HTML
+- for journal regressions, verify `state.catalog.elements.length` before editing data; if it is populated, suspect stale module/CSS cache first
+
+Journal periodic tile compactness note:
+
+What broke:
+
+- element names inside small periodic-table tiles could clip, for example `Hydrog` under the `H` symbol
+- atomic numbers could visually crowd the centered symbol
+
+Real cause:
+
+- the periodic table tile tried to fit number, symbol, and element name into a square that is intentionally small on dense layouts
+- CSS hid the name visually in one state, but the renderer still created the name node and the tile grid reserved too much structure for it
+
+Fix applied:
+
+- `docs/js/app/screen-runtime/content-builders.js` no longer renders `periodic-tile-name` inside table tiles
+- `docs/styles/pages/journal.css` positions the atomic number in the top-left corner and centers the symbol
+- `docs/styles/responsive.css` hides atomic numbers on tablet/mobile widths where they compete with two-letter symbols
+
+Safe rule:
+
+- periodic-table tiles should show only atomic number and symbol; keep full names in preview cards/modals
+- on tablet/mobile widths, prefer hiding the atomic number over letting it overlap the symbol
+- if tile content feels cramped, simplify the tile content before shrinking fonts or allowing clipped labels
+
+Journal periodic tile type-color note:
+
+What broke:
+
+- locked/reference periodic-table tiles all appeared gray, so element category colors were not visible in the journal table
+
+Real cause:
+
+- tile color variables were scoped to `.periodic-tile.unlocked.tone-*`
+- `.periodic-tile.locked` overrode the accent/soft colors with neutral grays
+
+Fix applied:
+
+- `docs/styles/pages/journal.css` applies `tone-*` color variables to all periodic tiles
+- locked tiles keep category color, but use a dim overlay/opacity and darker mixed text colors to communicate locked state
+
+Safe rule:
+
+- do not make locked/reference journal tiles globally gray if the table is meant to communicate element type; dim them while preserving the category hue
+- keep lock state separate from chemical category color
 
 ## Clone / Git For Windows Issues
 

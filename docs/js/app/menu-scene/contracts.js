@@ -4,8 +4,14 @@ export const MENU_SCENE_ENTITY_KIND = Object.freeze({
 });
 
 export const MENU_SCENE_DEFAULTS = Object.freeze({
+    edgeFitPaddingPixels: 28,
+    fitPaddingPixels: 34,
+    minNodeScale: 0.72,
+    maxNodeScale: 1,
+    nodeColumnClusterPixels: 42,
     overflowRatio: 34,
     nodeLockedScale: 0.88,
+    nodeVerticalGapPixels: 24,
     nodeSizePixels: Object.freeze({
         lg: 204,
         md: 150,

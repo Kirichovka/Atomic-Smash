@@ -133,7 +133,6 @@ function renderJournalElementCards({
             tile.innerHTML = `
                 <span class="periodic-tile-number">${Number.isFinite(element.atomicNumber) ? element.atomicNumber : ""}</span>
                 <span class="periodic-tile-symbol">${element.symbol}</span>
-                <span class="periodic-tile-name">${element.fullName}</span>
             `;
 
             const showPreview = () => renderPeriodicPreview(previewCard, element, tone);

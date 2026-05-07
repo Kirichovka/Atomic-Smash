@@ -4,6 +4,7 @@
   "definitions": {
     "levelIntro": {
       "kind": "container",
+      "className": "level-intro-shell",
       "children": [
         {
           "kind": "text",
@@ -359,6 +360,7 @@
     },
     "valencyModal": {
       "kind": "container",
+      "className": "valency-modal-shell",
       "children": [
         {
           "kind": "text",

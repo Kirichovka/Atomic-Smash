@@ -119,7 +119,7 @@ export async function loadNavigationRuntimeSchemaConfig() {
 }
 
 export async function loadModalRuntimeSchemaConfig() {
-    const response = await fetch("./data/modal-runtime.schema.json");
+    const response = await fetch("./data/modal-runtime.schema.json?v=20260506-compact-modals");
 
     if (!response.ok) {
         throw new Error(`Failed to load modal runtime schema: ${response.status}`);

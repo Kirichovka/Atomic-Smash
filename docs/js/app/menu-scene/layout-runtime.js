@@ -1,6 +1,6 @@
-import { MenuSceneCamera, MenuSceneSpace } from "./entities.js";
+import { MenuSceneCamera, MenuSceneSpace } from "./entities.js?v=20260507-menu-spacing";
 import { getMenuStageOverflow } from "./methods.js";
-import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js";
+import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260507-menu-spacing";
 
 export function createMenuSceneLayoutRuntime({
     refs,
@@ -26,7 +26,8 @@ export function createMenuSceneLayoutRuntime({
             overflowRatio,
             width: mapRect.width
         });
-        camera.setRange(overflowRatio);
+        space.updateLayout(sheet.nodes, sheet.edges);
+        camera.setRange(space.getOverflowRatio());
 
         layoutMenuSceneNodes({
             camera,
@@ -49,13 +50,23 @@ export function createMenuSceneLayoutRuntime({
             return;
         }
 
-        const overflowRatio = getMenuStageOverflow(refs.menuScreen);
         const mapRect = viewport.getRect();
-        if (overflowRatio <= 0 || !mapRect?.height) {
+        if (!mapRect?.width || !mapRect?.height) {
             return;
         }
 
-        camera.setRange(overflowRatio);
+        const overflowRatio = getMenuStageOverflow(refs.menuScreen);
+        space.updateViewport({
+            height: mapRect.height,
+            overflowRatio,
+            width: mapRect.width
+        });
+        space.updateLayout(sheet.nodes, sheet.edges);
+        camera.setRange(space.getOverflowRatio());
+        if (camera.maxOffsetRatio <= 0) {
+            return;
+        }
+
         camera.panBy((deltaY / mapRect.height) * 100);
         scheduleSync();
     }
@@ -71,8 +82,20 @@ export function createMenuSceneLayoutRuntime({
                 return;
             }
 
+            const mapRect = viewport.getRect();
+            if (!mapRect?.width || !mapRect?.height) {
+                return;
+            }
+
             const overflowRatio = getMenuStageOverflow(refs.menuScreen);
-            if (overflowRatio <= 0) {
+            space.updateViewport({
+                height: mapRect.height,
+                overflowRatio,
+                width: mapRect.width
+            });
+            space.updateLayout(sheet.nodes, sheet.edges);
+            camera.setRange(space.getOverflowRatio());
+            if (camera.maxOffsetRatio <= 0) {
                 return;
             }
 

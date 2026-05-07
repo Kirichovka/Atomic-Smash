@@ -13,10 +13,10 @@ import {
     loadPaletteRuntimeSchemaConfig,
     loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
-} from "./data.js?v=20260411-connection-revert";
+} from "./data.js?v=20260507-journal-tile-polish";
 import { createEventBus } from "./app/event-bus.js";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
-import { createGameRuntime } from "./app/game-runtime/runtime.js";
+import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260507-menu-navigation";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { createRefs } from "./app/refs.js";

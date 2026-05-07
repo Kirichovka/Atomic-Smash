@@ -83,67 +83,67 @@
 }
 
 .periodic-preview-card.unlocked.tone-alkali,
-.periodic-tile.unlocked.tone-alkali {
+.periodic-tile.tone-alkali {
     --element-accent: #f97316;
     --element-soft: #ffedd5;
 }
 
 .periodic-preview-card.unlocked.tone-earth,
-.periodic-tile.unlocked.tone-earth {
+.periodic-tile.tone-earth {
     --element-accent: #eab308;
     --element-soft: #fef9c3;
 }
 
 .periodic-preview-card.unlocked.tone-transition,
-.periodic-tile.unlocked.tone-transition {
+.periodic-tile.tone-transition {
     --element-accent: #0f766e;
     --element-soft: #ccfbf1;
 }
 
 .periodic-preview-card.unlocked.tone-post,
-.periodic-tile.unlocked.tone-post {
+.periodic-tile.tone-post {
     --element-accent: #0f766e;
     --element-soft: #d1fae5;
 }
 
 .periodic-preview-card.unlocked.tone-metalloid,
-.periodic-tile.unlocked.tone-metalloid {
+.periodic-tile.tone-metalloid {
     --element-accent: #2563eb;
     --element-soft: #dbeafe;
 }
 
 .periodic-preview-card.unlocked.tone-halogen,
-.periodic-tile.unlocked.tone-halogen {
+.periodic-tile.tone-halogen {
     --element-accent: #8b5cf6;
     --element-soft: #ede9fe;
 }
 
 .periodic-preview-card.unlocked.tone-noble,
-.periodic-tile.unlocked.tone-noble {
+.periodic-tile.tone-noble {
     --element-accent: #ec4899;
     --element-soft: #fce7f3;
 }
 
 .periodic-preview-card.unlocked.tone-lanthanide,
-.periodic-tile.unlocked.tone-lanthanide {
+.periodic-tile.tone-lanthanide {
     --element-accent: #0891b2;
     --element-soft: #cffafe;
 }
 
 .periodic-preview-card.unlocked.tone-actinide,
-.periodic-tile.unlocked.tone-actinide {
+.periodic-tile.tone-actinide {
     --element-accent: #dc2626;
     --element-soft: #fee2e2;
 }
 
 .periodic-preview-card.unlocked.tone-nonmetal,
-.periodic-tile.unlocked.tone-nonmetal {
+.periodic-tile.tone-nonmetal {
     --element-accent: #16a34a;
     --element-soft: #dcfce7;
 }
 
 .periodic-preview-card.unlocked.tone-reference,
-.periodic-tile.unlocked.tone-reference {
+.periodic-tile.tone-reference {
     --element-accent: #475569;
     --element-soft: #e2e8f0;
 }
@@ -268,14 +268,11 @@
     grid-column: var(--periodic-column);
     grid-row: var(--periodic-row);
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    align-content: stretch;
-    justify-items: start;
+    place-items: center;
     aspect-ratio: 1 / 1;
     min-width: 0;
     overflow: hidden;
-    gap: clamp(2px, 0.2vw, 5px);
-    padding: clamp(7px, 0.55vw, 11px);
+    padding: clamp(8px, 0.6vw, 12px);
     border: 3px solid #073b4c;
     border-radius: 18px;
     background:
@@ -306,15 +303,26 @@
 }
 
 .periodic-tile.locked {
-    --element-accent: #94a3b8;
-    --element-soft: #eef2f7;
-    filter: saturate(0.25);
-    opacity: 0.88;
+    background:
+        linear-gradient(180deg, rgba(71, 85, 105, 0.3), rgba(15, 23, 42, 0.36)),
+        linear-gradient(180deg, #ffffff 0%, var(--element-soft, #edf2f7) 100%);
+    opacity: 0.78;
+}
+
+.periodic-tile.locked .periodic-tile-number {
+    color: color-mix(in srgb, var(--element-accent, #64748b) 42%, #1f2937);
+}
+
+.periodic-tile.locked .periodic-tile-symbol {
+    color: color-mix(in srgb, var(--element-accent, #64748b) 46%, #111827);
 }
 
 .periodic-tile-number {
+    position: absolute;
+    top: clamp(5px, 0.36vw, 7px);
+    left: clamp(7px, 0.42vw, 9px);
     display: block;
-    font-size: clamp(10px, 0.72vw, 12px);
+    font-size: clamp(8px, 0.56vw, 10px);
     font-weight: 800;
     line-height: 1;
     color: #64748b;
@@ -322,33 +330,18 @@
 
 .periodic-tile-symbol {
     display: block;
-    align-self: center;
     max-width: 100%;
-    overflow: hidden;
-    font-size: clamp(18px, 1.45vw, 26px);
+    overflow: visible;
+    font-size: clamp(15px, 1.12vw, 20px);
     font-weight: 900;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
+    line-height: 1.12;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: color-mix(in srgb, var(--element-accent, #073b4c) 82%, #073b4c);
 }
 
 .periodic-tile.symbol-double .periodic-tile-symbol {
-    font-size: clamp(15px, 1.2vw, 22px);
-    letter-spacing: -0.02em;
-}
-
-.periodic-tile-name {
-    display: none;
-    align-self: end;
-    overflow: hidden;
-    font-size: clamp(9px, 0.7vw, 12px);
-    font-weight: 800;
-    line-height: 1.08;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    color: #334155;
+    font-size: clamp(13px, 0.94vw, 17px);
 }
 
 #journal-screen .screen-shell {

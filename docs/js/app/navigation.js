@@ -7,10 +7,10 @@ import {
     getMechanicById
 } from "./state.js";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
-import { createMenuSceneController } from "./menu-scene/controller.js";
+import { createMenuSceneController } from "./menu-scene/controller.js?v=20260507-menu-spacing";
 import { createHomeChromeController } from "./menu-scene/chrome.js";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
-import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js";
+import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260507-journal-tile-polish";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 import {

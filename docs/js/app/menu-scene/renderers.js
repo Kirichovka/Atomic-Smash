@@ -9,8 +9,8 @@ export function layoutMenuSceneNodes({ camera, nodeLayerElement, nodes, space })
 
         const projected = projectNodeToViewport(space, camera, node);
         const nodeWidthPx = space.getNodeWidthPx(node);
-        element.style.left = `${projected.xPercent}%`;
-        element.style.top = `${projected.yPercent}%`;
+        element.style.left = `${projected.xPixels}px`;
+        element.style.top = `${projected.yPixels}px`;
         element.style.width = `${nodeWidthPx}px`;
     });
 }
