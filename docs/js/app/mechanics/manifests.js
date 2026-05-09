@@ -1,5 +1,5 @@
 import { createConnectionLabMechanic } from "./connection-lab/index.js?v=20260509-board-selection-modifier";
-import { createBalanceLabMechanic } from "./balance-lab/index.js";
+import { createBalanceLabMechanic } from "./balance-lab/index.js?v=20260509-help-visual-optional";
 import { createMechanicManifest } from "./manifest-factory.js";
 import { MECHANIC_CAPABILITY } from "./manifest-contracts.js";
 
@@ -20,7 +20,8 @@ export function createBuiltInMechanicManifests() {
         createMechanicManifest({
             id: "balance-lab",
             capabilities: [
-                MECHANIC_CAPABILITY.activationLifecycle
+                MECHANIC_CAPABILITY.activationLifecycle,
+                MECHANIC_CAPABILITY.helpVisual
             ],
             create: createBalanceLabMechanic
         })

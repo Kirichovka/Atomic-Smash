@@ -16,12 +16,12 @@ import {
 } from "./data.js?v=20260509-menu-hover-continue-state";
 import { createEventBus } from "./app/event-bus.js";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
-import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260509-menu-hover-continue-state";
+import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260509-replay-completed-level";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { createRefs } from "./app/refs.js";
 import { clearStoredState, loadStoredState } from "./app/storage.js";
-import { createState, getLevelsForTheme, hydrateState } from "./app/state.js";
+import { createState, getLevelsForTheme, hydrateState } from "./app/state.js?v=20260509-replay-completed-level";
 
 export async function initGame() {
     const [

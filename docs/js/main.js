@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260509-menu-hover-continue-state";
+import { initGame } from "./game.js?v=20260509-replay-completed-level";
 
 initGame().catch(error => {
     console.error(error);

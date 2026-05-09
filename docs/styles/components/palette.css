@@ -65,8 +65,12 @@
 
 .sidebar-toggle:hover,
 .sidebar-toggle:focus-visible {
-    border-color: var(--color-accent);
-    color: var(--color-text-brand);
+    background: #fff7d7;
+    border-color: #073b4c;
+    box-shadow:
+        0 0 0 4px rgba(255, 209, 102, 0.24),
+        3px 4px 0 #073b4c;
+    color: #073b4c;
     outline: none;
 }
 

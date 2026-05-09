@@ -1,4 +1,4 @@
-import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js";
+import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js?v=20260509-replay-completed-level";
 import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
 import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260506-compact-modals";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
@@ -382,7 +382,7 @@ function getLevelIntroActionLabel({ isCompleted, isCurrent, isUnlocked }) {
     }
 
     if (isCompleted) {
-        return "Continue Theme";
+        return "Replay Level";
     }
 
     return "Open Level";

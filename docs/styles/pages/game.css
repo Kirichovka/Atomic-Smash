@@ -131,6 +131,11 @@
     font-size: 14px;
     font-weight: 900;
     text-transform: uppercase;
+    transition:
+        background 120ms ease,
+        box-shadow 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease;
 }
 
 #game-screen #topbar button.compact {
@@ -145,6 +150,30 @@
 #game-screen .sidebar-toggle,
 #game-screen #theme-complete-close {
     background: #ffffff;
+}
+
+#game-screen #topbar button:not(:disabled):hover,
+#game-screen #topbar button:not(:disabled):focus-visible,
+#game-screen .palette-actions button:not(:disabled):hover,
+#game-screen .palette-actions button:not(:disabled):focus-visible,
+#game-screen .sidebar-toggle:not(:disabled):hover,
+#game-screen .sidebar-toggle:not(:disabled):focus-visible,
+#game-screen #theme-complete-close:not(:disabled):hover,
+#game-screen #theme-complete-close:not(:disabled):focus-visible {
+    border-color: var(--game-ink);
+    background: #fff7d7;
+    box-shadow:
+        0 0 0 4px rgba(255, 209, 102, 0.24),
+        4px 6px 0 var(--game-shadow);
+    color: var(--game-ink);
+    outline: none;
+}
+
+#game-screen #topbar button.primary:not(:disabled):hover,
+#game-screen #topbar button.primary:not(:disabled):focus-visible,
+#game-screen .palette-actions button:not(:disabled):hover,
+#game-screen .palette-actions button:not(:disabled):focus-visible {
+    background: #ffe29a;
 }
 
 #game-screen #topbar button:active,

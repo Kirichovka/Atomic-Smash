@@ -1,4 +1,4 @@
-import { getCompoundById, getCurrentLevel, getCurrentTheme } from "../state.js";
+import { getCompoundById, getCurrentLevel, getCurrentTheme } from "../state.js?v=20260509-replay-completed-level";
 
 const BASIC_TUTORIAL_THEME_ID = "basic";
 const BASIC_TUTORIAL_FIRST_LEVEL_ID = "level-1";

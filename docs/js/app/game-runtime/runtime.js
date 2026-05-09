@@ -1,13 +1,13 @@
 import { createHotkeysController } from "../hotkeys.js";
-import { createModalController } from "../modals.js?v=20260506-compact-modals";
-import { createNavigationController } from "../navigation.js?v=20260509-menu-hover-continue-state";
+import { createModalController } from "../modals.js?v=20260509-replay-completed-level";
+import { createNavigationController } from "../navigation.js?v=20260509-replay-completed-level";
 import { createPaletteController } from "../palette.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
-import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-board-selection-modifier";
+import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-help-visual-optional";
 import { persistState } from "../storage.js";
-import { getActiveMechanicId } from "../state.js";
+import { getActiveMechanicId } from "../state.js?v=20260509-replay-completed-level";
 import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260507-game-level-intro";
-import { createGameplayController } from "./gameplay-controller.js?v=20260509-menu-render-cache";
+import { createGameplayController } from "./gameplay-controller.js?v=20260509-replay-completed-level";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";
 import { createRuntimeController } from "./controller-factory.js";
@@ -67,10 +67,12 @@ export function createGameRuntime({
             schemaConfig: modalRuntimeSchemaConfig,
             actionRegistry: runtimeActions.registry,
             registerLevelIntroAction: runtimeActions.registerLevelIntroAction,
-            createHelpVisual: compound => getActiveMechanic().createHelpVisual(compound),
+            createHelpVisual: compound => getActiveMechanic().createHelpVisual?.(compound) ?? null,
             onModalStateChanged: scheduleBasicTutorialSync,
             onThemeCompleteClosed: () => gameplayController?.openMainMenu(),
-            onStartLevelIntro: theme => gameplayController?.startTheme(theme.id)
+            onStartLevelIntro: (theme, level) => gameplayController?.startTheme(theme.id, {
+                levelId: level.id
+            })
         }
     });
     const paletteController = createRuntimeController({

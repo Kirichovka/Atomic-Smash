@@ -28,6 +28,7 @@ export function createState(gameData) {
             discoveredCompounds: new Set(),
             discoveryHistory: [],
             completedLevelIds: new Set(),
+            currentLevelId: null,
             currentThemeId: null,
             failedAttempts: 0,
             bonusUnlockShown: false
@@ -96,6 +97,9 @@ export function hydrateState(state, snapshot) {
             ? snapshot.progress.completedLevelIds.filter(levelId => validLevelIds.has(levelId))
             : []
     );
+    state.progress.currentLevelId = validLevelIds.has(snapshot.progress?.currentLevelId)
+        ? snapshot.progress.currentLevelId
+        : null;
     state.progress.currentThemeId = validThemeIds.has(snapshot.progress?.currentThemeId)
         ? snapshot.progress.currentThemeId
         : null;
@@ -158,6 +162,7 @@ export function createPersistedStateSnapshot(state) {
             basicTutorialCompleted: state.progress.basicTutorialCompleted,
             discoveryHistory: [...state.progress.discoveryHistory],
             completedLevelIds: [...state.progress.completedLevelIds],
+            currentLevelId: state.progress.currentLevelId,
             currentThemeId: state.progress.currentThemeId,
             failedAttempts: state.progress.failedAttempts,
             bonusUnlockShown: state.progress.bonusUnlockShown
@@ -224,8 +229,13 @@ export function getCurrentLevel(state) {
         return null;
     }
 
-    return getLevelsForTheme(state, state.progress.currentThemeId)
-        .find(level => !state.progress.completedLevelIds.has(level.id)) ?? null;
+    const themeLevels = getLevelsForTheme(state, state.progress.currentThemeId);
+    const activeLevel = themeLevels.find(level => level.id === state.progress.currentLevelId);
+    if (activeLevel) {
+        return activeLevel;
+    }
+
+    return themeLevels.find(level => !state.progress.completedLevelIds.has(level.id)) ?? null;
 }
 
 export function getActiveMechanicId(state) {

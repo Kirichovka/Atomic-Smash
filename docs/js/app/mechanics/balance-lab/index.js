@@ -1,4 +1,4 @@
-import { getCurrentLevel, getCompoundById } from "../../state.js";
+import { getCurrentLevel, getCompoundById } from "../../state.js?v=20260509-replay-completed-level";
 
 export function createBalanceLabMechanic({ refs, state }) {
     let userAnswers = {};
@@ -104,6 +104,27 @@ export function createBalanceLabMechanic({ refs, state }) {
 
     function captureState() {
         return null;
+    }
+
+    function createHelpVisual() {
+        const level = getCurrentLevel(state);
+        const eq = getEquation();
+        if (!level || !eq) {
+            return null;
+        }
+
+        const visual = document.createElement("div");
+        visual.className = "balance-help-visual";
+        const answers = eq.answers?.length
+            ? eq.answers.map(value => `<span class="balance-help-coeff">${value}</span>`).join("")
+            : "<span class=\"balance-help-coeff\">Already balanced</span>";
+
+        visual.innerHTML = `
+            <div class="balance-help-label">${eq.label ?? level.displayTitle ?? "Balanced equation"}</div>
+            <div class="balance-help-row">${answers}</div>
+        `;
+
+        return visual;
     }
 
     // ── Evaluation ────────────────────────────────────────────────────────
@@ -425,6 +446,7 @@ export function createBalanceLabMechanic({ refs, state }) {
     return {
         activate,
         captureState,
+        createHelpVisual,
         deactivate,
         evaluate,
         id: "balance-lab",

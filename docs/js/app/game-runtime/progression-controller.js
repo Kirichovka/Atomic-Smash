@@ -6,7 +6,7 @@ import {
     getCurrentTheme,
     getLevelsForTheme,
     getMechanicById
-} from "../state.js";
+} from "../state.js?v=20260509-replay-completed-level";
 import { createProgressionRuntimeContentBuilder } from "../progression-runtime/content-builders.js";
 import { createRuntimeContentBuilder } from "../runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "../runtime-content/contracts.js";
@@ -102,12 +102,17 @@ export function createProgressionController({
         onTutorialSync?.();
     }
 
-    function startTheme(themeId) {
+    function startTheme(themeId, options = {}) {
         if (!state.catalog.themes.some(theme => theme.id === themeId)) {
             return;
         }
 
+        const themeLevels = getLevelsForTheme(state, themeId);
+        const requestedLevel = themeLevels.find(level => level.id === options.levelId) ?? null;
+        const nextOpenLevel = themeLevels.find(level => !state.progress.completedLevelIds.has(level.id)) ?? null;
+
         state.progress.currentThemeId = themeId;
+        state.progress.currentLevelId = requestedLevel?.id ?? nextOpenLevel?.id ?? null;
         state.ui.menuViewedThemeId = themeId;
         mechanicsRegistry.resetAll();
         state.progress.failedAttempts = 0;
@@ -213,6 +218,7 @@ export function createProgressionController({
         state.progress.failedAttempts = 0;
         getActiveMechanic().captureState?.();
         state.progress.completedLevelIds.add(currentLevel.id);
+        state.progress.currentLevelId = nextLevel?.id ?? null;
 
         if (currentTheme.id === BASIC_TUTORIAL_THEME_ID && currentLevel.id === BASIC_TUTORIAL_FIRST_LEVEL_ID) {
             onTutorialLevelCompleted?.("after-mix");

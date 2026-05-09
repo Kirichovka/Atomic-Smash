@@ -166,6 +166,23 @@ Balance-lab mechanic UX note:
   - do not merge old `game-data.json` wholesale just to pick up mechanic fixes
   - after changing balance-lab controls, manually verify click fill, drag/drop fill, reset, check, wrong-answer feedback, and returning to connection-lab levels
 
+Balance-lab help visual note:
+
+- what broke:
+  - after repeated failed balance-lab answers, the shared help modal tried to call `createHelpVisual(...)`
+  - `balance-lab` did not implement that optional mechanic method, so the promise failed with `createHelpVisual is not a function`
+- real cause:
+  - `runtime.js` treated an optional mechanic capability as required
+  - balance-lab had local hint feedback but no shared modal help visual for the generic failed-attempt path
+- fix:
+  - `runtime.js` now calls `getActiveMechanic().createHelpVisual?.(...) ?? null`
+  - `docs/js/app/mechanics/balance-lab/index.js` provides a compact equation coefficient help visual
+  - `docs/js/app/mechanics/manifests.js` marks balance-lab with the help visual capability
+- safe rule:
+  - never call optional mechanic APIs without optional chaining or a capability check
+  - if a shared controller can open a mechanic-specific modal, either every routed mechanic implements the visual contract or the runtime must provide a null-safe fallback
+  - when changing mechanic optional methods, bust the runtime/mechanics import chain and the matching page CSS import
+
 ## Change Routing
 
 Use this map before editing:
@@ -365,6 +382,31 @@ Safe rule:
 
 - level transitions should go `discovery info -> level complete prompt -> next level intro -> start level`
 - do not call `startTheme(...)` directly from the level-complete next button unless intentionally skipping briefings
+
+Completed-level replay note:
+
+What broke:
+
+- clicking a completed menu level opened its intro, but starting it did not replay that completed level
+- the game instead resolved the active task from the first incomplete level in the theme
+
+Real cause:
+
+- progress only stored `currentThemeId`; `getCurrentLevel(...)` derived the active level from incomplete progress
+- `openLevelIntroModal(...)` passed the selected level to the intro UI, but the start action called `startTheme(theme.id)` without the selected level id
+
+Fix applied:
+
+- progress now stores `currentLevelId`
+- `getCurrentLevel(...)` returns `currentLevelId` when it belongs to the current theme, even if it is already completed
+- level intro start actions call `startTheme(theme.id, { levelId })`
+- completed level intro copy says `Replay Level`
+
+Safe rule:
+
+- do not derive active gameplay level only from completion state when users can replay completed tasks
+- menu preview actions must preserve selected `level.id` all the way through modal start and progression start
+- when changing active-level resolution, update persisted state hydration/snapshot and cache-bust every module importing `state.js`
 
 Tutorial-gated next-level note:
 
@@ -906,6 +948,29 @@ Safe rule:
 - locked menu tasks should use schema-owned `aria-disabled` plus a controller click guard when they still need hover feedback
 - disabled menu actions such as `Continue` must be disabled by navigation/controller state, then styled via `:disabled`
 - `Continue` should be enabled from the viewed route's completed-level count, not from unrelated global progress
+
+Game action hover note:
+
+What broke:
+
+- after removing broad Petra hover rules, several real action buttons had no useful hover feedback
+- affected surfaces included palette add, sidebar hide, topbar menu/journal/mix/clear, level intro actions, and level-complete actions
+
+Real cause:
+
+- the bad hover rollback correctly removed global `button:hover`, but some legitimate game chrome did not have scoped replacement states
+
+Fix applied:
+
+- `docs/styles/pages/game.css` adds scoped hover/focus-visible states for game chrome and palette action buttons
+- `docs/styles/components/palette.css` strengthens the sidebar toggle hover
+- `docs/styles/components/modals.css` adds scoped hover/focus-visible states for level intro and level-complete actions
+
+Safe rule:
+
+- add hover behavior to named game/modal action classes, not global `button:hover`
+- keep hover as a subtle affordance; reserve movement/pressed offset for `:active`
+- cache-bust `styles.css` and the specific imported CSS file when changing visible hover behavior
 
 Board multi-select modifier note:
 

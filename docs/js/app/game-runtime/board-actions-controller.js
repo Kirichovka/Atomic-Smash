@@ -1,4 +1,4 @@
-import { getCompoundById, getCurrentLevel, isCurrentLevelTarget } from "../state.js";
+import { getCompoundById, getCurrentLevel, isCurrentLevelTarget } from "../state.js?v=20260509-replay-completed-level";
 
 export function createBoardActionsController({
     refs,

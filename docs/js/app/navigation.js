@@ -5,7 +5,7 @@ import {
     getCurrentTheme,
     getLevelsForTheme,
     getMechanicById
-} from "./state.js";
+} from "./state.js?v=20260509-replay-completed-level";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
 import { createMenuSceneController } from "./menu-scene/controller.js?v=20260509-menu-hover-continue-state";
 import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";

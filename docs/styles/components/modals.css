@@ -198,6 +198,22 @@
     box-shadow: 0 8px 18px rgba(7, 59, 76, 0.12);
     color: var(--color-ink-game);
     font-weight: 900;
+    transition:
+        background 120ms ease,
+        box-shadow 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease;
+}
+
+.level-intro-action:not(:disabled):hover,
+.level-intro-action:not(:disabled):focus-visible {
+    border-color: var(--color-ink-game);
+    background: #ffe29a;
+    box-shadow:
+        0 0 0 4px rgba(255, 209, 102, 0.24),
+        0 10px 20px rgba(7, 59, 76, 0.16);
+    color: var(--color-ink-game);
+    outline: none;
 }
 
 .level-intro-action:disabled {
@@ -652,6 +668,34 @@
     background: var(--color-text-brand);
     color: var(--color-surface-solid);
     box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+}
+
+.level-complete-stay,
+.level-complete-next {
+    transition:
+        background 120ms ease,
+        box-shadow 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease;
+}
+
+.level-complete-stay:not(:disabled):hover,
+.level-complete-stay:not(:disabled):focus-visible {
+    border-color: var(--color-ink-game);
+    background: #fff7d7;
+    box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.2);
+    color: var(--color-ink-game);
+    outline: none;
+}
+
+.level-complete-next:not(:disabled):hover,
+.level-complete-next:not(:disabled):focus-visible {
+    background: #0a4a60;
+    box-shadow:
+        0 0 0 4px rgba(255, 209, 102, 0.2),
+        0 16px 30px rgba(15, 23, 42, 0.22);
+    color: var(--color-surface-solid);
+    outline: none;
 }
 
 .help-modal-kicker {
