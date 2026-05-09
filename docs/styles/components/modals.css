@@ -125,6 +125,10 @@
     max-width: 560px;
 }
 
+.modal-close:hover {
+    background: var(--color-text-primary);
+}
+
 .level-intro-kicker {
     display: inline-flex;
     align-items: center;

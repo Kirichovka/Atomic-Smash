@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="./styles.css?v=20260507-centered-modals" />
 </head>
 <body data-page="menu">
+    <!-- Splash Screen with Exploding Flask -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-flask-container">
+            <svg class="chemistry-flask" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <!-- Chemistry glass/beaker shape -->
+                <path d="M 30 20 L 28 20 Q 25 20 25 23 L 25 40 L 25 85 Q 25 95 34 100 L 66 100 Q 75 95 75 85 L 75 40 L 75 23 Q 75 20 72 20 L 70 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M 33 20 L 67 20" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                <path class="flask-liquid" d="M 28 65 Q 35 58 50 62 Q 65 66 72 65 L 72 85 Q 72 90 68 93 L 32 93 Q 28 90 28 85 Z"/>
+                <path d="M 38 45 L 44 40" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+                <path d="M 52 52 L 64 48" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+                <circle cx="45" cy="75" r="2.2" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="58" cy="88" r="1.5" fill="rgba(255,255,255,0.9)"/>
+            </svg>
+            <div class="bubbles">
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+            </div>
+            <div class="splash-flash"></div>
+        </div>
+        <div class="splash-instruction">Click or Press Space to Begin</div>
+    </div>
+
     <section id="menu-screen" class="app-screen">
         <div class="menu-dynamic-bg pattern-bg" aria-hidden="true"></div>
 
@@ -34,5 +57,6 @@
     </div>
 
     <script type="module" src="./js/main.js?v=20260507-menu-navigation"></script>
+    <script src="./js/splash.js?v=20260506-splash-intro"></script>
 </body>
 </html>

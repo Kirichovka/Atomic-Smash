@@ -124,6 +124,12 @@
     transition: transform 0.1s, box-shadow 0.1s;
 }
 
+.menu-card button:hover:not(:disabled) {
+    transform: translate(2px, 3px);
+    box-shadow: 2px 3px 0 #073b4c;
+    background: #ffd166;
+}
+
 .menu-card button:active {
     transform: translate(4px, 6px);
     box-shadow: 0px 0px 0px #073b4c;
@@ -226,6 +232,12 @@
     text-transform: uppercase;
 }
 
+.theme-card button:hover:not(:disabled) {
+    transform: translate(2px, 3px);
+    box-shadow: 2px 3px 0 #073b4c;
+    background: #ffd166;
+}
+
 .theme-card button:disabled {
     background: #e5edf3;
     color: #62748a;
@@ -270,6 +282,12 @@
     box-shadow: 6px 8px 0 #073b4c;
     text-align: left;
     color: #073b4c;
+}
+
+.journal-card:not(:disabled):hover {
+    transform: translate(3px, 4px);
+    box-shadow: 3px 4px 0 #073b4c;
+    background: #f8fafc;
 }
 
 .journal-card.locked {

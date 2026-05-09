@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let isExploding = false;
 
-    flaskContainer.addEventListener('click', () => {
+    const triggerExplosion = () => {
         if (isExploding) return;
         isExploding = true;
         flaskContainer.classList.add('exploding');
@@ -43,6 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 
             }, 300);
         }, 800);
+    };
+
+    flaskContainer.addEventListener('click', triggerExplosion);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            triggerExplosion();
+        }
     });
 });
 

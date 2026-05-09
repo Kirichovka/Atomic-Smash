@@ -147,6 +147,14 @@
     background: #ffffff;
 }
 
+#game-screen #topbar button:hover:not(:disabled),
+#game-screen .palette-actions button:hover:not(:disabled),
+#game-screen .sidebar-toggle:hover,
+#game-screen #theme-complete-close:hover {
+    transform: translate(2px, 3px);
+    box-shadow: 2px 3px 0 var(--game-shadow);
+}
+
 #game-screen #topbar button:active,
 #game-screen .palette-actions button:active,
 #game-screen .sidebar-toggle:active,

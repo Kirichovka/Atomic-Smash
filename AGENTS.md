@@ -832,6 +832,31 @@ Safe rule:
 - do not make locked/reference journal tiles globally gray if the table is meant to communicate element type; dim them while preserving the category hue
 - keep lock state separate from chemical category color
 
+Favicon merge hygiene note:
+
+What broke:
+
+- a feature branch added a new favicon as root-level files with spaces in their names and changed page links to `../favicon (2).ico`
+- one page could also end up with two favicon links after a merge
+
+Real cause:
+
+- the deployed `docs` folder expects stable page-local asset paths
+- taking branch HTML changes wholesale can overwrite current cache-busting URLs and point pages outside the docs root
+
+Fix applied:
+
+- the new icon was copied into `docs/favicon.ico`
+- the SVG source was kept as `docs/favicon.svg`
+- page HTML kept the stable `./favicon.ico` link and current stylesheet/script cache-busting URLs
+- duplicate root favicon files with spaces were removed from the merge result
+
+Safe rule:
+
+- keep public page assets under `docs/` and reference favicon as `./favicon.ico`
+- do not use root-level favicon filenames with spaces in HTML
+- when merging favicon work, preserve current cache-busting query strings and check every page has only one favicon link
+
 ## Clone / Git For Windows Issues
 
 Known external setup issue:
