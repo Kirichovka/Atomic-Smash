@@ -12,7 +12,8 @@ export function createMenuSceneNodeSchema(node) {
             levelId: node.levelId
         },
         attrs: {
-            disabled: !node.isUnlocked
+            "aria-disabled": node.isUnlocked ? undefined : "true",
+            tabindex: node.isUnlocked ? undefined : -1
         },
         on: {
             click: {
@@ -25,8 +26,9 @@ export function createMenuSceneNodeSchema(node) {
 
 export function createMenuSceneNodeBindings(node) {
     return {
-        disabled: !node.isUnlocked,
+        ariaDisabled: node.isUnlocked ? undefined : "true",
         isUnlocked: node.isUnlocked,
+        tabIndex: node.isUnlocked ? undefined : -1,
         level: {
             id: node.levelId,
             index: `Level ${node.level.levelNumber ?? resolveMenuSceneLevelNumber(node.levelId)}`

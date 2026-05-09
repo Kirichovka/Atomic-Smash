@@ -1,6 +1,6 @@
-import { MenuSceneCamera, MenuSceneSpace } from "./entities.js?v=20260507-menu-spacing";
-import { getMenuStageOverflow } from "./methods.js";
-import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260507-menu-spacing";
+import { MenuSceneCamera, MenuSceneSpace } from "./entities.js?v=20260509-menu-render-cache";
+import { getMenuStageOverflow } from "./methods.js?v=20260509-menu-render-cache";
+import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260509-menu-render-cache";
 
 export function createMenuSceneLayoutRuntime({
     refs,

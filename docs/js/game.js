@@ -13,10 +13,10 @@ import {
     loadPaletteRuntimeSchemaConfig,
     loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
-} from "./data.js?v=20260507-journal-tile-polish";
+} from "./data.js?v=20260509-menu-hover-continue-state";
 import { createEventBus } from "./app/event-bus.js";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
-import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260507-menu-navigation";
+import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260509-menu-hover-continue-state";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { createRefs } from "./app/refs.js";

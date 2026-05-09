@@ -29,7 +29,7 @@ export function createBoardDragSessionController({
 
         event.preventDefault();
         const draggedNodeId = boardState.getNodeIdFromElement(event.currentTarget);
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey || event.shiftKey) {
             boardSelection.toggleNodeSelection(draggedNodeId);
             return;
         }

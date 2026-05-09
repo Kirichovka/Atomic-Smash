@@ -1,5 +1,5 @@
 import { SceneObject, SCENE_OBJECT_ROLE } from "../scene-object.js";
-import { MENU_SCENE_DEFAULTS, MENU_SCENE_ENTITY_KIND } from "./contracts.js";
+import { MENU_SCENE_DEFAULTS, MENU_SCENE_ENTITY_KIND } from "./contracts.js?v=20260509-menu-render-cache";
 
 export class MenuSceneEntity extends SceneObject {
     constructor({ id, kind }) {

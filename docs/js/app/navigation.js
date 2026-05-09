@@ -7,8 +7,8 @@ import {
     getMechanicById
 } from "./state.js";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
-import { createMenuSceneController } from "./menu-scene/controller.js?v=20260507-menu-spacing";
-import { createHomeChromeController } from "./menu-scene/chrome.js";
+import { createMenuSceneController } from "./menu-scene/controller.js?v=20260509-menu-hover-continue-state";
+import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
 import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260507-journal-tile-polish";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
@@ -98,7 +98,9 @@ export function createNavigationController({
         const availableElements = getAvailableElements(state);
         const viewedTheme = getMenuViewedTheme();
         const themeLevels = viewedTheme ? getLevelsForTheme(state, viewedTheme.id) : [];
+        const completedViewedThemeLevels = viewedTheme ? getCompletedCountForTheme(state, viewedTheme.id) : 0;
         const isThemeReady = Boolean(viewedTheme && themeLevels.length > 0 && menuMapConfig?.themes?.[viewedTheme.id]);
+        const canContinue = isThemeReady && completedViewedThemeLevels > 0;
 
         if (refs.menuThemeProgress) {
             refs.menuThemeProgress.textContent = `${completedThemes}/${state.catalog.themes.length} themes complete`;
@@ -117,10 +119,11 @@ export function createNavigationController({
         }
 
         if (refs.menuContinueButton) {
-            refs.menuContinueButton.disabled = !isThemeReady;
+            refs.menuContinueButton.disabled = !canContinue;
             refs.menuContinueButton.textContent = isThemeReady ? "Continue" : "Coming Soon";
         }
         homeChromeController.renderHeaderState({
+            canContinue,
             routeName: viewedTheme?.name ?? "No route selected",
             routeProgress: viewedTheme
                 ? `${getCompletedCountForTheme(state, viewedTheme.id)}/${themeLevels.length} complete`

@@ -1,11 +1,11 @@
-import { MenuSceneSheetBuilder } from "./builders.js?v=20260507-menu-spacing";
-import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260507-menu-spacing";
+import { MenuSceneSheetBuilder } from "./builders.js?v=20260509-menu-render-cache";
+import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260509-menu-render-cache";
 import {
     createMenuSceneNodeBindings,
     createMenuSceneNodeSchema,
     createMenuScenePlaceholderSchema
-} from "./node-schema.js";
-import { createMenuSceneViewport } from "./view.js";
+} from "./node-schema.js?v=20260509-menu-hover-continue-state";
+import { createMenuSceneViewport } from "./view.js?v=20260509-menu-render-cache";
 import { createSceneUiFactory } from "../scene-ui/factory.js";
 import { compileSceneSchema, resolveSceneSchema } from "../scene-ui/schema.js";
 import { SCENE_ACTION_IDS, createPreviewLevelIntroActionId } from "../contracts/action-ids.js";
@@ -124,6 +124,10 @@ export function createMenuSceneController({
             const actionId = createPreviewLevelIntroActionId(node.levelId);
             if (!actionRegistry.has?.(actionId)) {
                 actionRegistry.register(actionId, () => {
+                    if (!node.isUnlocked) {
+                        return;
+                    }
+
                     onPreviewLevelIntro?.(node.theme, node.level, node.options);
                 });
             }
@@ -141,6 +145,10 @@ export function createMenuSceneController({
 
         return {
             [SCENE_ACTION_IDS.previewLevelIntro]: () => {
+                if (!node.isUnlocked) {
+                    return;
+                }
+
                 onPreviewLevelIntro?.(node.theme, node.level, node.options);
             }
         };

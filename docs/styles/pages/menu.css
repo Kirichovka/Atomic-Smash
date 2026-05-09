@@ -196,11 +196,32 @@ body[data-page="menu"] {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
+    transition: background 120ms ease, box-shadow 120ms ease, color 120ms ease;
 }
 
 .home-header-link-primary {
     background: #073b4c;
     color: #ffffff;
+}
+
+.home-header-link:not(:disabled):hover,
+.home-header-link:not(:disabled):focus-visible {
+    background: #fff7d7;
+    box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.24);
+}
+
+.home-header-link-primary:not(:disabled):hover,
+.home-header-link-primary:not(:disabled):focus-visible {
+    background: #0a4a60;
+    color: #ffffff;
+}
+
+.home-header-link:disabled {
+    border-color: rgba(7, 59, 76, 0.34);
+    background: #edf2f4;
+    box-shadow: none;
+    color: #7b8e98;
+    cursor: not-allowed;
 }
 
 .home-stage {
@@ -294,6 +315,13 @@ body[data-page="menu"] {
     font-size: 1.25rem;
     font-weight: 900;
     line-height: 1;
+    transition: background 120ms ease, box-shadow 120ms ease;
+}
+
+.home-sheet-arrow:not(:disabled):hover,
+.home-sheet-arrow:not(:disabled):focus-visible {
+    background: #fff7d7;
+    box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.24);
 }
 
 .home-sheet-dots {
@@ -439,7 +467,7 @@ body[data-page="menu"] {
 }
 
 .home-level-node.level-status-current {
-    background: linear-gradient(180deg, #d8f4ff 0%, #bfe5f6 100%);
+    background: linear-gradient(180deg, #fff8db 0%, #ffe39a 100%);
     box-shadow:
         0 0 0 6px rgba(17, 138, 178, 0.14),
         6px 8px 0 rgba(7, 59, 76, 0.22);
@@ -454,8 +482,24 @@ button.home-level-node {
     cursor: pointer;
 }
 
-button.home-level-node:hover {
-    transform: translate(-50%, calc(-50% - 2px));
+button.home-level-node[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+button.home-level-node:not([aria-disabled="true"]):hover,
+button.home-level-node:not([aria-disabled="true"]):focus-visible {
+    background: linear-gradient(180deg, #fffefa 0%, #fff6d8 100%);
+    box-shadow:
+        0 0 0 5px rgba(255, 209, 102, 0.22),
+        6px 8px 0 rgba(7, 59, 76, 0.22);
+}
+
+button.home-level-node[aria-disabled="true"]:hover {
+    border-color: rgba(7, 59, 76, 0.68);
+    background: #fff7d7;
+    box-shadow:
+        0 0 0 5px rgba(255, 209, 102, 0.22),
+        6px 8px 0 rgba(7, 59, 76, 0.16);
 }
 
 .home-level-index {

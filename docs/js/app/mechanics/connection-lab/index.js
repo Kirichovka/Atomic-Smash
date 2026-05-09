@@ -1,4 +1,4 @@
-import { createBoardSceneRuntime } from "../../board-scene/runtime.js";
+import { createBoardSceneRuntime } from "../../board-scene/runtime.js?v=20260509-board-selection-modifier";
 import { createBoardVisualRuntimeContentBuilder } from "../../board-visual-runtime/content-builders.js";
 import { RUNTIME_EVENT_IDS } from "../../contracts/event-contracts.js";
 import { createRuntimeContentBuilder } from "../../runtime-content/factory.js";

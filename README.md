@@ -168,7 +168,7 @@ The current `Game` screen supports multiple interaction layers depending on devi
 ### Board interactions
 
 - tap or click a node to select it and inspect its element data;
-- hold `Ctrl` and left click to add or remove nodes from the current selection;
+- hold `Shift`, `Ctrl`, or `Cmd` and left click to add or remove nodes from the current selection;
 - drag any selected node to move the whole selected group together;
 - drag nodes to reposition them;
 - drag from connectors to create links;

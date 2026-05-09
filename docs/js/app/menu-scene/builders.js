@@ -1,10 +1,10 @@
-import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js?v=20260507-menu-spacing";
+import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js?v=20260509-menu-render-cache";
 import {
     createSceneNodeStatus,
     createSceneNodeSubtitle,
     createSceneNodeTitle,
     createScenePlaceholder
-} from "./methods.js";
+} from "./methods.js?v=20260509-menu-render-cache";
 
 export class MenuSceneTaskNodeBuilder {
     constructor({ layoutNode, level, options, theme }) {

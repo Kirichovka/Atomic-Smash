@@ -1,5 +1,5 @@
 import { createBoardActionsController } from "./board-actions-controller.js?v=20260507-game-level-intro";
-import { createProgressionController } from "./progression-controller.js?v=20260507-menu-navigation";
+import { createProgressionController } from "./progression-controller.js?v=20260509-menu-render-cache";
 
 export function createGameplayController({
     refs,

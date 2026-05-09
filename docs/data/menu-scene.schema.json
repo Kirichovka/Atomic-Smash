@@ -13,7 +13,8 @@
                 "levelId": { "bind": "level.id" }
             },
             "attrs": {
-                "disabled": { "bind": "disabled", "fallback": false }
+                "aria-disabled": { "bind": "ariaDisabled", "fallback": false },
+                "tabindex": { "bind": "tabIndex" }
             },
             "on": {
                 "click": {

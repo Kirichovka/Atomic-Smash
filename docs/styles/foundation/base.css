@@ -35,11 +35,6 @@ button {
     font-size: 14px;
     background: var(--color-accent);
     color: var(--color-text-on-accent);
-    transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
-}
-
-button:hover:not(:disabled) {
-    background: var(--color-accent-active);
 }
 
 button:disabled {
@@ -50,10 +45,6 @@ button:disabled {
 button.secondary {
     background: var(--color-surface-panel-strong);
     color: var(--color-text-brand);
-}
-
-button.secondary:hover:not(:disabled) {
-    background: var(--color-surface-hover);
 }
 
 .zone-title {

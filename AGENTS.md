@@ -857,6 +857,105 @@ Safe rule:
 - do not use root-level favicon filenames with spaces in HTML
 - when merging favicon work, preserve current cache-busting query strings and check every page has only one favicon link
 
+Menu render cache-busting note:
+
+What broke:
+
+- the menu could still show old task-node hover/size behavior after the newer auto-fit renderer existed in code
+- node hover looked like the historical inflated-node bug, and menu scaling/panning could feel like the older inline controller renderer
+
+Real cause:
+
+- `styles.css` imported `styles/pages/menu.css` without a query string, so browsers could keep the old padding-based node CSS
+- several nested menu-scene ES module imports also had no fresh query string, so `layout-runtime`, `renderers`, `node-schema`, and `methods` could be mixed with stale cached versions
+
+Fix applied:
+
+- bumped `docs/index.html`, `docs/styles.css`, `docs/js/main.js`, `docs/js/game.js`, runtime imports, and the full menu-scene import chain with `20260509-menu-render-cache`
+
+Safe rule:
+
+- when changing menu rendering, spacing, hover behavior, or scene projection, bust both the page CSS import and every nested menu-scene ES module in the chain
+- if browser visuals look like old menu math while source code is correct, inspect loaded URLs/cache before rewriting layout logic
+
+Menu hover selection rollback note:
+
+What broke:
+
+- a feature branch added broad hover styling to ordinary buttons and game chrome
+- menu-node hover/current experiments also made task nodes look selected when they were only hovered or current
+- these visual hover transforms could interfere with game-board selection expectations, especially around shift-selection workflows
+
+Real cause:
+
+- the branch changed global `button:hover` behavior and several page-level button/card hover transforms
+- hover styling was treated like selection styling instead of staying scoped to surfaces that truly need hover feedback
+
+Fix applied:
+
+- removed the broad Petra hover additions from base, game chrome, cards, screens, and the duplicate modal close rule
+- removed menu task hover fill/transform changes
+- bumped imported CSS cache keys so old hover rules are not kept by the browser
+
+Safe rule:
+
+- do not implement hover as selection on menu nodes or board-adjacent controls
+- keep game-board selection visual state owned by `.node.selected` and board-scene state, not global button/card hover CSS
+- avoid broad `button:hover` transforms because buttons also participate in runtime/game workflows
+- menu task and menu chrome hover may use scoped, subtle affordances only; do not use saturated fill or transform movement
+- locked menu tasks should use schema-owned `aria-disabled` plus a controller click guard when they still need hover feedback
+- disabled menu actions such as `Continue` must be disabled by navigation/controller state, then styled via `:disabled`
+- `Continue` should be enabled from the viewed route's completed-level count, not from unrelated global progress
+
+Board multi-select modifier note:
+
+What broke:
+
+- multi-node board selection could be confused with hover/selection styling changes, and `Shift` selection was not accepted by the board drag session
+
+Real cause:
+
+- visual hover CSS was introduced outside the board selection state path
+- board toggle selection only checked `Ctrl`, even though users may use `Shift`/platform modifiers for multi-select workflows
+
+Fix applied:
+
+- `docs/js/app/board-scene/drag-session-controller.js` toggles node selection from `Shift`, `Ctrl`, or `Meta/Cmd`
+- README interaction docs now describe the accepted multi-select modifiers
+
+Safe rule:
+
+- board multi-select must be implemented in `board-scene` selection/drag controllers
+- do not attempt to emulate selected/hovered board state with global CSS selectors
+
+Schema-vs-CSS audit note:
+
+What to watch:
+
+- CSS should define how named classes look, not decide which runtime state an element is in
+- schema JSON should define ordinary UI structure, class names, attributes, dataset hooks, and actions
+- controllers/builders should bind state into schema classes such as `selected`, `active`, `locked`, `current`, `tone-*`, or mechanic-specific state classes
+
+Current safe examples:
+
+- menu task nodes get `level-size-*` and `level-status-*` through `docs/data/menu-scene.schema.json` and `menu-scene/node-schema.js`
+- board nodes get schema structure from `docs/data/board-runtime.schema.json`, while `.node.selected` is applied only by `board-scene` state
+- palette tiles get `element-template selected` through `palette-runtime` bindings, not through hover CSS
+- mix-zone context actions/options get `active` through controller-rendered schema bindings
+
+Current migration candidates:
+
+- `docs/js/app/screen-runtime/content-builders.js` still hand-builds the periodic table, preview card, row labels, `tone-*`, `locked`, and `unlocked` classes; move that structure into `screen-runtime.schema.json` when touching journal table behavior
+- `docs/js/app/modal-runtime/content-builders.js` still hand-builds level-complete panels and several compound/element sub-panels; prefer adding modal schema definitions for repeated panel/pill/action shapes before changing their CSS
+- `docs/js/app/mechanics/balance-lab/index.js` and `docs/js/equation-balancer.js` still build mechanic UI with template strings and direct state classes; when refactoring these mechanics, route panel/buttons/blanks through mechanic-local schema/bindings instead of adding more CSS-only state rules
+- static page header/action buttons on `themes.html`, `journal.html`, and `equation-balancer.html` remain outside runtime schema; move them only as part of a page-shell runtime pass, not as one-off CSS changes
+
+Safe rule:
+
+- before adding a selector for `.active`, `.selected`, `.locked`, `.current`, `.wrong`, `.correct`, `.drag-over`, or `tone-*`, first identify the controller/builder/schema path that owns that state
+- if the element is ordinary UI and already has a schema config, add or bind the class in JSON/bindings first, then style the class in CSS
+- keep geometry, animation, SVG coordinates, and canvas/SVG drawing in mechanics/renderers where schema cannot express them cleanly
+
 ## Clone / Git For Windows Issues
 
 Known external setup issue:

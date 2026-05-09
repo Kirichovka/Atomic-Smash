@@ -2,7 +2,7 @@ import { BOARD_SCENE_PART_KIND } from "./contracts.js";
 import { createBoardScenePart } from "./factory.js";
 import { createBoardConnectionSessionController } from "./connection-session-controller.js";
 import { createBoardSceneController } from "./controller.js";
-import { createBoardDragSessionController } from "./drag-session-controller.js";
+import { createBoardDragSessionController } from "./drag-session-controller.js?v=20260509-board-selection-modifier";
 import { createBoardMutationController } from "./mutation-controller.js";
 import { createBoardRenderController } from "./render-controller.js";
 import { createBoardSelectionController } from "./selection-controller.js";

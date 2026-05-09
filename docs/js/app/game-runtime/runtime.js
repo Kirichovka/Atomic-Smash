@@ -1,13 +1,13 @@
 import { createHotkeysController } from "../hotkeys.js";
 import { createModalController } from "../modals.js?v=20260506-compact-modals";
-import { createNavigationController } from "../navigation.js?v=20260507-menu-navigation";
+import { createNavigationController } from "../navigation.js?v=20260509-menu-hover-continue-state";
 import { createPaletteController } from "../palette.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
-import { createMechanicsRegistry } from "../mechanics/index.js";
+import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-board-selection-modifier";
 import { persistState } from "../storage.js";
 import { getActiveMechanicId } from "../state.js";
 import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260507-game-level-intro";
-import { createGameplayController } from "./gameplay-controller.js?v=20260507-menu-navigation";
+import { createGameplayController } from "./gameplay-controller.js?v=20260509-menu-render-cache";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";
 import { createRuntimeController } from "./controller-factory.js";

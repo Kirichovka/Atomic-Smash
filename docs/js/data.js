@@ -42,7 +42,7 @@ export async function loadHomeChromeSchemaConfig() {
 }
 
 export async function loadMenuSceneSchemaConfig() {
-    const response = await fetch("./data/menu-scene.schema.json");
+    const response = await fetch("./data/menu-scene.schema.json?v=20260509-menu-hover-continue-state");
 
     if (!response.ok) {
         throw new Error(`Failed to load menu scene schema: ${response.status}`);

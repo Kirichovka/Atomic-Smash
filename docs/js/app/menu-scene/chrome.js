@@ -16,9 +16,10 @@ export function createHomeChromeController({ refs, schemaConfig = null, actionRe
         renderToolbarScaffold();
     }
 
-    function renderHeaderState({ routeName, routeProgress }) {
+    function renderHeaderState({ canContinue = true, routeName, routeProgress }) {
         const routeNameElement = document.getElementById("menu-route-name");
         const routeProgressElement = document.getElementById("menu-route-progress");
+        const continueButton = document.getElementById("menu-continue-btn");
 
         if (routeNameElement) {
             routeNameElement.textContent = routeName ?? "No route selected";
@@ -26,6 +27,16 @@ export function createHomeChromeController({ refs, schemaConfig = null, actionRe
 
         if (routeProgressElement) {
             routeProgressElement.textContent = routeProgress ?? "Choose a theme to begin";
+        }
+
+        if (continueButton) {
+            continueButton.disabled = !canContinue;
+            continueButton.setAttribute(
+                "aria-label",
+                canContinue
+                    ? "Continue current route"
+                    : "Complete a mission to unlock continue"
+            );
         }
     }
 
