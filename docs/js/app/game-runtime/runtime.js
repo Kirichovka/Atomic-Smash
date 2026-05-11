@@ -1,5 +1,5 @@
 import { createHotkeysController } from "../hotkeys.js";
-import { createModalController } from "../modals.js?v=20260509-replay-completed-level";
+import { createModalController } from "../modals.js?v=20260512-compact-game-dialogs";
 import { createNavigationController } from "../navigation.js?v=20260509-replay-completed-level";
 import { createPaletteController } from "../palette.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";

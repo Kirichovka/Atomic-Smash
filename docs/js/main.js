@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260509-replay-completed-level";
+import { initGame } from "./game.js?v=20260512-compact-game-dialogs";
 
 initGame().catch(error => {
     console.error(error);

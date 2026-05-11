@@ -1,6 +1,6 @@
 import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js?v=20260509-replay-completed-level";
 import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
-import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260506-compact-modals";
+import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260512-compact-game-dialogs";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 
