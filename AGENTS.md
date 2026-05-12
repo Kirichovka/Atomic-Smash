@@ -1003,6 +1003,27 @@ Safe rule:
 - when a bug report says level buttons no longer open levels right after menu/runtime changes, verify the actual click path in-browser and then check cache keys before changing action wiring
 - keep `index.html` and `game.html` on the same shared app cache key when `main.js`, runtime, navigation, menu-scene, palette, or tutorial modules change
 
+Mobile menu pan/tap suppression note:
+
+What broke:
+
+- on touch devices, tapping a level after panning or zooming the route could appear to do nothing
+
+Real cause:
+
+- menu pan/zoom used a single `suppressNextClick` flag to block the synthetic click after a drag
+- the flag stayed active until any future click inside the stage, so a real tap after a previous gesture could be swallowed
+
+Fix applied:
+
+- `docs/js/app/menu-scene/layout-runtime.js` now suppresses only clicks that happen near the gesture endpoint and within a short time window
+- cache-busted the menu entry chain with `20260512-menu-touch-click`
+
+Safe rule:
+
+- never leave drag-click suppression as an unbounded boolean in touch navigation surfaces
+- suppression should be scoped by time and pointer position so later taps on level buttons still activate normally
+
 Menu hover selection rollback note:
 
 What broke:

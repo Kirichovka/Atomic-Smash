@@ -1,5 +1,5 @@
 import { MenuSceneSheetBuilder } from "./builders.js?v=20260512-level-entry-cache";
-import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-level-entry-cache";
+import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-touch-click";
 import {
     createMenuSceneNodeBindings,
     createMenuSceneNodeSchema,

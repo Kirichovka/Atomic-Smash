@@ -2,6 +2,9 @@ import { MenuSceneCamera, MenuSceneSpace } from "./entities.js?v=20260512-level-
 import { getMenuStageOverflow } from "./methods.js?v=20260512-level-entry-cache";
 import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260512-level-entry-cache";
 
+const CLICK_SUPPRESSION_MS = 420;
+const CLICK_SUPPRESSION_RADIUS = 28;
+
 export function createMenuSceneLayoutRuntime({
     refs,
     viewport,
@@ -11,7 +14,7 @@ export function createMenuSceneLayoutRuntime({
     const space = new MenuSceneSpace();
     const pointers = new Map();
     let dragState = null;
-    let suppressNextClick = false;
+    let suppressedClick = null;
 
     function sync(sheet) {
         if (!refs.menuLevelMap || !refs.menuLevelLines || !refs.menuSceneViewport || !sheet || sheet.placeholder) {
@@ -130,7 +133,7 @@ export function createMenuSceneLayoutRuntime({
             if (pointers.size >= 2) {
                 event.preventDefault();
                 handlePinch(previousPointers, sheet);
-                suppressNextClick = true;
+                suppressClickNear(event);
                 return;
             }
 
@@ -146,7 +149,7 @@ export function createMenuSceneLayoutRuntime({
 
             if (movedDistance > 6) {
                 dragState.moved = true;
-                suppressNextClick = true;
+                suppressClickNear(event);
             }
 
             if (dragState.moved) {
@@ -158,6 +161,9 @@ export function createMenuSceneLayoutRuntime({
         refs.menuStageFrame.addEventListener("pointerup", event => {
             pointers.delete(event.pointerId);
             if (dragState?.pointerId === event.pointerId) {
+                if (dragState.moved) {
+                    suppressClickNear(event);
+                }
                 dragState = null;
             }
             refs.menuStageFrame.releasePointerCapture?.(event.pointerId);
@@ -171,11 +177,11 @@ export function createMenuSceneLayoutRuntime({
         });
 
         refs.menuStageFrame.addEventListener("click", event => {
-            if (!suppressNextClick) {
+            if (!shouldSuppressClick(event)) {
                 return;
             }
 
-            suppressNextClick = false;
+            suppressedClick = null;
             event.preventDefault();
             event.stopPropagation();
         }, true);
@@ -233,6 +239,28 @@ export function createMenuSceneLayoutRuntime({
         resetCamera,
         sync
     };
+
+    function suppressClickNear(event) {
+        suppressedClick = {
+            expiresAt: performance.now() + CLICK_SUPPRESSION_MS,
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
+    function shouldSuppressClick(event) {
+        if (!suppressedClick) {
+            return false;
+        }
+
+        if (performance.now() > suppressedClick.expiresAt) {
+            suppressedClick = null;
+            return false;
+        }
+
+        const distance = Math.hypot(event.clientX - suppressedClick.x, event.clientY - suppressedClick.y);
+        return distance <= CLICK_SUPPRESSION_RADIUS;
+    }
 }
 
 function createPointerSnapshot(event) {

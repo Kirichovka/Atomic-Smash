@@ -7,7 +7,7 @@ import {
     getMechanicById
 } from "./state.js?v=20260509-replay-completed-level";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
-import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-level-entry-cache";
+import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-menu-touch-click";
 import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
 import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260507-journal-tile-polish";

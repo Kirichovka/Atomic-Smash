@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-level-entry-cache";
+import { initGame } from "./game.js?v=20260512-menu-touch-click";
 
 initGame().catch(error => {
     console.error(error);
