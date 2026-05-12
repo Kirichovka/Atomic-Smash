@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-mobile-connection-lab";
+import { initGame } from "./game.js?v=20260512-level-entry-cache";
 
 initGame().catch(error => {
     console.error(error);

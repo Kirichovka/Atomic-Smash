@@ -1,12 +1,12 @@
 import { createHotkeysController } from "../hotkeys.js";
 import { createModalController } from "../modals.js?v=20260509-replay-completed-level";
-import { createNavigationController } from "../navigation.js?v=20260512-menu-fit-whole-words";
-import { createPaletteController } from "../palette.js?v=20260512-mobile-connection-lab";
+import { createNavigationController } from "../navigation.js?v=20260512-level-entry-cache";
+import { createPaletteController } from "../palette.js?v=20260512-level-entry-cache";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-help-visual-optional";
 import { persistState } from "../storage.js";
 import { getActiveMechanicId } from "../state.js?v=20260509-replay-completed-level";
-import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260512-mobile-connection-lab";
+import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260512-level-entry-cache";
 import { createGameplayController } from "./gameplay-controller.js?v=20260509-replay-completed-level";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";

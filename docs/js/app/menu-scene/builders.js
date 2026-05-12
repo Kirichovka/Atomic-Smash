@@ -1,10 +1,10 @@
-import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js?v=20260512-menu-pan-zoom-spacing";
+import { MenuSceneEdge, MenuSceneSheet, MenuSceneTaskNode } from "./entities.js?v=20260512-level-entry-cache";
 import {
     createSceneNodeStatus,
     createSceneNodeSubtitle,
     createSceneNodeTitle,
     createScenePlaceholder
-} from "./methods.js?v=20260512-menu-no-swipe-names";
+} from "./methods.js?v=20260512-level-entry-cache";
 
 export class MenuSceneTaskNodeBuilder {
     constructor({ layoutNode, level, options, theme }) {

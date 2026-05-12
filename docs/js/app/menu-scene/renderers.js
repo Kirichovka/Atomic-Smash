@@ -1,4 +1,4 @@
-import { projectNodeToViewport } from "./methods.js?v=20260509-menu-render-cache";
+import { projectNodeToViewport } from "./methods.js?v=20260512-level-entry-cache";
 
 export function layoutMenuSceneNodes({ camera, nodeLayerElement, nodes, space }) {
     nodes.forEach(node => {

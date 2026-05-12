@@ -983,6 +983,26 @@ Safe rule:
 - when changing menu rendering, spacing, hover behavior, or scene projection, bust both the page CSS import and every nested menu-scene ES module in the chain
 - if browser visuals look like old menu math while source code is correct, inspect loaded URLs/cache before rewriting layout logic
 
+Menu level-entry cache-busting note:
+
+What broke:
+
+- after the mobile connection-lab/menu work, a browser could keep an older menu entry module and level buttons appeared to do nothing or not reach the game screen
+
+Real cause:
+
+- `game.html` and the shared `main.js -> game.js` path had fresh query strings, but `index.html` and nested menu/runtime imports still referenced older cache keys
+- ES module cache can mix a fresh page shell with stale `navigation` or `menu-scene` code when only part of the import chain is busted
+
+Fix applied:
+
+- bumped `docs/index.html`, `docs/game.html`, `docs/js/main.js`, `docs/js/game.js`, `docs/js/app/game-runtime/runtime.js`, `docs/js/app/navigation.js`, and the nested menu-scene import chain with `20260512-level-entry-cache`
+
+Safe rule:
+
+- when a bug report says level buttons no longer open levels right after menu/runtime changes, verify the actual click path in-browser and then check cache keys before changing action wiring
+- keep `index.html` and `game.html` on the same shared app cache key when `main.js`, runtime, navigation, menu-scene, palette, or tutorial modules change
+
 Menu hover selection rollback note:
 
 What broke:
