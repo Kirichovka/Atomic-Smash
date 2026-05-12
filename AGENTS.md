@@ -316,6 +316,32 @@ Safe rule:
 - do not show theory by default in blocking error modals
 - use scoped dialog classes for compact workflow prompts instead of shrinking every shared modal
 
+Game modal density note:
+
+What broke:
+
+- discovery and valency modals still felt like full-page reading surfaces during gameplay
+- simple feedback such as `Discovery complete` or `Valency check failed` showed too much supporting copy and occupied too much of the viewport
+
+Real cause:
+
+- compound discovery content rendered three explanatory panels plus repeated journal/status copy
+- compound and valency dialog CSS allowed generous desktop sizing even when the modal was just a quick gameplay checkpoint
+
+Fix applied:
+
+- `docs/js/app/modal-runtime/content-builders.js` now keeps discovery copy shorter, uses `Saved to journal.`, shows two compact discovery panels, and renders valency issues as concise `current/allowed` bond counts
+- `docs/styles/components/modals.css` scopes smaller sizing, tighter typography, shorter visual previews, and compact issue cards to `#compound-modal` and `.valency-dialog`
+- `docs/styles/responsive.css` preserves compact discovery sizing at tablet/mobile widths
+- cache-busted the `main.js -> game.js -> runtime.js -> modals.js -> modal-runtime/content-builders.js` import chain and the shared modal CSS import
+
+Safe rule:
+
+- gameplay feedback modals should be quick checkpoints, not lesson pages
+- keep discovery modal content to the molecule identity, one short explanation, and what it was built from
+- keep valency failures action-oriented: show which atom is over limit and what to remove; do not re-add theory panels by default
+- change modal copy in `modal-runtime/content-builders.js` and scoped sizing in `components/modals.css`, not by broadening `.modal-dialog`
+
 Centered workflow modal note:
 
 What broke:

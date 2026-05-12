@@ -199,9 +199,9 @@ function renderCompoundModalContent({
     const presentation = buildCompoundPresentation(compound);
     const root = createSchemaElement(schemaConfig?.compoundModal, {
         compound: {
-            description: presentation.description,
+            description: `Built from ${presentation.ingredientBreakdown}.`,
             formula: compound.formula,
-            journalNote: "Saved to your journal. Open the archive any time to revisit the full entry.",
+            journalNote: "Saved to journal.",
             kicker: "Discovery complete",
             name: compound.name,
             subtitle: presentation.subtitle
@@ -224,12 +224,8 @@ function renderCompoundModalContent({
     if (panelsSlot) {
         [
             {
-                body: presentation.context,
-                title: "Real-World Snapshot"
-            },
-            {
                 body: presentation.note,
-                title: "Chemistry Note"
+                title: "Quick Note"
             },
             {
                 body: presentation.ingredientBreakdown,
@@ -394,7 +390,7 @@ function renderValencyModalContent({
 
     const root = createSchemaElement(schemaConfig?.valencyModal, {
         valency: {
-            description: "Fix the highlighted atom before mixing.",
+            description: "Remove extra links, then mix again.",
             kicker: "Valency check failed",
             title: "Too many bonds"
         }
@@ -403,7 +399,7 @@ function renderValencyModalContent({
     const panelsSlot = root.querySelector("[data-valency-panels-slot='true']");
     if (panelsSlot) {
         appendValencyPanel({
-            body: "Remove or rearrange one connection, then try again.",
+            body: "Each line counts as one bond.",
             container: panelsSlot,
             items: validation.issues ?? [],
             listClassName: "valency-issue-list",
@@ -465,9 +461,9 @@ function appendValencyPanel({
             itemsSlot?.appendChild(
                 createSchemaElement(schemaConfig?.valencyIssueItem, {
                     issue: {
-                        body: `Allowed: ${issue.allowedBonds}. Current: ${issue.actualBonds}.`,
+                        body: "Remove or reroute one connection.",
                         symbol: issue.symbol,
-                        title: `${issue.elementName} has too many bonds`
+                        title: `${issue.elementName}: ${issue.actualBonds}/${issue.allowedBonds} bonds`
                     }
                 })
             );

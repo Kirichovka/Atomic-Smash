@@ -184,6 +184,10 @@
     .compound-modal-panel-grid {
         grid-template-columns: 1fr;
     }
+
+    #compound-modal .modal-dialog {
+        width: min(720px, calc(100vw - 40px));
+    }
 }
 
 @media (max-width: 820px) {
@@ -701,12 +705,12 @@
     }
 
     .compound-modal-visual-card {
-        padding: 16px 14px 14px;
-        border-radius: 22px;
+        padding: 12px;
+        border-radius: 18px;
     }
 
     .compound-modal-visual-svg {
-        height: 220px;
+        height: 150px;
     }
 
     .compound-modal-panel {
