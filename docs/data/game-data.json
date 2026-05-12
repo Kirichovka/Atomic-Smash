@@ -2567,7 +2567,7 @@
                                  {
                                      "id":  "equations",
                                      "name":  "Equations",
-                                     "description":  "Balance real chemical equations by choosing the right coefficients â€” atom counts must match on both sides.",
+                                     "description":  "Balance real chemical equations by choosing the right coefficients - atom counts must match on both sides.",
                                      "schoolTopic":  "Chemical equations",
                                      "primaryMechanicId":  "balance-lab",
                                      "sheetStatus":  "ready"

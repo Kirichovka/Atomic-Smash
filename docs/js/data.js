@@ -3,7 +3,7 @@ import { validateSceneSchemaConfig } from "./app/scene-ui/validator.js";
 
 export async function loadGameData() {
     const [rawData, elementReference] = await Promise.all([
-        loadJson("./data/game-data.json", "game data"),
+        loadJson("./data/game-data.json?v=20260512-tutorial-positioning", "game data"),
         loadJson("./data/element-reference.json", "element reference data")
     ]);
 

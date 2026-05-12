@@ -175,7 +175,7 @@ export function createBasicTutorialController({
                         },
                         placement: "bottom-left",
                         targetRect: target.getBoundingClientRect(),
-                        text: "After Mix, the game checks the ingredients and the links, then shows the result in the top panel."
+                        text: "After Mix, the game checks the ingredients and links, then shows the result as a short popup."
                     }
                     : null;
             }
@@ -259,7 +259,7 @@ export function createBasicTutorialController({
 
         refs.tutorialBubble.style.left = "-9999px";
         refs.tutorialBubble.style.top = "-9999px";
-        refs.tutorialBubble.style.maxWidth = "300px";
+        refs.tutorialBubble.style.maxWidth = "280px";
 
         const bubbleRect = refs.tutorialBubble.getBoundingClientRect();
         const bubblePosition = getBubblePosition(
@@ -366,8 +366,8 @@ export function createBasicTutorialController({
         return {
             arrowFromRect: fromConnector.getBoundingClientRect(),
             arrowToRect: toConnector.getBoundingClientRect(),
-            primaryLabel: "Start here",
-            secondaryLabel: "Connect here",
+            primaryLabel: null,
+            secondaryLabel: null,
             secondaryTargetRect: toConnector.getBoundingClientRect(),
             target: fromConnector,
             text: connectionFeedback
@@ -420,7 +420,7 @@ export function createBasicTutorialController({
     }
 
     function getPostMixTarget() {
-        if (refs.result && refs.result.textContent?.trim()) {
+        if (refs.result?.classList.contains("is-visible") && refs.result.textContent?.trim()) {
             return refs.result;
         }
 
@@ -607,6 +607,8 @@ function getBubblePosition(targetRect, bubbleRect, placement = "bottom-left", ob
     const maxLeft = Math.max(viewportWidth - bubbleRect.width - 12, 12);
     const maxTop = Math.max(viewportHeight - bubbleRect.height - 12, 12);
     const rawCandidates = getBubblePositionCandidates(targetRect, bubbleRect);
+    const targetObstacle = { rect: inflateRect(targetRect, 14), weight: 36 };
+    const allObstacles = [targetObstacle, ...obstacles];
     const preferredIndex = rawCandidates.findIndex(candidate => candidate.placement === placement);
     const orderedCandidates = preferredIndex >= 0
         ? [
@@ -632,7 +634,7 @@ function getBubblePosition(targetRect, bubbleRect, placement = "bottom-left", ob
 
             return {
                 ...clampedCandidate,
-                score: scoreBubbleCandidate(candidateRect, obstacles) + index
+                score: scoreBubbleCandidate(candidateRect, allObstacles) + index
             };
         })
         .sort((left, right) => left.score - right.score)[0]
@@ -659,8 +661,7 @@ function getBubblePositionCandidates(targetRect, bubbleRect) {
         { placement: "right-bottom", left: right, top: targetRect.bottom - bubbleRect.height },
         { placement: "left", left, top: verticalCenter },
         { placement: "left-top", left, top: targetRect.top },
-        { placement: "left-bottom", left, top: targetRect.bottom - bubbleRect.height },
-        { placement: "inside-top-left", left: targetRect.left + 12, top: targetRect.top + 12 }
+        { placement: "left-bottom", left, top: targetRect.bottom - bubbleRect.height }
     ];
 }
 

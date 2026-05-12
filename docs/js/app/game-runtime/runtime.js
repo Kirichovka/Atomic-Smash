@@ -6,7 +6,7 @@ import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-help-visual-optional";
 import { persistState } from "../storage.js";
 import { getActiveMechanicId } from "../state.js?v=20260509-replay-completed-level";
-import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260507-game-level-intro";
+import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260512-tutorial-positioning";
 import { createGameplayController } from "./gameplay-controller.js?v=20260509-replay-completed-level";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";

@@ -774,6 +774,40 @@ Safe rule:
 - tutorial placement must avoid persistent chrome as well as board objects
 - when adding tutorial targets near topbar/sidebar/controls, include those UI areas in obstacle scoring before hand-tuning a single placement
 
+Tutorial bubble target-overlap note:
+
+What broke:
+
+- tutorial bubbles and small highlight labels could overlap the atom/connector they were explaining
+- primary and secondary connector labels could crowd each other during the first H-O connection tutorial
+- the balance-lab sheet description showed a mojibake dash instead of readable punctuation
+- the post-mix tutorial still described results as appearing in the top panel after mix feedback had moved to a toast
+- after the result toast faded out, the post-mix tutorial could still highlight the invisible `#result` element and show a blank white rectangle
+
+Real cause:
+
+- tutorial bubble placement avoided chrome, nodes, and lines, but did not score overlap with the active target itself
+- the data string in `game-data.json` already contained a damaged character sequence
+
+Fix applied:
+
+- `docs/js/app/game-runtime/basic-tutorial-controller.js` treats the active tutorial target as a high-weight placement obstacle and removes the inside-target fallback position
+- post-mix tutorial copy now describes the result popup instead of old topbar behavior
+- `docs/styles/pages/game.css` tightens tutorial bubble width and raises highlight labels away from small connectors
+- secondary connector labels render below the target highlight, while the bubble stays above labels
+- the first connection tutorial relies on highlight rings plus the arrow instead of tiny connector labels
+- post-mix tutorial targeting now only uses `#result` while the toast has `.is-visible`; otherwise it falls back to the Mix button
+- `docs/data/game-data.json` replaces the damaged dash in the balance-lab sheet description
+
+Safe rule:
+
+- tutorial bubbles should never sit inside or directly on top of the target highlight
+- keep labels above small connector targets with enough vertical clearance
+- for two-connector tutorial steps, offset primary and secondary labels in opposite directions instead of stacking both above their targets
+- if connector labels still compete with the tutorial bubble, prefer the ring/arrow cue over adding more label positioning rules
+- do not target toast DOM by text alone; hidden toast elements can keep text after they are no longer visible
+- when correcting visible copy stored in JSON, cache-bust the data/module chain as well as the page entrypoint
+
 ### Current caution
 
 Connection creation has been unstable during refactors. Treat this area as sensitive until manually re-verified in-browser.

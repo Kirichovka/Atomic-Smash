@@ -8,7 +8,7 @@
 @import url("./styles/pages/menu.css?v=20260509-menu-hover-continue-state");
 @import url("./styles/pages/themes.css");
 @import url("./styles/pages/journal.css?v=20260507-journal-locked-dim");
-@import url("./styles/pages/game.css?v=20260509-game-action-hover");
+@import url("./styles/pages/game.css?v=20260512-tutorial-positioning");
 @import url("./styles/pages/game-balance-lab.css?v=20260509-help-visual-optional");
 @import url("./styles/pages/splash.css?v=20260509-menu-render-cache");
-@import url("./styles/responsive.css?v=20260507-centered-modals");
+@import url("./styles/responsive.css?v=20260512-tutorial-positioning");
