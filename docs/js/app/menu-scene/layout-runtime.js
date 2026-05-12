@@ -102,7 +102,7 @@ export function createMenuSceneLayoutRuntime({
 
         refs.menuStageFrame.addEventListener("pointerdown", event => {
             const sheet = getSheet?.();
-            if (!sheet || sheet.placeholder || event.button !== 0) {
+            if (!sheet || sheet.placeholder || event.button !== 0 || isInteractiveMenuTarget(event.target)) {
                 return;
             }
 
@@ -292,4 +292,12 @@ function getPointerCenter([firstPointer, secondPointer]) {
         x: (firstPointer.clientX + secondPointer.clientX) / 2,
         y: (firstPointer.clientY + secondPointer.clientY) / 2
     };
+}
+
+function isInteractiveMenuTarget(target) {
+    if (!(target instanceof Element)) {
+        return false;
+    }
+
+    return Boolean(target.closest("button, a, input, select, textarea, [role='button'], [tabindex]"));
 }

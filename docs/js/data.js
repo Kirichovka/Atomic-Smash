@@ -64,7 +64,7 @@ export async function loadScreenRuntimeSchemaConfig() {
 }
 
 export async function loadPaletteRuntimeSchemaConfig() {
-    const response = await fetch("./data/palette-runtime.schema.json");
+    const response = await fetch("./data/palette-runtime.schema.json?v=20260512-palette-tile-button");
 
     if (!response.ok) {
         throw new Error(`Failed to load palette runtime schema: ${response.status}`);

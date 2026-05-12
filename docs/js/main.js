@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-menu-touch-click";
+import { initGame } from "./game.js?v=20260512-menu-delegated-click";
 
 initGame().catch(error => {
     console.error(error);

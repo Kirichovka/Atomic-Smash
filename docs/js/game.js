@@ -13,10 +13,10 @@ import {
     loadPaletteRuntimeSchemaConfig,
     loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
-} from "./data.js?v=20260512-menu-touch-click";
+} from "./data.js?v=20260512-menu-delegated-click";
 import { createEventBus } from "./app/event-bus.js";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
-import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260512-menu-touch-click";
+import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260512-menu-delegated-click";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { createRefs } from "./app/refs.js";

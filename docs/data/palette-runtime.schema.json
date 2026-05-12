@@ -3,11 +3,14 @@
   "version": 1,
   "definitions": {
     "paletteTile": {
-      "kind": "container",
+      "kind": "button",
       "className": {
         "bind": "tile.className"
       },
       "attrs": {
+        "aria-label": {
+          "bind": "tile.title"
+        },
         "title": {
           "bind": "tile.title"
         }

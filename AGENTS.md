@@ -1024,6 +1024,70 @@ Safe rule:
 - never leave drag-click suppression as an unbounded boolean in touch navigation surfaces
 - suppression should be scoped by time and pointer position so later taps on level buttons still activate normally
 
+Menu interactive pointer-capture note:
+
+What broke:
+
+- on desktop, level buttons could look clickable but mouse clicks did not open the level intro
+
+Real cause:
+
+- the menu stage pan/zoom controller called `setPointerCapture(...)` on the stage for every pointerdown inside the stage, including pointerdown events that started on real buttons
+- that let the pan surface compete with the button's native click flow
+
+Fix applied:
+
+- `docs/js/app/menu-scene/layout-runtime.js` ignores pointerdown events that start on interactive descendants such as buttons and links
+- cache-busted the menu entry chain with `20260512-menu-interactive-click`
+
+Safe rule:
+
+- pan/zoom containers should not capture pointers that begin on buttons, links, form controls, or explicit interactive roles
+- keep background gestures and UI activation paths separate before tuning click suppression
+
+Menu level-node delegated activation note:
+
+What broke:
+
+- level buttons could be present, visible, and enabled, but clicks still failed to open the level intro on some desktop/mobile input paths
+
+Real cause:
+
+- menu level activation relied on per-node schema listeners only
+- when pointer gesture handling, browser coordinate clicks, or stale listener resolution disagreed, the critical `previewLevelIntro` action had no runtime hydration fallback
+
+Fix applied:
+
+- `docs/js/app/menu-scene/controller.js` now delegates clicks from `refs.menuLevelMap` to the current sheet node by `data-level-id`
+- the delegated handler calls `onPreviewLevelIntro(...)` directly for unlocked nodes and stops the schema listener path from double-firing
+- cache-busted the menu entry chain with `20260512-menu-delegated-click`
+
+Safe rule:
+
+- for menu level entry, keep `data-level-id` plus a runtime delegated activation handler as the reliable path
+- schema listeners can describe UI actions, but critical scene navigation should also be hydrated at the scene controller boundary
+
+Palette tile button note:
+
+What broke:
+
+- on desktop input paths, palette elements could be visible but unreliable to click/select
+
+Real cause:
+
+- palette element tiles rendered as generic containers with a delegated click listener on the list
+- touch taps could still work, but mouse/browser activation had no native button semantics or stable accessible click target
+
+Fix applied:
+
+- `docs/data/palette-runtime.schema.json` renders `paletteTile` as a `button` with an `aria-label`
+- `docs/js/data.js` cache-busts the palette runtime schema with `20260512-palette-tile-button`
+
+Safe rule:
+
+- selectable UI tiles should be real buttons when they trigger app state
+- keep delegated palette logic for shared state handling, but do not make users click anonymous containers
+
 Menu hover selection rollback note:
 
 What broke:

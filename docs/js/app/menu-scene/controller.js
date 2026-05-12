@@ -1,5 +1,5 @@
 import { MenuSceneSheetBuilder } from "./builders.js?v=20260512-level-entry-cache";
-import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-touch-click";
+import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-delegated-click";
 import {
     createMenuSceneNodeBindings,
     createMenuSceneNodeSchema,
@@ -38,6 +38,7 @@ export function createMenuSceneController({
     let resizeObserver = null;
     let syncFrame = null;
     let currentSheet = null;
+    let nodeActivationBound = false;
     const layoutRuntime = createMenuSceneLayoutRuntime({
         refs,
         scheduleSync,
@@ -47,6 +48,7 @@ export function createMenuSceneController({
     function bind() {
         layoutRuntime.bindWheelPan(() => currentSheet);
         bindResizeObserver();
+        bindNodeActivation();
     }
 
     function render({ currentLevel, levels, theme }) {
@@ -106,6 +108,29 @@ export function createMenuSceneController({
 
         resizeObserver = viewport.observeResize(() => {
             scheduleSync();
+        });
+    }
+
+    function bindNodeActivation() {
+        if (nodeActivationBound || !refs.menuLevelMap) {
+            return;
+        }
+
+        nodeActivationBound = true;
+        refs.menuLevelMap.addEventListener("click", event => {
+            const levelElement = event.target.closest?.(".home-level-node[data-level-id]");
+            if (!levelElement) {
+                return;
+            }
+
+            const node = currentSheet?.nodes?.find(item => item.levelId === levelElement.dataset.levelId);
+            if (!node?.isUnlocked) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            onPreviewLevelIntro?.(node.theme, node.level, node.options);
         });
     }
 
