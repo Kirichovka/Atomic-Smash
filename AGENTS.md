@@ -1134,6 +1134,32 @@ Do not wire one-off controller composition from random feature files if runtime 
 - debugging cached browser code as if it were fresh code
 - changing DOM structure and interaction binding together without a browser check
 
+### Mobile menu pan/zoom note
+
+What broke:
+
+- on small screens, the home route map stopped behaving like a scene
+- level nodes rendered as a vertical CSS grid, route lines were hidden, and the player could not pan/zoom around the level sheet
+
+Real cause:
+
+- the `max-width: 640px` responsive rules bypassed `menu-scene` projection by making `.home-level-map` relative/grid and `.home-level-node` relative
+- the camera only supported vertical wheel offset, so touch pan, horizontal pan, and pinch zoom had no runtime state to update
+
+Fix applied:
+
+- `docs/js/app/menu-scene/entities.js` gives `MenuSceneCamera` pixel X/Y offsets and zoom with clamped camera bounds
+- `docs/js/app/menu-scene/entities.js` also runs row spacing so same-row nodes do not overlap after mobile projection
+- `docs/js/app/menu-scene/layout-runtime.js` binds wheel pan, ctrl/meta-wheel zoom, pointer drag, and two-finger pinch zoom
+- mobile CSS keeps the map as an absolute scene viewport and leaves edge rendering enabled
+
+Safe rule:
+
+- do not turn the mobile menu map into CSS grid/list layout unless intentionally replacing the scene renderer
+- do not fix same-row mobile overlap by editing individual level coordinates first; add spacing in `MenuSceneSpace` so edge paths and nodes share the adjusted positions
+- keep pan/zoom in the menu-scene camera/runtime layer, not in ad-hoc DOM scroll offsets
+- when changing nested menu-scene modules, cache-bust the full `index.html -> main.js -> game.js -> runtime.js -> navigation.js -> menu-scene` import chain
+
 ## Practical Testing Checklist
 
 After changing menu/home:

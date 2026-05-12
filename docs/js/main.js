@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-tutorial-positioning";
+import { initGame } from "./game.js?v=20260512-menu-pan-zoom-spacing";
 
 initGame().catch(error => {
     console.error(error);

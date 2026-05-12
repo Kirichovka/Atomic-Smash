@@ -1,5 +1,5 @@
 import { SceneObject, SCENE_OBJECT_ROLE } from "../scene-object.js";
-import { MENU_SCENE_DEFAULTS, MENU_SCENE_ENTITY_KIND } from "./contracts.js?v=20260509-menu-render-cache";
+import { MENU_SCENE_DEFAULTS, MENU_SCENE_ENTITY_KIND } from "./contracts.js?v=20260512-menu-pan-zoom-spacing";
 
 export class MenuSceneEntity extends SceneObject {
     constructor({ id, kind }) {
@@ -72,25 +72,101 @@ export class MenuSceneSheet {
 
 export class MenuSceneCamera {
     constructor() {
-        this.offsetRatio = 0;
-        this.maxOffsetRatio = 0;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.maxZoom = MENU_SCENE_DEFAULTS.maxCameraZoom;
+        this.minZoom = MENU_SCENE_DEFAULTS.minCameraZoom;
+        this.range = createEmptyCameraRange();
+        this.zoom = 1;
     }
 
     reset() {
-        this.offsetRatio = 0;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.zoom = 1;
+        this.clampOffsets();
     }
 
-    setRange(maxOffsetRatio) {
-        this.maxOffsetRatio = Math.max(maxOffsetRatio, 0);
-        this.offsetRatio = clamp(this.offsetRatio, 0, this.maxOffsetRatio);
+    setRange(range) {
+        this.range = {
+            ...createEmptyCameraRange(),
+            ...range
+        };
+        this.clampOffsets();
     }
 
-    panBy(deltaRatio) {
-        this.offsetRatio = clamp(this.offsetRatio + deltaRatio, 0, this.maxOffsetRatio);
+    panBy(deltaX, deltaY) {
+        this.offsetX += deltaX;
+        this.offsetY += deltaY;
+        this.clampOffsets();
     }
 
-    getOffsetPixels(viewportHeight) {
-        return (this.offsetRatio / 100) * Math.max(viewportHeight, 0);
+    zoomBy(deltaZoom, anchor = null) {
+        this.zoomAt(this.zoom + deltaZoom, anchor);
+    }
+
+    zoomAt(nextZoom, anchor = null) {
+        const previousZoom = this.zoom;
+        const clampedZoom = clamp(nextZoom, this.minZoom, this.maxZoom);
+        if (clampedZoom === previousZoom) {
+            return;
+        }
+
+        if (anchor) {
+            const worldX = this.range.centerX + ((anchor.x + this.offsetX - this.range.centerX) / previousZoom);
+            const worldY = this.range.centerY + ((anchor.y + this.offsetY - this.range.centerY) / previousZoom);
+            this.offsetX = this.range.centerX + ((worldX - this.range.centerX) * clampedZoom) - anchor.x;
+            this.offsetY = this.range.centerY + ((worldY - this.range.centerY) * clampedZoom) - anchor.y;
+        }
+
+        this.zoom = clampedZoom;
+        this.clampOffsets();
+    }
+
+    getOffsetPixels() {
+        return {
+            x: this.offsetX,
+            y: this.offsetY
+        };
+    }
+
+    getZoom() {
+        return this.zoom;
+    }
+
+    hasScrollableRange() {
+        const bounds = this.getOffsetBounds();
+        return bounds.maxX > bounds.minX || bounds.maxY > bounds.minY;
+    }
+
+    clampOffsets() {
+        const bounds = this.getOffsetBounds();
+        this.offsetX = clamp(this.offsetX, bounds.minX, bounds.maxX);
+        this.offsetY = clamp(this.offsetY, bounds.minY, bounds.maxY);
+    }
+
+    getOffsetBounds() {
+        const {
+            contentMaxX,
+            contentMaxY,
+            contentMinX,
+            contentMinY,
+            height,
+            panPadding,
+            width
+        } = this.range;
+        const zoom = this.zoom;
+        const left = this.range.centerX + ((contentMinX - this.range.centerX) * zoom);
+        const right = this.range.centerX + ((contentMaxX - this.range.centerX) * zoom);
+        const top = this.range.centerY + ((contentMinY - this.range.centerY) * zoom);
+        const bottom = this.range.centerY + ((contentMaxY - this.range.centerY) * zoom);
+
+        return {
+            maxX: createMaxOffset(left, right, width, panPadding),
+            maxY: createMaxOffset(top, bottom, height, panPadding),
+            minX: createMinOffset(left, right, width, panPadding),
+            minY: createMinOffset(top, bottom, height, panPadding)
+        };
     }
 }
 
@@ -150,6 +226,12 @@ export class MenuSceneSpace {
         const offsetY = padding - (rawBounds.minY * scale);
 
         this.layout = {
+            contentBounds: {
+                maxX: (rawBounds.maxX * scale) + offsetX,
+                maxY: (rawBounds.maxY * scale) + offsetY,
+                minX: (rawBounds.minX * scale) + offsetX,
+                minY: (rawBounds.minY * scale) + offsetY
+            },
             offsetX,
             offsetY,
             positionsByLevelId: new Map(
@@ -171,20 +253,44 @@ export class MenuSceneSpace {
         return Math.max(((this.layout.virtualHeight - this.height) / this.height) * 100, 0);
     }
 
+    getCameraRange() {
+        const bounds = this.layout.contentBounds ?? {
+            maxX: this.width,
+            maxY: this.height,
+            minX: 0,
+            minY: 0
+        };
+
+        return {
+            centerX: this.width / 2,
+            centerY: this.height / 2,
+            contentMaxX: bounds.maxX,
+            contentMaxY: Math.max(bounds.maxY, this.layout.virtualHeight),
+            contentMinX: bounds.minX,
+            contentMinY: bounds.minY,
+            height: this.height,
+            panPadding: MENU_SCENE_DEFAULTS.cameraPanPaddingPixels,
+            width: this.width
+        };
+    }
+
     project(node, camera) {
         const adjustedPosition = this.layout.positionsByLevelId?.get(node.levelId);
         const baseX = adjustedPosition?.x ?? (node.x / 100) * this.width;
         const baseY = adjustedPosition?.y ?? (node.y / 100) * this.height * (1 + (this.overflowRatio / 100));
-        const cameraOffsetY = camera.getOffsetPixels(this.height);
+        const cameraOffset = camera.getOffsetPixels();
+        const cameraZoom = camera.getZoom();
+        const worldX = (baseX * this.layout.scale) + this.layout.offsetX;
+        const worldY = (baseY * this.layout.scale) + this.layout.offsetY;
 
         return {
-            xPixels: (baseX * this.layout.scale) + this.layout.offsetX,
-            yPixels: (baseY * this.layout.scale) + this.layout.offsetY - cameraOffsetY
+            xPixels: this.width / 2 + ((worldX - (this.width / 2)) * cameraZoom) - cameraOffset.x,
+            yPixels: this.height / 2 + ((worldY - (this.height / 2)) * cameraZoom) - cameraOffset.y
         };
     }
 
-    getNodeWidthPx(node) {
-        return Math.round(this.getBaseNodeWidthPx(node) * this.layout.scale);
+    getNodeWidthPx(node, camera = null) {
+        return Math.round(this.getBaseNodeWidthPx(node) * this.layout.scale * (camera?.getZoom?.() ?? 1));
     }
 
     getBaseNodeWidthPx(node) {
@@ -203,6 +309,12 @@ export class MenuSceneSpace {
 
 function createEmptyLayout() {
     return {
+        contentBounds: {
+            maxX: 0,
+            maxY: 0,
+            minX: 0,
+            minY: 0
+        },
         offsetX: 0,
         offsetY: 0,
         positionsByLevelId: new Map(),
@@ -217,6 +329,12 @@ function createSpacedNodeLayout(rawNodes) {
 
     columnGroups.forEach(group => {
         enforceColumnNodeSpacing(group);
+    });
+
+    const rowGroups = createNodeRowGroups(spacedNodes);
+
+    rowGroups.forEach(group => {
+        enforceRowNodeSpacing(group);
     });
 
     return spacedNodes;
@@ -263,6 +381,50 @@ function enforceColumnNodeSpacing(columnNodes) {
         }
 
         currentNode.y += minimumDistance - actualDistance;
+    }
+}
+
+function createNodeRowGroups(rawNodes) {
+    const groups = [];
+    const sortedNodes = [...rawNodes].sort((firstNode, secondNode) => firstNode.y - secondNode.y);
+
+    sortedNodes.forEach(rawNode => {
+        const group = groups.find(candidate =>
+            Math.abs(candidate.centerY - rawNode.y) <= MENU_SCENE_DEFAULTS.nodeRowClusterPixels
+        );
+
+        if (!group) {
+            groups.push({
+                centerY: rawNode.y,
+                nodes: [rawNode]
+            });
+            return;
+        }
+
+        group.nodes.push(rawNode);
+        group.centerY = group.nodes.reduce((sum, node) => sum + node.y, 0) / group.nodes.length;
+    });
+
+    return groups.map(group => group.nodes);
+}
+
+function enforceRowNodeSpacing(rowNodes) {
+    const sortedNodes = rowNodes.sort((firstNode, secondNode) => firstNode.x - secondNode.x);
+
+    for (let index = 1; index < sortedNodes.length; index += 1) {
+        const previousNode = sortedNodes[index - 1];
+        const currentNode = sortedNodes[index];
+        const minimumDistance =
+            previousNode.radius
+            + currentNode.radius
+            + MENU_SCENE_DEFAULTS.nodeHorizontalGapPixels;
+        const actualDistance = currentNode.x - previousNode.x;
+
+        if (actualDistance >= minimumDistance) {
+            continue;
+        }
+
+        currentNode.x += minimumDistance - actualDistance;
     }
 }
 
@@ -410,4 +572,34 @@ function mergeBounds(firstBounds, secondBounds) {
 
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
+}
+
+function createEmptyCameraRange() {
+    return {
+        centerX: 0,
+        centerY: 0,
+        contentMaxX: 0,
+        contentMaxY: 0,
+        contentMinX: 0,
+        contentMinY: 0,
+        height: 0,
+        panPadding: 0,
+        width: 0
+    };
+}
+
+function createMinOffset(start, end, viewportSize, padding) {
+    if (end - start <= viewportSize - (padding * 2)) {
+        return ((start + end) / 2) - (viewportSize / 2);
+    }
+
+    return start - padding;
+}
+
+function createMaxOffset(start, end, viewportSize, padding) {
+    if (end - start <= viewportSize - (padding * 2)) {
+        return ((start + end) / 2) - (viewportSize / 2);
+    }
+
+    return end - viewportSize + padding;
 }

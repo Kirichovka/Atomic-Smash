@@ -321,14 +321,15 @@
 
 @media (max-width: 640px) {
     body[data-page="menu"] {
-        overflow: auto;
+        overflow: hidden;
     }
 
     #menu-screen {
-        --home-sheet-clearance: 0px;
-        --home-map-overflow: 0px;
-        overflow: visible;
-        height: auto;
+        --home-sheet-clearance: 104px;
+        --home-map-overflow: 180;
+        overflow: hidden;
+        height: 100vh;
+        height: 100dvh;
     }
 
     #menu-screen {
@@ -347,7 +348,7 @@
     .home-header {
         gap: 12px;
         min-height: 0;
-        padding: 12px 14px;
+        padding: 10px 12px 12px;
         border-radius: 20px;
     }
 
@@ -381,13 +382,45 @@
 
     .home-header-strap {
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
         flex-wrap: wrap;
     }
 
     .home-route-meta,
     .home-header-nav {
         width: 100%;
+    }
+
+    .home-route-meta {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .home-header-pill {
+        min-width: 0;
+        min-height: 34px;
+        padding: 5px 10px;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+    }
+
+    .home-route-copy {
+        min-width: 0;
+        gap: 2px;
+    }
+
+    .home-route-copy strong {
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .home-route-copy span {
+        font-size: 0.78rem;
+        line-height: 1.08;
+        white-space: nowrap;
     }
 
     .home-header-nav {
@@ -402,20 +435,23 @@
     }
 
     .home-stage {
-        margin-top: 0;
+        margin-top: 12px;
+        flex: 1 1 auto;
         height: auto;
-        min-height: auto;
+        min-height: 0;
     }
 
     .home-stage-frame {
-        height: auto;
+        height: 100%;
         min-height: 0;
         border-radius: 24px;
-        padding: 112px 16px 20px;
+        padding: 0;
+        touch-action: none;
+        user-select: none;
     }
 
     .home-stage-rule {
-        top: 22px;
+        top: 0;
     }
 
     .home-sheet-toolbar {
@@ -443,15 +479,14 @@
     }
 
     .home-map-lines {
-        display: none;
+        display: block;
     }
 
     .home-level-map {
-        position: relative;
-        inset: auto;
+        position: absolute;
+        inset: 0;
+        display: block;
         min-height: 0;
-        display: grid;
-        gap: 16px;
     }
 
     .home-sheet-placeholder {
@@ -463,16 +498,10 @@
     }
 
     .home-level-node {
-        position: relative;
-        inset: auto;
-        left: auto;
-        top: auto;
-        width: min(210px, 100%);
-        height: auto;
+        position: absolute;
         aspect-ratio: 1 / 1;
         min-height: 0;
-        justify-self: center;
-        transform: none;
+        transform: translate(-50%, -50%);
         border-radius: 50%;
     }
 
