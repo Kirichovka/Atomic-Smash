@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-menu-fit-whole-words";
+import { initGame } from "./game.js?v=20260512-mobile-connection-lab";
 
 initGame().catch(error => {
     console.error(error);

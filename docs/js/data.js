@@ -97,7 +97,7 @@ export async function loadProgressionRuntimeSchemaConfig() {
 }
 
 export async function loadGameShellRuntimeSchemaConfig() {
-    const response = await fetch("./data/game-shell-runtime.schema.json");
+    const response = await fetch("./data/game-shell-runtime.schema.json?v=20260512-mobile-connection-lab");
 
     if (!response.ok) {
         throw new Error(`Failed to load game shell runtime schema: ${response.status}`);

@@ -653,6 +653,35 @@ Safe rule:
 
 ## Board / Connection Notes
 
+### Mobile connection-lab note
+
+What broke:
+
+- phone layout reused the desktop connection-lab assumptions too closely
+- tutorial copy emphasized dragging from the palette even though mobile players mostly use element selection plus the `Add` button
+- the mobile game shell spent too much space on text/chrome and too little on the connection board
+- landscape phones did not get a compact desktop-like layout with palette/actions around a large board
+
+Real cause:
+
+- `palette.js` auto-added elements on coarse-pointer tile taps, bypassing the explicit add button
+- `basic-tutorial-controller.js` did not distinguish compact/coarse devices when choosing tutorial targets and copy
+- responsive game CSS stacked the sidebar/topbar/compound panels as a scrolling page instead of preserving an app-like board workspace
+
+Fix applied:
+
+- mobile palette taps now select an element; `Add H` / `Add O` places the selected atom
+- compact tutorial stages point players to tap the element row first and then use the Add button
+- mobile portrait CSS reduces chrome text, hides secondary element detail, keeps the board in the main flexible area, and compresses discovered compounds
+- mobile landscape CSS uses a compact PC-like shell: elements on the left, actions on the right, board in the large center area
+
+Safe rule:
+
+- connection-lab mobile hints should describe the primary mobile flow: select element, press Add, connect on the board, then Mix
+- do not spend vertical mobile space on secondary explanatory panels when the board needs room for connections
+- for landscape phones, prefer a compact app shell over the portrait stacked layout
+- keep mobile interaction changes in palette/tutorial/runtime CSS; do not fork connection-lab chemistry evaluation for layout issues
+
 ### Most important bug class we hit
 
 The biggest recent board bug was premature schema resolve for board connectors.

@@ -192,14 +192,16 @@
     }
 
     body[data-page="game"] {
-        overflow: auto;
+        overflow: hidden;
     }
 
     #game-screen {
         flex-direction: column;
-        height: auto;
+        height: 100vh;
+        height: 100dvh;
         min-height: 100vh;
         min-height: 100dvh;
+        padding: 8px;
         background:
             radial-gradient(circle at top left, rgba(255, 209, 102, 0.2), transparent 30%),
             radial-gradient(circle at 86% 18%, rgba(17, 138, 178, 0.1), transparent 18%),
@@ -208,9 +210,11 @@
 
     #sidebar {
         width: auto;
+        height: auto;
+        flex: 0 0 auto;
         border-right: none;
         border-bottom: 4px solid #073b4c;
-        padding: 14px;
+        padding: 8px 10px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 238, 0.98));
     }
 
@@ -220,7 +224,7 @@
 
     #sidebar-content {
         min-width: 0;
-        gap: 12px;
+        gap: 8px;
     }
 
     .sidebar-resize-handle {
@@ -229,7 +233,7 @@
 
     #sidebar h2 {
         margin-bottom: 0;
-        font-size: 18px;
+        font-size: 14px;
     }
 
     #element-list {
@@ -237,36 +241,80 @@
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
-        padding-bottom: 4px;
+        gap: 8px;
+        margin-top: 0;
+        padding-bottom: 2px;
         -webkit-overflow-scrolling: touch;
     }
 
     .element-template {
-        flex: 0 0 82px;
-        width: 82px;
-        min-height: 82px;
-        max-width: 82px;
+        flex: 0 0 58px;
+        width: 58px;
+        min-height: 58px;
+        max-width: 58px;
+        border-width: 3px;
+        border-radius: 14px;
+        box-shadow: 3px 4px 0 rgba(7, 59, 76, 0.72);
+        font-size: 19px;
     }
 
     #element-info {
-        margin-top: 0;
+        display: none;
+    }
+
+    .palette-actions {
+        grid-template-columns: minmax(116px, auto) minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+    }
+
+    .palette-tip {
+        font-size: 11px;
+        line-height: 1.25;
     }
 
     #workspace {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        overflow: visible;
-        padding: 12px;
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 8px;
+        min-height: 0;
+        overflow: hidden;
+        padding: 8px 0 0;
     }
 
     #topbar {
-        position: sticky;
-        top: calc(env(safe-area-inset-top, 0px) + 8px);
+        position: relative;
+        top: auto;
         left: auto;
         right: auto;
         min-height: 0;
         z-index: 30;
+        padding: 8px;
+        border-width: 3px;
+        border-radius: 16px;
+        box-shadow: 4px 5px 0 var(--game-shadow);
+    }
+
+    #task-panel {
+        min-width: 0;
+        gap: 2px;
+    }
+
+    #level-indicator {
+        padding: 4px 8px;
+        border-width: 2px;
+        border-radius: 9px;
+        font-size: 10px;
+    }
+
+    #task {
+        font-size: 14px;
+        line-height: 1.1;
+    }
+
+    #hint {
+        display: none;
     }
 
     #controls {
@@ -280,7 +328,13 @@
     #controls button,
     .topbar-group-navigation button,
     .topbar-group-palette button {
-        flex: 1 1 140px;
+        flex: 1 1 76px;
+        min-height: 38px;
+        padding: 7px 9px;
+        font-size: 11px;
+        border-width: 3px;
+        border-radius: 12px;
+        box-shadow: 2px 3px 0 var(--game-shadow);
     }
 
     #result {
@@ -290,9 +344,12 @@
     #mix-zone {
         position: relative;
         inset: auto;
-        min-height: 360px;
-        height: clamp(360px, 52dvh, 520px);
+        min-height: 0;
+        height: 100%;
         overflow: visible;
+        border-width: 3px;
+        border-radius: 18px;
+        box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35), 4px 5px 0 rgba(7, 59, 76, 0.12);
     }
 
     #compound-zone {
@@ -301,6 +358,35 @@
         right: auto;
         bottom: auto;
         min-height: 0;
+        max-height: 82px;
+        overflow: auto;
+        padding: 8px;
+        border-width: 3px;
+        border-radius: 16px;
+        box-shadow: 4px 5px 0 rgba(7, 59, 76, 0.14);
+    }
+
+    #compound-zone .zone-title {
+        font-size: 11px;
+    }
+
+    #compound-list {
+        gap: 6px;
+    }
+
+    .compound-card {
+        min-width: 96px;
+        padding: 7px 9px;
+        border-width: 2px;
+        border-radius: 11px;
+    }
+
+    .compound-formula {
+        font-size: 13px;
+    }
+
+    .compound-name {
+        font-size: 10px;
     }
 }
 
@@ -557,35 +643,23 @@
     }
 
     #sidebar {
-        padding: 12px;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 8px;
+        padding-bottom: 8px;
     }
 
     .palette-actions {
-        gap: 10px;
+        gap: 8px;
     }
 
     #workspace {
-        padding: 10px;
-        padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        padding: 8px 0 0;
+        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     }
 
     #topbar,
     #mix-zone,
     #compound-zone {
         border-radius: 16px;
-    }
-
-    #topbar {
-        padding: 12px;
-    }
-
-    #task {
-        font-size: 15px;
-    }
-
-    #hint {
-        font-size: 13px;
     }
 
     #controls {
@@ -607,11 +681,6 @@
         flex: 1 1 calc(50% - 8px);
     }
 
-    #mix-zone {
-        min-height: 320px;
-        height: clamp(320px, 46dvh, 420px);
-    }
-
     .mix-zone-context-menu,
     .mix-zone-picker {
         max-width: calc(100% - 24px);
@@ -623,7 +692,6 @@
 
     .compound-card {
         min-width: 0;
-        width: 100%;
     }
 
     .modal-dialog {
@@ -777,5 +845,51 @@
 
     .tutorial-bubble-text {
         font-size: 13px;
+    }
+}
+
+@media (max-width: 920px) and (orientation: landscape) {
+    #game-screen {
+        flex-direction: row;
+        padding: 6px;
+    }
+
+    #sidebar {
+        width: 116px;
+        height: auto;
+        flex: 0 0 116px;
+        padding: 7px;
+        border-right: 3px solid #073b4c;
+        border-bottom: 0;
+    }
+
+    #workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 116px;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 6px;
+        padding: 0 0 0 6px;
+        min-height: 0;
+    }
+
+    #topbar {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 7px;
+    }
+
+    #mix-zone {
+        grid-column: 1;
+        grid-row: 1;
+        height: 100%;
+        min-height: 0;
+    }
+
+    #compound-zone {
+        grid-column: 1;
+        grid-row: 2;
+        max-height: 58px;
     }
 }

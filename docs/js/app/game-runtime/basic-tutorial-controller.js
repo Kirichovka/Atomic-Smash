@@ -3,6 +3,7 @@ import { getCompoundById, getCurrentLevel, getCurrentTheme } from "../state.js?v
 const BASIC_TUTORIAL_THEME_ID = "basic";
 const BASIC_TUTORIAL_FIRST_LEVEL_ID = "level-1";
 const BASIC_TUTORIAL_BUBBLE_GAP = 16;
+const COMPACT_DEVICE_QUERY = "(max-width: 820px), (pointer: coarse)";
 
 export function createBasicTutorialController({
     refs,
@@ -119,15 +120,17 @@ export function createBasicTutorialController({
     function getStageConfig(stageId) {
         switch (stageId) {
             case "pick-next-element": {
+                if (isCompactDevice() && getSelectedPaletteSymbol()) {
+                    return getAddButtonTutorialStage();
+                }
+
                 const target = getPaletteTarget();
                 const nextSymbol = getNextRequiredSymbol();
                 return target
                     ? {
-                        placement: "right",
+                        placement: isCompactDevice() ? "bottom-left" : "right",
                         targetRect: target.getBoundingClientRect(),
-                        text: nextSymbol
-                            ? `Drag ${nextSymbol} onto the board. Keep following the highlighted element until the full molecule is placed.`
-                            : "Drag the highlighted element onto the board to continue building the molecule."
+                        text: getPickElementTutorialText(nextSymbol)
                     }
                     : null;
             }
@@ -189,7 +192,9 @@ export function createBasicTutorialController({
                         },
                         placement: "bottom-left",
                         targetRect: refs.controls.getBoundingClientRect(),
-                        text: "Hotkeys: Shift + A opens the add menu, Shift + M runs Mix, Shift + R clears the board, Delete removes the selection, and Esc closes overlays."
+                        text: isCompactDevice()
+                            ? "On phones, build with the element row and Add button. Use Mix when the molecule is ready, and Clear if you want to restart the board."
+                            : "Hotkeys: Shift + A opens the add menu, Shift + M runs Mix, Shift + R clears the board, Delete removes the selection, and Esc closes overlays."
                     }
                     : null;
             case "journal-nav":
@@ -417,6 +422,37 @@ export function createBasicTutorialController({
             ...nodeRects.map(rect => ({ rect: inflateRect(rect, 8), weight: 8 })),
             ...lineRects.map(rect => ({ rect, weight: 4 }))
         ];
+    }
+
+    function getAddButtonTutorialStage() {
+        if (!refs.addSelectedButton) {
+            return null;
+        }
+
+        const selectedSymbol = getSelectedPaletteSymbol();
+        return {
+            placement: "bottom-left",
+            targetRect: refs.addSelectedButton.getBoundingClientRect(),
+            text: selectedSymbol
+                ? `Now press Add ${selectedSymbol}. On phones this is the main way to place atoms on the board.`
+                : "Press Add Element to place the selected atom on the board."
+        };
+    }
+
+    function getPickElementTutorialText(nextSymbol) {
+        if (isCompactDevice()) {
+            return nextSymbol
+                ? `Tap ${nextSymbol} in the element row, then use the Add button to place it on the board.`
+                : "Tap an element in the element row, then use the Add button to place it on the board.";
+        }
+
+        return nextSymbol
+            ? `Drag ${nextSymbol} onto the board. Keep following the highlighted element until the full molecule is placed.`
+            : "Drag the highlighted element onto the board to continue building the molecule.";
+    }
+
+    function getSelectedPaletteSymbol() {
+        return state.ui.paletteSelectedElementSymbol ?? null;
     }
 
     function getPostMixTarget() {
@@ -663,6 +699,10 @@ function getBubblePositionCandidates(targetRect, bubbleRect) {
         { placement: "left-top", left, top: targetRect.top },
         { placement: "left-bottom", left, top: targetRect.bottom - bubbleRect.height }
     ];
+}
+
+function isCompactDevice() {
+    return window.matchMedia?.(COMPACT_DEVICE_QUERY).matches ?? window.innerWidth <= 820;
 }
 
 function scoreBubbleCandidate(candidateRect, obstacles) {

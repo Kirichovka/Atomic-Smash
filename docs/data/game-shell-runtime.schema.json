@@ -46,7 +46,7 @@
               "kind": "text",
               "tagName": "p",
               "className": "palette-tip",
-              "text": "On phones, tap an element to place it instantly. You can still use quick add if you want to repeat the selected atom."
+              "text": "On phones, tap an element, then press Add to place it on the board."
             }
           ]
         },

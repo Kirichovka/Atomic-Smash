@@ -61,13 +61,6 @@ export function createPaletteController({
                 persist: true
             });
 
-            if (prefersCoarsePointer && symbol) {
-                bus.publish(RUNTIME_EVENT_IDS.elementQuickAdd, {
-                    source: "palette-click",
-                    symbol
-                });
-                return;
-            }
         });
     }
 
@@ -300,8 +293,8 @@ export function createPaletteController({
 
         refs.addSelectedButton.disabled = !element;
         refs.addSelectedButton.textContent = element
-            ? `Add ${element.symbol} To Board`
-            : "Add Selected To Board";
+            ? `Add ${element.symbol}`
+            : "Add Element";
     }
 
     return {
