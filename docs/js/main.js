@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-menu-no-swipe-names";
+import { initGame } from "./game.js?v=20260512-menu-fit-labels";
 
 initGame().catch(error => {
     console.error(error);

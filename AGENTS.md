@@ -1142,6 +1142,7 @@ What broke:
 - level nodes rendered as a vertical CSS grid, route lines were hidden, and the player could not pan/zoom around the level sheet
 - strong horizontal swipes on the mobile map could still change the active theme sheet instead of only panning the current sheet
 - route nodes could show formula-style briefing titles such as `H2CO3` instead of player-readable compound names
+- after switching node titles to compound names, longer labels could overflow the circular level nodes on small screens
 
 Real cause:
 
@@ -1149,6 +1150,7 @@ Real cause:
 - the camera only supported vertical wheel offset, so touch pan, horizontal pan, and pinch zoom had no runtime state to update
 - `navigation.js` had an older stage-level swipe gesture that interpreted horizontal pan as theme navigation
 - `createSceneNodeTitle(...)` preferred `level-briefs.json` `nodeTitle` over the compound catalog name, and many briefs used formulas as compact labels
+- node typography was fixed by state/size class, so it did not react to actual projected node width or title length
 
 Fix applied:
 
@@ -1157,6 +1159,7 @@ Fix applied:
 - `docs/js/app/menu-scene/layout-runtime.js` binds wheel pan, ctrl/meta-wheel zoom, pointer drag, and two-finger pinch zoom
 - `docs/js/app/navigation.js` no longer binds stage swipe-to-theme gestures; sheet changes stay on explicit arrow/dot controls
 - `docs/js/app/menu-scene/methods.js` now prefers `compound.name` for route node titles and only falls back to briefing/formula text when catalog data is missing
+- `docs/js/app/menu-scene/renderers.js` sets per-node text sizing CSS variables after projection, and `docs/styles/pages/menu.css` lets labels wrap inside the node
 - mobile CSS keeps the map as an absolute scene viewport and leaves edge rendering enabled
 
 Safe rule:
@@ -1166,6 +1169,7 @@ Safe rule:
 - keep pan/zoom in the menu-scene camera/runtime layer, not in ad-hoc DOM scroll offsets
 - do not bind broad swipe navigation on the same surface that owns pan/zoom
 - route node labels should prefer player-readable catalog names over formulas; use formulas as fallback or detail text, not the primary node title
+- when node title length changes, adjust text fitting in the renderer/CSS variable layer instead of hard-coding one-off font sizes in data or schema
 - when changing nested menu-scene modules, cache-bust the full `index.html -> main.js -> game.js -> runtime.js -> navigation.js -> menu-scene` import chain
 
 ## Practical Testing Checklist

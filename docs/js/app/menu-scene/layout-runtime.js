@@ -1,6 +1,6 @@
 import { MenuSceneCamera, MenuSceneSpace } from "./entities.js?v=20260512-menu-pan-zoom-spacing";
 import { getMenuStageOverflow } from "./methods.js?v=20260509-menu-render-cache";
-import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260512-menu-pan-zoom-spacing";
+import { layoutMenuSceneNodes, renderMenuSceneEdges } from "./renderers.js?v=20260512-menu-fit-labels";
 
 export function createMenuSceneLayoutRuntime({
     refs,

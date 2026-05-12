@@ -446,7 +446,7 @@ body[data-page="menu"] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: var(--level-node-gap, 4px);
     transform: translate(-50%, -50%);
 }
 
@@ -505,53 +505,61 @@ button.home-level-node[aria-disabled="true"]:hover {
 .home-level-index {
     display: block;
     color: #5a6b79;
-    font-size: 0.74rem;
+    max-width: 82%;
+    font-size: var(--level-index-font-size, 0.74rem);
     font-weight: 900;
     letter-spacing: 0.08em;
+    line-height: 1;
+    overflow-wrap: anywhere;
     text-transform: uppercase;
 }
 
 .home-level-formula {
     display: block;
     color: #073b4c;
-    font-size: 1.35rem;
+    max-width: 84%;
+    font-size: var(--level-title-font-size, 1.35rem);
     font-weight: 900;
-    line-height: 1.05;
+    line-height: var(--level-title-line-height, 1.05);
+    overflow-wrap: anywhere;
+    text-wrap: balance;
 }
 
 .home-level-objective {
     display: block;
     color: #244b63;
-    max-width: 82%;
-    font-size: 0.82rem;
+    max-width: 84%;
+    font-size: var(--level-subtitle-font-size, 0.82rem);
     font-weight: 800;
-    line-height: 1.18;
+    line-height: var(--level-subtitle-line-height, 1.14);
+    overflow-wrap: anywhere;
+    text-wrap: balance;
 }
 
 .home-level-node.level-size-md .home-level-index {
-    font-size: 0.68rem;
+    font-size: var(--level-index-font-size, 0.68rem);
     letter-spacing: 0.05em;
 }
 
 .home-level-node.level-size-md .home-level-formula {
-    font-size: 1.2rem;
+    font-size: var(--level-title-font-size, 1.2rem);
 }
 
 .home-level-node.level-size-md .home-level-objective {
-    font-size: 0.72rem;
+    font-size: var(--level-subtitle-font-size, 0.72rem);
 }
 
 .home-level-node.level-size-sm .home-level-formula {
-    font-size: 1rem;
+    font-size: var(--level-title-font-size, 1rem);
 }
 
 .home-level-node.level-size-sm .home-level-index {
-    font-size: 0.58rem;
+    font-size: var(--level-index-font-size, 0.58rem);
     letter-spacing: 0.04em;
 }
 
 .home-level-node.level-size-sm .home-level-objective {
-    font-size: 0.66rem;
+    font-size: var(--level-subtitle-font-size, 0.66rem);
 }
 
 .home-level-node.level-status-locked .home-level-objective {

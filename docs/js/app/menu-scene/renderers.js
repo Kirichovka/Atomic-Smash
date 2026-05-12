@@ -12,7 +12,43 @@ export function layoutMenuSceneNodes({ camera, nodeLayerElement, nodes, space })
         element.style.left = `${projected.xPixels}px`;
         element.style.top = `${projected.yPixels}px`;
         element.style.width = `${nodeWidthPx}px`;
+        applyNodeTextScale(element, node, nodeWidthPx);
     });
+}
+
+function applyNodeTextScale(element, node, nodeWidthPx) {
+    const titleLength = getTextMeasureLength(node.title);
+    const subtitleLength = getTextMeasureLength(node.subtitle);
+    const compactness = nodeWidthPx < 92 ? 0.9 : 1;
+    const titleFontSize = clamp(
+        (nodeWidthPx * 1.42) / Math.max(titleLength, 6),
+        nodeWidthPx * 0.082,
+        nodeWidthPx * 0.18
+    ) * compactness;
+    const subtitleFontSize = clamp(
+        (nodeWidthPx * 0.92) / Math.max(subtitleLength, 10),
+        nodeWidthPx * 0.054,
+        nodeWidthPx * 0.096
+    ) * compactness;
+    const indexFontSize = clamp(nodeWidthPx * 0.065, 8, 13) * compactness;
+    const gap = clamp(nodeWidthPx * 0.025, 2, 5);
+
+    element.style.setProperty("--level-title-font-size", `${titleFontSize.toFixed(2)}px`);
+    element.style.setProperty("--level-subtitle-font-size", `${subtitleFontSize.toFixed(2)}px`);
+    element.style.setProperty("--level-index-font-size", `${indexFontSize.toFixed(2)}px`);
+    element.style.setProperty("--level-node-gap", `${gap.toFixed(2)}px`);
+    element.style.setProperty("--level-title-line-height", titleLength > 14 ? "0.96" : "1.04");
+    element.style.setProperty("--level-subtitle-line-height", subtitleLength > 14 ? "1.02" : "1.12");
+}
+
+function getTextMeasureLength(value) {
+    return String(value ?? "")
+        .replace(/\s+/g, "")
+        .length;
+}
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
 }
 
 export function renderMenuSceneEdges({ edgeLayerElement, edges, mapRect, nodeLayerElement, viewport }) {
