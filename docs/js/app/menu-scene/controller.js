@@ -1,4 +1,4 @@
-import { MenuSceneSheetBuilder } from "./builders.js?v=20260509-menu-render-cache";
+import { MenuSceneSheetBuilder } from "./builders.js?v=20260512-menu-no-swipe-names";
 import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-pan-zoom-spacing";
 import {
     createMenuSceneNodeBindings,

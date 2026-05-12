@@ -11,7 +11,7 @@ export function createSceneNodeStatus({ isCompleted, isCurrent, isUnlocked }) {
 }
 
 export function createSceneNodeTitle({ briefing, compound, level }) {
-    return briefing?.nodeTitle ?? level.displayTitle ?? compound?.name ?? level.hint ?? level.id;
+    return compound?.name ?? briefing?.nodeTitle ?? level.displayTitle ?? level.hint ?? level.id;
 }
 
 export function createSceneNodeSubtitle({ briefing, mechanic, level }) {

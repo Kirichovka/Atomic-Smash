@@ -7,7 +7,7 @@ import {
     getMechanicById
 } from "./state.js?v=20260509-replay-completed-level";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
-import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-menu-pan-zoom-spacing";
+import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-menu-no-swipe-names";
 import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
 import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260507-journal-tile-polish";
@@ -22,7 +22,6 @@ const PAGE_ROUTES = {
     menu: "index.html",
     themes: "themes.html"
 };
-const MENU_SWIPE_THRESHOLD = 64;
 
 export function createNavigationController({
     refs,
@@ -74,10 +73,6 @@ export function createNavigationController({
         levelBriefsConfig,
         onPreviewLevelIntro
     });
-    let menuSwipeStartX = null;
-    let menuSwipeStartY = null;
-    let menuSwipePointerId = null;
-
     function bind() {
         homeChromeController.renderScaffold();
         refreshMenuChromeRefs();
@@ -87,7 +82,6 @@ export function createNavigationController({
         bindIfPresent(refs.journalThemesButton, "click", onOpenThemeSelection);
         bindIfPresent(refs.menuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.journalButton, "click", onOpenJournalScreen);
-        bindMenuSheetGestures();
         menuSceneController.bind();
     }
 
@@ -288,44 +282,6 @@ export function createNavigationController({
         });
     }
 
-    function bindMenuSheetGestures() {
-        if (!refs.menuStageFrame) {
-            return;
-        }
-
-        refs.menuStageFrame.addEventListener("pointerdown", event => {
-            if (event.pointerType === "mouse" && event.button !== 0) {
-                return;
-            }
-
-            if (event.target.closest("button, a")) {
-                return;
-            }
-
-            menuSwipePointerId = event.pointerId;
-            menuSwipeStartX = event.clientX;
-            menuSwipeStartY = event.clientY;
-        });
-
-        refs.menuStageFrame.addEventListener("pointerup", event => {
-            if (event.pointerId !== menuSwipePointerId) {
-                return;
-            }
-
-            const deltaX = event.clientX - menuSwipeStartX;
-            const deltaY = event.clientY - menuSwipeStartY;
-            resetMenuSwipeState();
-
-            if (Math.abs(deltaX) < MENU_SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) {
-                return;
-            }
-
-            cycleMenuTheme(deltaX < 0 ? 1 : -1);
-        });
-
-        refs.menuStageFrame.addEventListener("pointercancel", resetMenuSwipeState);
-    }
-
     function cycleMenuTheme(direction) {
         const themes = state.catalog.themes;
         if (themes.length <= 1) {
@@ -372,12 +328,6 @@ export function createNavigationController({
         }
 
         state.ui.menuViewedThemeId = themeId;
-    }
-
-    function resetMenuSwipeState() {
-        menuSwipePointerId = null;
-        menuSwipeStartX = null;
-        menuSwipeStartY = null;
     }
 
     function refreshMenuChromeRefs() {

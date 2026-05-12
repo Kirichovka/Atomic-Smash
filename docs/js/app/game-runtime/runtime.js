@@ -1,6 +1,6 @@
 import { createHotkeysController } from "../hotkeys.js";
 import { createModalController } from "../modals.js?v=20260509-replay-completed-level";
-import { createNavigationController } from "../navigation.js?v=20260512-menu-pan-zoom-spacing";
+import { createNavigationController } from "../navigation.js?v=20260512-menu-no-swipe-names";
 import { createPaletteController } from "../palette.js";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js?v=20260509-help-visual-optional";
