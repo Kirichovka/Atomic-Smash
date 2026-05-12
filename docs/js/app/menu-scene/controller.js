@@ -1,5 +1,5 @@
 import { MenuSceneSheetBuilder } from "./builders.js?v=20260512-menu-no-swipe-names";
-import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-fit-labels";
+import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-fit-whole-words";
 import {
     createMenuSceneNodeBindings,
     createMenuSceneNodeSchema,

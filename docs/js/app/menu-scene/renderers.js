@@ -18,15 +18,24 @@ export function layoutMenuSceneNodes({ camera, nodeLayerElement, nodes, space })
 
 function applyNodeTextScale(element, node, nodeWidthPx) {
     const titleLength = getTextMeasureLength(node.title);
+    const titleLongestWordLength = getLongestWordLength(node.title);
     const subtitleLength = getTextMeasureLength(node.subtitle);
+    const subtitleLongestWordLength = getLongestWordLength(node.subtitle);
     const compactness = nodeWidthPx < 92 ? 0.9 : 1;
+    const textWidthPx = nodeWidthPx * 0.84;
     const titleFontSize = clamp(
-        (nodeWidthPx * 1.42) / Math.max(titleLength, 6),
+        Math.min(
+            (nodeWidthPx * 1.42) / Math.max(titleLength, 6),
+            (textWidthPx * 1.72) / Math.max(titleLongestWordLength, 4)
+        ),
         nodeWidthPx * 0.082,
         nodeWidthPx * 0.18
     ) * compactness;
     const subtitleFontSize = clamp(
-        (nodeWidthPx * 0.92) / Math.max(subtitleLength, 10),
+        Math.min(
+            (nodeWidthPx * 0.92) / Math.max(subtitleLength, 10),
+            (textWidthPx * 1.62) / Math.max(subtitleLongestWordLength, 4)
+        ),
         nodeWidthPx * 0.054,
         nodeWidthPx * 0.096
     ) * compactness;
@@ -39,12 +48,59 @@ function applyNodeTextScale(element, node, nodeWidthPx) {
     element.style.setProperty("--level-node-gap", `${gap.toFixed(2)}px`);
     element.style.setProperty("--level-title-line-height", titleLength > 14 ? "0.96" : "1.04");
     element.style.setProperty("--level-subtitle-line-height", subtitleLength > 14 ? "1.02" : "1.12");
+    fitTextElement({
+        cssProperty: "--level-title-font-size",
+        element,
+        maxHeight: nodeWidthPx * 0.34,
+        minFontSize: Math.max(nodeWidthPx * 0.052, 4.8),
+        selector: ".home-level-formula"
+    });
+    fitTextElement({
+        cssProperty: "--level-subtitle-font-size",
+        element,
+        maxHeight: nodeWidthPx * 0.24,
+        minFontSize: Math.max(nodeWidthPx * 0.045, 4.4),
+        selector: ".home-level-objective"
+    });
 }
 
 function getTextMeasureLength(value) {
     return String(value ?? "")
         .replace(/\s+/g, "")
         .length;
+}
+
+function getLongestWordLength(value) {
+    return String(value ?? "")
+        .split(/\s+/)
+        .reduce((length, word) => Math.max(length, word.length), 0);
+}
+
+function fitTextElement({ cssProperty, element, maxHeight, minFontSize, selector }) {
+    const textElement = element.querySelector(selector);
+    if (!textElement) {
+        return;
+    }
+
+    let fontSize = Number.parseFloat(getComputedStyle(textElement).fontSize);
+    if (!Number.isFinite(fontSize)) {
+        return;
+    }
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+        const overflowsWidth = textElement.scrollWidth > textElement.clientWidth + 1;
+        const overflowsHeight = textElement.scrollHeight > Math.max(maxHeight, textElement.clientHeight) + 1;
+        if (!overflowsWidth && !overflowsHeight) {
+            return;
+        }
+
+        fontSize = Math.max(fontSize * 0.88, minFontSize);
+        element.style.setProperty(cssProperty, `${fontSize.toFixed(2)}px`);
+
+        if (fontSize <= minFontSize) {
+            return;
+        }
+    }
 }
 
 function clamp(value, min, max) {

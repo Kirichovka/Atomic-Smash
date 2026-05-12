@@ -5,7 +5,7 @@
 @import url("./styles/components/cards.css?v=20260509-remove-hover-selection");
 @import url("./styles/components/palette.css?v=20260509-game-action-hover");
 @import url("./styles/components/modals.css?v=20260509-game-action-hover");
-@import url("./styles/pages/menu.css?v=20260512-menu-fit-labels");
+@import url("./styles/pages/menu.css?v=20260512-menu-fit-whole-words");
 @import url("./styles/pages/themes.css");
 @import url("./styles/pages/journal.css?v=20260507-journal-locked-dim");
 @import url("./styles/pages/game.css?v=20260512-tutorial-positioning");

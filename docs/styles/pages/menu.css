@@ -510,8 +510,9 @@ button.home-level-node[aria-disabled="true"]:hover {
     font-weight: 900;
     letter-spacing: 0.08em;
     line-height: 1;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
     text-transform: uppercase;
+    word-break: normal;
 }
 
 .home-level-formula {
@@ -521,8 +522,9 @@ button.home-level-node[aria-disabled="true"]:hover {
     font-size: var(--level-title-font-size, 1.35rem);
     font-weight: 900;
     line-height: var(--level-title-line-height, 1.05);
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
     text-wrap: balance;
+    word-break: normal;
 }
 
 .home-level-objective {
@@ -532,8 +534,9 @@ button.home-level-node[aria-disabled="true"]:hover {
     font-size: var(--level-subtitle-font-size, 0.82rem);
     font-weight: 800;
     line-height: var(--level-subtitle-line-height, 1.14);
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
     text-wrap: balance;
+    word-break: normal;
 }
 
 .home-level-node.level-size-md .home-level-index {
