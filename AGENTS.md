@@ -1067,6 +1067,26 @@ Safe rule:
 - for menu level entry, keep `data-level-id` plus a runtime delegated activation handler as the reliable path
 - schema listeners can describe UI actions, but critical scene navigation should also be hydrated at the scene controller boundary
 
+Petra splash cache-busting note:
+
+What broke:
+
+- Petra's entry splash animation was already merged, but browsers could keep loading older splash CSS/JS because the splash query strings stayed on an older menu cache key
+
+Real cause:
+
+- `docs/index.html` loaded `docs/js/splash.js` with the old `20260509-menu-render-cache` key
+- `docs/styles.css` imported `docs/styles/pages/splash.css` with the same old key
+
+Fix applied:
+
+- bumped `docs/index.html` stylesheet/script cache keys and the `docs/styles.css` splash import to `20260513-petra-splash-cache`
+
+Safe rule:
+
+- when taking splash/entry-animation changes from a branch, bump both the page script URL and the nested CSS import
+- do not assume a merged animation is visible in-browser until the page-level and imported asset cache keys both changed
+
 Palette tile button note:
 
 What broke:
