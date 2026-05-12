@@ -1087,6 +1087,28 @@ Safe rule:
 - when taking splash/entry-animation changes from a branch, bump both the page script URL and the nested CSS import
 - do not assume a merged animation is visible in-browser until the page-level and imported asset cache keys both changed
 
+Splash entry-only behavior note:
+
+What broke:
+
+- the Petra splash animation appeared again when returning to the menu from another app page
+
+Real cause:
+
+- `docs/js/splash.js` treated every load of `index.html` as a fresh site entry
+- internal navigation from `game.html` to `index.html` reloads the menu page, so the splash mounted again even though the user was already inside the app
+
+Fix applied:
+
+- `docs/js/splash.js` stores `atomicSmashSplashSeen` in `sessionStorage` after the intro starts
+- the splash also skips immediately when `document.referrer` is from the same origin
+- `docs/index.html` cache-busts `splash.js` with `20260513-entry-only-splash`
+
+Safe rule:
+
+- entry splash should be session-scoped, not page-load-scoped
+- internal same-origin navigation must reveal the menu immediately and remove the splash DOM
+
 Palette tile button note:
 
 What broke:
