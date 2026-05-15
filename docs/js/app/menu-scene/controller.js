@@ -1,4 +1,4 @@
-import { MenuSceneSheetBuilder } from "./builders.js?v=20260512-level-entry-cache";
+import { MenuSceneSheetBuilder } from "./builders.js?v=20260515-menu-unlock-progression";
 import { createMenuSceneLayoutRuntime } from "./layout-runtime.js?v=20260512-menu-delegated-click";
 import {
     createMenuSceneNodeBindings,

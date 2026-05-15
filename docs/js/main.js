@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260515-level-stay-fix";
+import { initGame } from "./game.js?v=20260515-balance-calcium-unbalanced";
 
 initGame().catch(error => {
     console.error(error);

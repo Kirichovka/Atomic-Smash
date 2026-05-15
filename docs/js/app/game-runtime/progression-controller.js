@@ -26,6 +26,7 @@ export function createProgressionController({
     getActiveMechanic,
     onPersistState,
     onRunAfterTutorialHints,
+    onShowPaletteForConnectionLab,
     onTutorialLevelCompleted,
     onTutorialReset,
     onTutorialSync
@@ -127,6 +128,9 @@ export function createProgressionController({
         mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
             reason: "start-theme",
             themeId
+        });
+        onShowPaletteForConnectionLab?.({
+            persist: false
         });
         navigationController.showGameScreen();
         onTutorialReset?.();
@@ -248,10 +252,27 @@ export function createProgressionController({
             refreshMetaViews();
             const openNextLevelPrompt = () => {
                 const openNextLevelIntro = () => {
+                    state.progress.currentThemeId = currentTheme.id;
+                    state.progress.currentLevelId = nextLevel.id;
+                    mechanicsRegistry.resetAll();
+                    refreshMetaViews();
+                    paletteController.render();
+                    renderCurrentLevel();
+                    renderDiscoveredCompounds();
+                    mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+                        reason: "next-level-intro",
+                        themeId: currentTheme.id
+                    });
+                    onShowPaletteForConnectionLab?.({
+                        persist: false
+                    });
+                    getActiveMechanic().sync();
                     modalController.openLevelIntroModal(currentTheme, nextLevel, {
                         isCurrent: true,
                         isUnlocked: true
                     });
+                    onPersistState?.({ skipCapture: true });
+                    onTutorialSync?.();
                 };
                 modalController.openLevelCompleteModal({
                     completedLevelNumber,

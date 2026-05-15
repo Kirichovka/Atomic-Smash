@@ -7,7 +7,7 @@ import {
     getMechanicById
 } from "./state.js?v=20260515-balance-flow";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
-import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-menu-delegated-click";
+import { createMenuSceneController } from "./menu-scene/controller.js?v=20260515-menu-unlock-progression";
 import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
 import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260515-compound-carousel";

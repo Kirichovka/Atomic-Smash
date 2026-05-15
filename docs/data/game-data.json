@@ -3040,8 +3040,8 @@
                                      "id":  "ab-level-10",
                                      "themeId":  "acids-bases",
                                      "targetCompoundId":  "calcium-hydroxide",
-                                     "objective":  "Review calcium hydroxide formation",
-                                     "hint":  "CaO + H2O -\u003e Ca(OH)2",
+                                     "objective":  "Balance calcium hydroxide formation",
+                                     "hint":  "Ca + 2H2O -\u003e Ca(OH)2 + H2",
                                      "availableElementSymbols":  [
                                                                      "H",
                                                                      "Cl",
@@ -3060,16 +3060,19 @@
                                      "mechanicId":  "balance-lab",
                                      "equation":  {
                                                       "parts":  [
-                                                                    "CaO",
+                                                                    "Ca",
                                                                     " + ",
+                                                                    null,
                                                                     "H2O",
                                                                     " -\u003e ",
-                                                                    "Ca(OH)2"
+                                                                    "Ca(OH)2",
+                                                                    " + ",
+                                                                    "H2"
                                                                 ],
                                                       "answers":  [
-
+                                                                      2
                                                                   ],
-                                                      "label":  "CaO + H2O -\u003e Ca(OH)2"
+                                                      "label":  "Ca + H2O -\u003e Ca(OH)2 + H2"
                                                   }
                                  },
                                  {

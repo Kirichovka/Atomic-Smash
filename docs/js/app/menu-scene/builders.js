@@ -97,16 +97,19 @@ export class MenuSceneSheetBuilder {
         const layoutNodes = buildSceneLayoutNodes(levels, themeMap);
         const sceneNodes = layoutNodes.map(layoutNode => {
             const level = levels.find(item => item.id === layoutNode.levelId);
+            const levelIndex = levels.findIndex(item => item.id === level?.id);
             const compound = this.state.catalog.compoundsById.get(level?.targetCompoundId);
             const briefing = getLevelBriefing(this.levelBriefsConfig, theme.id, level?.id);
             const mechanic = this.state.catalog.mechanicsById.get(level?.mechanicId);
+            const isUnlockedByProgression = levelIndex >= 0
+                && levels.slice(0, levelIndex).every(item => this.state.progress.completedLevelIds.has(item.id));
             const options = {
                 isCompleted: this.state.progress.completedLevelIds.has(level.id),
                 isCurrent: currentLevel?.id === level.id,
                 isUnlocked:
                     this.state.progress.completedLevelIds.has(level.id)
                     || currentLevel?.id === level.id
-                    || levels[0]?.id === level.id
+                    || isUnlockedByProgression
             };
 
             return new MenuSceneTaskNodeBuilder({

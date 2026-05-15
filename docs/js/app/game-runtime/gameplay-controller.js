@@ -1,5 +1,5 @@
 import { createBoardActionsController } from "./board-actions-controller.js?v=20260515-balance-flow";
-import { createProgressionController } from "./progression-controller.js?v=20260515-level-stay-fix";
+import { createProgressionController } from "./progression-controller.js?v=20260515-connection-palette-open";
 
 export function createGameplayController({
     refs,
@@ -14,6 +14,7 @@ export function createGameplayController({
     onBeforeBoardReset,
     onPersistState,
     onRunAfterTutorialHints,
+    onShowPaletteForConnectionLab,
     onTutorialLevelCompleted,
     onTutorialReset,
     onTutorialSync
@@ -30,6 +31,7 @@ export function createGameplayController({
         getActiveMechanic,
         onPersistState,
         onRunAfterTutorialHints,
+        onShowPaletteForConnectionLab,
         onTutorialLevelCompleted,
         onTutorialReset,
         onTutorialSync

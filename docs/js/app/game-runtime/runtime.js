@@ -1,18 +1,18 @@
 import { createHotkeysController } from "../hotkeys.js";
 import { createModalController } from "../modals.js?v=20260515-equation-reference-v2";
-import { createNavigationController } from "../navigation.js?v=20260515-compound-carousel";
+import { createNavigationController } from "../navigation.js?v=20260515-menu-unlock-progression";
 import { createPaletteController } from "../palette.js?v=20260512-level-entry-cache";
 import { RUNTIME_EVENT_IDS } from "../contracts/event-contracts.js";
 import { createMechanicsRegistry } from "../mechanics/index.js?v=20260515-balance-journal-persist";
 import { persistState } from "../storage.js?v=20260515-balance-flow";
 import { getActiveMechanicId } from "../state.js?v=20260515-balance-flow";
 import { createBasicTutorialController } from "./basic-tutorial-controller.js?v=20260512-level-entry-cache";
-import { createGameplayController } from "./gameplay-controller.js?v=20260515-level-stay-fix";
+import { createGameplayController } from "./gameplay-controller.js?v=20260515-connection-palette-open";
 import { createMixZoneContextController } from "./mix-zone-context-controller.js";
 import { RUNTIME_CONTROLLER_KIND } from "./controller-contracts.js";
 import { createRuntimeController } from "./controller-factory.js";
 import { createRuntimeActionRegistry } from "./runtime-actions.js";
-import { createSidebarController } from "./sidebar-controller.js";
+import { createSidebarController } from "./sidebar-controller.js?v=20260515-connection-palette-open";
 
 export function createGameRuntime({
     refs,
@@ -149,6 +149,7 @@ export function createGameRuntime({
             onBeforeBoardReset: () => mixZoneContextController?.closeContextMenu({ restorePreview: false }),
             onPersistState: persistCurrentState,
             onRunAfterTutorialHints: handler => tutorialController?.runAfterPostLevelHints(handler),
+            onShowPaletteForConnectionLab: showPaletteForConnectionLab,
             onTutorialLevelCompleted: stageId => tutorialController?.setPostLevelStage(stageId),
             onTutorialReset: () => tutorialController?.resetProgress(),
             onTutorialSync: scheduleBasicTutorialSync
@@ -211,6 +212,7 @@ export function createGameRuntime({
         bindActiveZoneTracking();
 
         gameplayController.refreshAllViews();
+        showPaletteForConnectionLab();
         sidebarController.applyLayout();
         scheduleBasicTutorialSync();
         persistCurrentState();
@@ -228,6 +230,12 @@ export function createGameRuntime({
 
         getActiveMechanic().sync();
         scheduleBasicTutorialSync();
+    }
+
+    function showPaletteForConnectionLab(options = {}) {
+        if (getActiveMechanicId(state) === "connection-lab") {
+            sidebarController.showPalette(options);
+        }
     }
 
     function bindGameplayControls() {

@@ -64,6 +64,15 @@ export function createSidebarController({
         onPersist?.();
     }
 
+    function showPalette(options = {}) {
+        state.ui.sidebarCollapsed = false;
+        applyLayout();
+        getActiveMechanic().sync();
+        if (options.persist) {
+            onPersist?.();
+        }
+    }
+
     function applyLayout() {
         if (!refs.sidebar || !refs.paletteToggleButton) {
             return;
@@ -98,7 +107,8 @@ export function createSidebarController({
     return {
         applyLayout,
         bind,
-        isCompactLayout
+        isCompactLayout,
+        showPalette
     };
 }
 

@@ -148,6 +148,22 @@ Balance-lab route integration note:
   - when switching a level mechanic, update both game data and level brief text together
   - keep theme-level balance/connection proportions intentional, not accidental leftovers from copied levels
 
+Balance-lab already-balanced data note:
+
+- what broke:
+  - `acids-bases / ab-level-10` opened in Balance Lab with `CaO + H2O -> Ca(OH)2`, which is already balanced
+  - the UI could only show `Already balanced — press Check to continue`, so the task did not provide real gameplay
+- real cause:
+  - the level had `mechanicId: "balance-lab"` but its `equation.answers` array was empty
+  - empty answers are valid only for intentional read/checkpoint rounds, not ordinary balance tasks
+- fix:
+  - `docs/data/game-data.json` now uses `Ca + H2O -> Ca(OH)2 + H2` with one blank coefficient answer `2`
+  - `docs/data/level-briefs.json` now describes balancing the water coefficient for the repeated hydroxide group
+- safe rule:
+  - do not put an already balanced equation in a normal Balance Lab level unless the level is intentionally a reference checkpoint
+  - if `equation.answers` is empty, verify the UX copy makes that intentional and not a failed puzzle
+  - balance-level `hint`, `label`, `parts`, `answers`, and intro summary should describe the same equation
+
 Balance-lab mechanic UX note:
 
 - what changed:
@@ -430,11 +446,13 @@ Real cause:
 Fix applied:
 
 - the level-complete `onStay` handler restores `state.progress.currentLevelId` to the completed level id, refreshes meta/current/discovery views, and persists without recapturing the board
+- the level-complete `Next` handler explicitly switches `currentLevelId` to the next level, clears the old board, syncs the active mechanic, and then opens the next level intro
 
 Safe rule:
 
 - if progression advances state before a confirmation modal, every cancel/stay/close path must restore the previous active level
 - do not let visible board state and `getCurrentLevel(...)` drift apart
+- if the player explicitly chooses `Next`, switch state and board context before opening the next intro; do not rely on a later intro action to repair stale board/current-level state
 
 Completed-level replay note:
 
@@ -643,6 +661,27 @@ Safe rule:
 - keep size/state decisions on the node entity, then let `MenuSceneSpace` recalculate spacing from the actual radii
 - when changing menu node sizes, verify completed/open/locked mixes, not only the fresh locked route
 
+### Menu progression unlock note
+
+What broke:
+
+- after completing a level and closing the completion/intro flow without starting the next level, the next route node could remain locked
+- this was visible after completing Basic level 13: Chlorine stayed unavailable because `currentLevelId` had been restored to level 13
+
+Real cause:
+
+- menu unlock state only considered completed levels, the current level, or the first level
+- it did not unlock the first incomplete level whose previous levels were all completed unless that level was also `currentLevelId`
+
+Fix applied:
+
+- `docs/js/app/menu-scene/builders.js` now unlocks a level when every earlier level in the theme sequence is completed
+
+Safe rule:
+
+- menu availability should be based on progression completion, not only `currentLevelId`
+- restoring current level for replay/stay flows must not re-lock the next sequential level
+
 ### Important past issue
 
 Node size appeared not to change because:
@@ -705,6 +744,48 @@ Safe rule:
 - keep the Atomic Smash palette central: ink `#073b4c`, warm accent `#ffd166`, active teal `#118ab2`, paper `#fffdf4`
 
 ## Board / Connection Notes
+
+### Compound structure edge normalization
+
+What broke:
+
+- some two-atom compounds, including hydrofluoric acid (`HF`), had `structure.edges` stored as a flat pair like `[0, 1]`
+- connection-lab evaluation expected edge pairs like `[[0, 1]]`, so a correctly connected H-F board did not complete the level
+
+Real cause:
+
+- data used two edge shapes while structure matching, help visuals, and modal visuals assumed one canonical pair-list shape
+
+Fix applied:
+
+- `docs/js/data.js` normalizes compound structures during metadata enrichment
+- flat edge pairs are converted into pair arrays before the catalog reaches mechanics/renderers
+
+Safe rule:
+
+- mechanics should receive normalized structure data
+- if catalog data supports legacy shorthand, normalize at load time instead of spreading edge-shape checks through evaluators and renderers
+
+### Connection-lab palette visibility note
+
+What broke:
+
+- connection-lab levels could open with the palette hidden if the player previously collapsed it or came from a mechanic that hides palette controls
+
+Real cause:
+
+- palette/sidebar collapsed state is persisted in `state.ui.sidebarCollapsed`
+- starting a connection-lab level did not explicitly reset that UI state
+
+Fix applied:
+
+- `sidebar-controller` exposes `showPalette(...)`
+- runtime calls it for connection-lab on init and progression calls it after `startTheme`/next-level activation through a runtime callback
+
+Safe rule:
+
+- connection-lab starts should show the element palette by default
+- balance-lab may hide palette controls while active, but switching back to connection-lab must restore palette visibility through the sidebar controller, not direct DOM tweaks
 
 ### Generated chemistry validation
 

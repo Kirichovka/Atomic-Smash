@@ -626,7 +626,37 @@ function enrichCompoundMetadata(compound, elementLookup) {
         discoveryHeadline: override.headline ?? buildGenericCompoundHeadline(compound, totalAtoms),
         discoveryNote: override.note ?? buildGenericCompoundNote(compound),
         ingredientBreakdown,
-        ingredientCounts
+        ingredientCounts,
+        structure: normalizeCompoundStructure(compound.structure)
+    };
+}
+
+function normalizeCompoundStructure(structure) {
+    if (!structure || !Array.isArray(structure.nodes) || !Array.isArray(structure.edges)) {
+        return structure ?? null;
+    }
+
+    const edges = [];
+    for (let index = 0; index < structure.edges.length; index += 1) {
+        const edge = structure.edges[index];
+        if (Array.isArray(edge)) {
+            const [fromIndex, toIndex] = edge;
+            if (Number.isInteger(fromIndex) && Number.isInteger(toIndex)) {
+                edges.push([fromIndex, toIndex]);
+            }
+            continue;
+        }
+
+        const toIndex = structure.edges[index + 1];
+        if (Number.isInteger(edge) && Number.isInteger(toIndex)) {
+            edges.push([edge, toIndex]);
+            index += 1;
+        }
+    }
+
+    return {
+        ...structure,
+        edges
     };
 }
 

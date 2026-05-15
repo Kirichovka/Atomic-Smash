@@ -13,10 +13,10 @@ import {
     loadPaletteRuntimeSchemaConfig,
     loadProgressionRuntimeSchemaConfig,
     loadScreenRuntimeSchemaConfig
-} from "./data.js?v=20260515-equation-reference-v2";
+} from "./data.js?v=20260515-balance-calcium-unbalanced";
 import { createEventBus } from "./app/event-bus.js";
 import { createGameShellRuntimeContentBuilder } from "./app/game-shell-runtime/bootstrap.js";
-import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260515-level-stay-fix";
+import { createGameRuntime } from "./app/game-runtime/runtime.js?v=20260515-connection-palette-open";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./app/runtime-content/contracts.js";
 import { createRuntimeContentBuilder } from "./app/runtime-content/factory.js";
 import { createRefs } from "./app/refs.js?v=20260515-balance-flow";
