@@ -1,4 +1,4 @@
-import { createPersistedStateSnapshot } from "./state.js";
+import { createPersistedStateSnapshot } from "./state.js?v=20260515-balance-flow";
 
 export const STORAGE_KEY = "atomic-smash.app-state.v2";
 

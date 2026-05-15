@@ -1,4 +1,4 @@
-import { getCurrentLevel, getCompoundById } from "../../state.js?v=20260509-replay-completed-level";
+import { getCurrentLevel, getCompoundById } from "../../state.js?v=20260515-balance-flow";
 
 export function createBalanceLabMechanic({ refs, state }) {
     let userAnswers = {};
@@ -8,6 +8,7 @@ export function createBalanceLabMechanic({ refs, state }) {
     let ctxMenuEl = null;
     let ctxTargetBlank = null;
     let savedSidebarCollapsed = false;
+    let savedCompoundZoneDisplay = "";
     let wrongAttempts = 0;
 
     // ── Helpers ───────────────────────────────────────────────────────────
@@ -42,12 +43,17 @@ export function createBalanceLabMechanic({ refs, state }) {
         if (refs.paletteToggleButton) refs.paletteToggleButton.style.display = "none";
         if (refs.mixButton)           refs.mixButton.style.display = "none";
         if (refs.clearButton)         refs.clearButton.style.display = "none";
+        if (refs.compoundZone) {
+            savedCompoundZoneDisplay = refs.compoundZone.style.display;
+            refs.compoundZone.style.display = "none";
+        }
     }
 
     function restoreGameControls() {
         if (refs.paletteToggleButton) refs.paletteToggleButton.style.display = "";
         if (refs.mixButton)           refs.mixButton.style.display = "";
         if (refs.clearButton)         refs.clearButton.style.display = "";
+        if (refs.compoundZone)        refs.compoundZone.style.display = savedCompoundZoneDisplay;
     }
 
     // ── Intercept game context menu (capture phase) ───────────────────────
@@ -64,6 +70,7 @@ export function createBalanceLabMechanic({ refs, state }) {
 
     function init() {
         if (!isMounted()) return;
+        restoreSavedState();
         renderPanel();
     }
 
@@ -74,6 +81,7 @@ export function createBalanceLabMechanic({ refs, state }) {
         // Block the game's context menu (it binds at bubble phase; we capture first)
         refs.mixZone?.addEventListener("contextmenu", interceptContextMenu, true);
         if (!isMounted()) return;
+        restoreSavedState();
         renderPanel();
     }
 
@@ -90,6 +98,7 @@ export function createBalanceLabMechanic({ refs, state }) {
         selectedCoeff = null;
         currentLevelId = null;
         wrongAttempts = 0;
+        state.board.balanceLab = null;
         if (isMounted()) renderPanel();
     }
 
@@ -103,7 +112,35 @@ export function createBalanceLabMechanic({ refs, state }) {
     }
 
     function captureState() {
-        return null;
+        if (!isMounted()) {
+            return state.board.balanceLab;
+        }
+
+        const levelId = getCurrentLevel(state)?.id ?? null;
+        state.board.balanceLab = levelId
+            ? {
+                answers: { ...userAnswers },
+                levelId,
+                selectedCoeff,
+                wrongAttempts
+            }
+            : null;
+        return state.board.balanceLab;
+    }
+
+    function restoreSavedState() {
+        const saved = state.board.balanceLab;
+        const levelId = getCurrentLevel(state)?.id ?? null;
+        if (!saved || saved.levelId !== levelId) {
+            userAnswers = {};
+            selectedCoeff = null;
+            wrongAttempts = 0;
+            return;
+        }
+
+        userAnswers = { ...(saved.answers ?? {}) };
+        selectedCoeff = Number.isFinite(saved.selectedCoeff) ? Number(saved.selectedCoeff) : null;
+        wrongAttempts = Number.isFinite(saved.wrongAttempts) ? Math.max(0, Number(saved.wrongAttempts)) : 0;
     }
 
     function createHelpVisual() {
@@ -327,6 +364,7 @@ export function createBalanceLabMechanic({ refs, state }) {
 
         if (action === "clear-all") {
             userAnswers = {};
+            state.board.balanceLab = null;
             if (panelEl) {
                 panelEl.querySelectorAll(".bl-blank").forEach(b => {
                     b.textContent = "?";
@@ -341,11 +379,13 @@ export function createBalanceLabMechanic({ refs, state }) {
 
         if (action === "clear-one") {
             delete userAnswers[i];
+            captureState();
             blank.textContent = "?";
             blank.classList.remove("has-val", "correct", "wrong");
         } else if (action.startsWith("fill-")) {
             const val = Number(action.split("-")[1]);
             userAnswers[i] = val;
+            captureState();
             blank.textContent = val;
             blank.classList.add("has-val");
             blank.classList.remove("correct", "wrong");
@@ -357,6 +397,7 @@ export function createBalanceLabMechanic({ refs, state }) {
     function fillBlank(blank, val) {
         const i = Number(blank.dataset.blank);
         userAnswers[i] = val;
+        captureState();
         blank.textContent = val;
         blank.classList.add("has-val");
         blank.classList.remove("correct", "wrong", "drag-over");
@@ -372,6 +413,7 @@ export function createBalanceLabMechanic({ refs, state }) {
             // Click: select coefficient (existing behaviour)
             btn.addEventListener("click", () => {
                 selectedCoeff = coeff;
+                captureState();
                 panelEl.querySelectorAll(".bl-pick")
                     .forEach(b => b.classList.toggle("sel", b === btn));
             });
@@ -426,6 +468,7 @@ export function createBalanceLabMechanic({ refs, state }) {
             userAnswers = {};
             selectedCoeff = null;
             wrongAttempts = 0;
+            state.board.balanceLab = null;
             renderPanel();
         });
     }

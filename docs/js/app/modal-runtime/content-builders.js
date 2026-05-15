@@ -89,6 +89,7 @@ function renderElementModalContent({
         return;
     }
 
+    const equationReference = buildElementEquationReference(element);
     const root = createSchemaElement(schemaConfig?.elementModal, {
         element: {
             description: element.detailDescription ?? element.description,
@@ -113,23 +114,23 @@ function renderElementModalContent({
                         value: formatCategoryLabel(element.chemicalCategory)
                     },
                     {
-                        label: "Phase",
-                        value: element.phase ?? "Unknown"
+                        label: "Typical valency",
+                        value: equationReference.valency
                     },
                     {
-                        label: "Melting point",
-                        value: element.meltingPoint ?? "No standard value"
+                        label: "Common ions",
+                        value: equationReference.commonIons
                     },
                     {
-                        label: "Freezing point",
-                        value: element.freezingPoint ?? "No standard value"
+                        label: "Electronegativity",
+                        value: equationReference.electronegativity
                     },
                     {
-                        label: "Boiling point",
-                        value: element.boilingPoint ?? "No standard value"
+                        label: "Equation use",
+                        value: equationReference.equationUse
                     }
                 ],
-                title: "Quick Facts"
+                title: "Equation Reference"
             })
         );
     }
@@ -144,27 +145,27 @@ function renderElementModalContent({
                         value: element.radioactivityLabel ?? (element.radioactive ? "Yes" : "No")
                     },
                     {
-                        label: "Conductivity",
-                        value: element.electricalConductivity ?? "Unknown"
+                        label: "Phase",
+                        value: element.phase ?? "Unknown"
                     },
                     {
-                        label: "Behavior in air",
-                        value: element.airBehavior ?? "Unknown"
+                        label: "Melting point",
+                        value: element.meltingPoint ?? "No standard value"
                     },
                     {
-                        label: "Appearance",
-                        value: element.appearance ?? "Unknown"
+                        label: "Boiling point",
+                        value: element.boilingPoint ?? "No standard value"
                     },
                     {
                         label: "Electron configuration",
                         value: element.electronConfiguration ?? "Unknown"
                     },
                     {
-                        label: "Density",
-                        value: element.density ?? "Unknown"
+                        label: "Behavior in air",
+                        value: element.airBehavior ?? "Unknown"
                     }
                 ],
-                title: "Properties"
+                title: "Periodic Table Data"
             })
         );
     }
@@ -185,6 +186,88 @@ function renderElementModalContent({
     }
 
     container.replaceChildren(root);
+}
+
+function buildElementEquationReference(element) {
+    const commonIons = getCommonIons(element);
+    const valency = Number.isFinite(element.valency) ? String(element.valency) : inferValencyLabel(element);
+    const electronegativity = Number.isFinite(element.electronegativity)
+        ? Number(element.electronegativity).toFixed(2).replace(/\.00$/, "")
+        : inferElectronegativityHint(element);
+
+    return {
+        commonIons,
+        electronegativity,
+        equationUse: getEquationUseNote(element, commonIons),
+        valency
+    };
+}
+
+function getCommonIons(element) {
+    const symbol = element.symbol;
+    const specific = {
+        Al: "+3",
+        C: "-4, +4",
+        Cl: "-1",
+        Cu: "+1, +2",
+        Fe: "+2, +3",
+        H: "+1, -1",
+        N: "-3, +3, +5",
+        O: "-2",
+        P: "-3, +3, +5",
+        S: "-2, +4, +6",
+        Zn: "+2"
+    };
+    if (specific[symbol]) {
+        return specific[symbol];
+    }
+
+    const category = String(element.chemicalCategory ?? "").toLowerCase();
+    if (category.includes("noble gas")) return "0";
+    if (category.includes("alkali metal")) return "+1";
+    if (category.includes("alkaline earth")) return "+2";
+    if (category.includes("halogen")) return "-1";
+    if (category.includes("transition")) return "variable";
+    if (category.includes("post-transition")) return "+2, +3";
+    if (category.includes("nonmetal")) return "varies";
+    return "varies";
+}
+
+function inferValencyLabel(element) {
+    const category = String(element.chemicalCategory ?? "").toLowerCase();
+    if (category.includes("noble gas")) return "0";
+    if (category.includes("alkali metal") || category.includes("halogen")) return "1";
+    if (category.includes("alkaline earth")) return "2";
+    if (category.includes("transition")) return "varies";
+    return "varies";
+}
+
+function inferElectronegativityHint(element) {
+    const category = String(element.chemicalCategory ?? "").toLowerCase();
+    if (category.includes("noble gas")) return "n/a";
+    if (category.includes("alkali") || category.includes("alkaline earth")) return "low";
+    if (category.includes("halogen") || category.includes("nonmetal")) return "high";
+    return "medium";
+}
+
+function getEquationUseNote(element, commonIons) {
+    const category = String(element.chemicalCategory ?? "").toLowerCase();
+    if (commonIons === "0") {
+        return "Usually inert in beginner equations; count it only if it appears explicitly.";
+    }
+    if (isMetalLikeCategory(category) || ["Li", "Na", "K", "Mg", "Ca", "Al", "Fe", "Cu", "Zn"].includes(element.symbol)) {
+        return `Conserve ${element.symbol} atoms first in salts/oxides; common charge ${commonIons} helps predict formulas.`;
+    }
+    if (["H", "O", "S", "Cl", "F", "Br", "I", "N", "P"].includes(element.symbol)) {
+        return `Often appears in pairs or repeated groups; adjust coefficients until total ${element.symbol} atoms match.`;
+    }
+    return `Use table family and valency to predict formulas, then match total ${element.symbol} atoms on both sides.`;
+}
+
+function isMetalLikeCategory(category) {
+    return category.includes("metal")
+        && !category.includes("nonmetal")
+        && !category.includes("metalloid");
 }
 
 function renderCompoundModalContent({

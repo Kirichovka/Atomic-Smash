@@ -1,7 +1,7 @@
-import { DEFAULT_MECHANIC_ID } from "../state.js";
+import { DEFAULT_MECHANIC_ID } from "../state.js?v=20260515-balance-flow";
 import { createMechanicAdapter } from "./adapters.js";
 import { createMechanicInstance } from "./factory.js";
-import { createBuiltInMechanicManifests } from "./manifests.js?v=20260509-help-visual-optional";
+import { createBuiltInMechanicManifests } from "./manifests.js?v=20260515-balance-journal-persist";
 
 export function createMechanicsRegistry({ refs, state, bus, boardRuntimeSchemaConfig }) {
     const mechanicAdapters = new Map(

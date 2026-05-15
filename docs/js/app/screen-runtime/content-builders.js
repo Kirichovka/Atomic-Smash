@@ -76,11 +76,7 @@ function renderJournalElementCards({
 
     const intro = document.createElement("div");
     intro.className = "periodic-library-intro";
-    intro.innerHTML = `
-        <div class="periodic-library-kicker">Periodic Table View</div>
-        <h3 class="periodic-library-title">Explore the element library on the table itself</h3>
-        <p class="periodic-library-copy">Colored tiles are unlocked for gameplay. Gray tiles stay in the reference view until you earn them. Hover to preview, click to open the full element card.</p>
-    `;
+    renderPeriodicReferencePanel(intro, previewElement);
 
     const previewCard = document.createElement("button");
     previewCard.type = "button";
@@ -135,9 +131,15 @@ function renderJournalElementCards({
                 <span class="periodic-tile-symbol">${element.symbol}</span>
             `;
 
-            const showPreview = () => renderPeriodicPreview(previewCard, element, tone);
-            tile.addEventListener("pointerenter", showPreview);
-            tile.addEventListener("focus", showPreview);
+    const showPreview = () => renderPeriodicPreview(previewCard, element, tone);
+            tile.addEventListener("pointerenter", () => {
+                showPreview();
+                renderPeriodicReferencePanel(intro, element);
+            });
+            tile.addEventListener("focus", () => {
+                showPreview();
+                renderPeriodicReferencePanel(intro, element);
+            });
             tile.addEventListener("click", () => {
                 onSelectElement?.(element.symbol);
                 onOpenElementModal?.(element.raw);
@@ -150,6 +152,7 @@ function renderJournalElementCards({
     shell.append(meta, boardWrap);
     container.appendChild(shell);
     renderPeriodicPreview(previewCard, previewElement, getElementTone(previewElement.category));
+    renderPeriodicReferencePanel(intro, previewElement);
 }
 
 function renderPeriodicPreview(container, element, tone) {
@@ -169,6 +172,25 @@ function renderPeriodicPreview(container, element, tone) {
         </div>
         <p class="periodic-preview-description">${element.description}</p>
         <div class="periodic-preview-footer">${element.status}</div>
+    `;
+}
+
+function renderPeriodicReferencePanel(container, element) {
+    const reference = buildEquationReference(element);
+    container.innerHTML = `
+        <div class="periodic-library-kicker">Equation Reference</div>
+        <h3 class="periodic-library-title">${element.fullName} calculations</h3>
+        <table class="periodic-reference-table" aria-label="Equation reference for ${element.fullName}">
+            <tbody>
+            ${reference.facts.map(fact => `
+                <tr class="periodic-reference-row">
+                    <th class="periodic-reference-label" scope="row">${fact.label}</th>
+                    <td class="periodic-reference-value">${fact.value}</td>
+                </tr>
+            `).join("")}
+            </tbody>
+        </table>
+        <p class="periodic-library-copy">${reference.note}</p>
     `;
 }
 
@@ -237,6 +259,120 @@ function formatCategoryLabel(category = "") {
     }
 
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+}
+
+function buildEquationReference(element) {
+    const placement = getPeriodicPlacement(element.symbol);
+    const commonIons = getCommonIons(element);
+    const valency = Number.isFinite(element.valency) ? String(element.valency) : inferValencyLabel(element);
+    const electronegativity = Number.isFinite(element.electronegativity)
+        ? Number(element.electronegativity).toFixed(2).replace(/\.00$/, "")
+        : inferElectronegativityHint(element);
+
+    return {
+        facts: [
+            {
+                label: "Period / group",
+                value: `P${getElementPeriod(element, placement)} / ${getElementGroupLabel(element, placement)}`
+            },
+            {
+                label: "Common ions",
+                value: commonIons
+            },
+            {
+                label: "Valency",
+                value: valency
+            },
+            {
+                label: "Electronegativity",
+                value: electronegativity
+            }
+        ],
+        note: getEquationUseNote(element, commonIons)
+    };
+}
+
+function getElementPeriod(element, placement) {
+    const atomicNumber = Number(element.atomicNumber);
+    if (atomicNumber >= 57 && atomicNumber <= 71) return 6;
+    if (atomicNumber >= 89 && atomicNumber <= 103) return 7;
+    return placement.row;
+}
+
+function getElementGroupLabel(element, placement) {
+    const atomicNumber = Number(element.atomicNumber);
+    if ((atomicNumber >= 57 && atomicNumber <= 71) || (atomicNumber >= 89 && atomicNumber <= 103)) {
+        return "f-block";
+    }
+    return `G${placement.column}`;
+}
+
+function getCommonIons(element) {
+    const symbol = element.symbol;
+    const specific = {
+        Al: "+3",
+        C: "-4, +4",
+        Cl: "-1",
+        Cu: "+1, +2",
+        Fe: "+2, +3",
+        H: "+1, -1",
+        N: "-3, +3, +5",
+        O: "-2",
+        P: "-3, +3, +5",
+        S: "-2, +4, +6",
+        Zn: "+2"
+    };
+    if (specific[symbol]) {
+        return specific[symbol];
+    }
+
+    const placement = getPeriodicPlacement(symbol);
+    if (placement.column === 1) return "+1";
+    if (placement.column === 2) return "+2";
+    if (placement.column === 13) return "+3";
+    if (placement.column === 16) return "-2";
+    if (placement.column === 17) return "-1";
+    if (placement.column === 18) return "0";
+    if (String(element.category).toLowerCase().includes("transition")) return "variable";
+    return "varies";
+}
+
+function inferValencyLabel(element) {
+    const placement = getPeriodicPlacement(element.symbol);
+    if (placement.column === 18) return "0";
+    if (placement.column === 1 || placement.column === 17) return "1";
+    if (placement.column === 2 || placement.column === 16) return "2";
+    if (placement.column === 13 || placement.column === 15) return "3";
+    if (placement.column === 14) return "4";
+    return "varies";
+}
+
+function inferElectronegativityHint(element) {
+    const placement = getPeriodicPlacement(element.symbol);
+    if (placement.column === 18) return "n/a";
+    if (placement.column <= 2) return "low";
+    if (placement.column >= 16) return "high";
+    return "medium";
+}
+
+function getEquationUseNote(element, commonIons) {
+    const category = String(element.category).toLowerCase();
+    if (commonIons === "0") {
+        return "Noble gases usually do not drive beginner equation balancing; count them only if they appear explicitly.";
+    }
+    if (isMetalLikeCategory(category) || ["Li", "Na", "K", "Mg", "Ca", "Al", "Fe", "Cu", "Zn"].includes(element.symbol)) {
+        return `For equations, treat ${element.symbol} as the metal count to conserve; its common charge (${commonIons}) helps predict oxide, chloride, and hydroxide formulas.`;
+    }
+    if (["H", "O", "S", "Cl", "F", "Br", "I", "N", "P"].includes(element.symbol)) {
+        return `Watch ${element.symbol} carefully in balancing: it often appears in pairs or repeated groups, so coefficients usually change to make its atom count equal.`;
+    }
+    return `Use the table position to predict how ${element.symbol} combines, then balance by matching total atoms on both sides.`;
+}
+
+function isMetalLikeCategory(category) {
+    return category.includes("metal")
+        && !category.includes("nonmetal")
+        && !category.includes("metalloid");
 }
 
 function createPeriodicRowLabel(text, row) {

@@ -3,7 +3,7 @@ import { createBoardVisualRuntimeContentBuilder } from "../../board-visual-runti
 import { RUNTIME_EVENT_IDS } from "../../contracts/event-contracts.js";
 import { createRuntimeContentBuilder } from "../../runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "../../runtime-content/contracts.js";
-import { getCompoundById, getCurrentLevel } from "../../state.js?v=20260509-replay-completed-level";
+import { getCompoundById, getCurrentLevel } from "../../state.js?v=20260515-balance-flow";
 import {
     DEFAULT_NODE_HEIGHT,
     DEFAULT_NODE_WIDTH,
@@ -13,7 +13,7 @@ import {
     isPointerOutsideViewport,
     parseNodeIndex
 } from "./constants.js";
-import { createConnectionLabEvaluation } from "./evaluation.js";
+import { createConnectionLabEvaluation } from "./evaluation.js?v=20260515-chemistry-engine";
 import {
     bindConnectionLabResizeObserver,
     bindConnectionLabWorkspaceInteractions

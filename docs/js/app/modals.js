@@ -1,6 +1,6 @@
-import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js?v=20260509-replay-completed-level";
+import { getCompoundById, getCurrentLevel, getElementBySymbol, getLevelsForTheme, getMechanicById } from "./state.js?v=20260515-balance-flow";
 import { createStartLevelIntroActionId } from "./contracts/action-ids.js";
-import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260506-compact-modals";
+import { createModalRuntimeContentBuilder } from "./modal-runtime/content-builders.js?v=20260515-equation-reference-v2";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 
@@ -25,6 +25,7 @@ export function createModalController({
         onAdvance: null,
         onStay: null
     };
+    let levelIntroCloseHandler = null;
 
     function bind() {
         bindIfPresent(refs.levelIntroClose, "click", closeLevelIntroModal);
@@ -98,6 +99,7 @@ export function createModalController({
             isUnlocked = false
         } = options;
         const actionId = createStartLevelIntroActionId(theme.id, level.id);
+        levelIntroCloseHandler = () => onStartLevelIntro?.(theme, level, options);
 
         registerLevelIntroAction?.({
             actionId,
@@ -106,8 +108,9 @@ export function createModalController({
                     return;
                 }
 
+                const startHandler = levelIntroCloseHandler;
                 closeLevelIntroModal();
-                onStartLevelIntro?.(theme, level, options);
+                startHandler?.();
             }
         });
 
@@ -130,6 +133,7 @@ export function createModalController({
     }
 
     function closeLevelIntroModal() {
+        levelIntroCloseHandler = null;
         closeModal(refs.levelIntroModal);
         onModalStateChanged?.();
     }

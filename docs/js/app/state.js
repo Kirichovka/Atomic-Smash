@@ -37,6 +37,7 @@ export function createState(gameData) {
             nodeIdCounter: 0,
             savedNodes: [],
             savedConnections: [],
+            balanceLab: null,
             nodes: new Map(),
             nodeEntities: new Map(),
             connections: [],
@@ -144,6 +145,7 @@ export function hydrateState(state, snapshot) {
 
     state.board.savedNodes = savedNodes;
     state.board.savedConnections = savedConnections;
+    state.board.balanceLab = normalizeBalanceLabSnapshot(snapshot.board?.balanceLab, validLevelIds);
     state.board.nodeIdCounter = Number.isFinite(snapshot.board?.nodeIdCounter)
         ? Math.max(Number(snapshot.board.nodeIdCounter), getMaxNodeId(savedNodes))
         : getMaxNodeId(savedNodes);
@@ -168,6 +170,7 @@ export function createPersistedStateSnapshot(state) {
             bonusUnlockShown: state.progress.bonusUnlockShown
         },
         board: {
+            balanceLab: normalizeBalanceLabSnapshot(state.board.balanceLab, new Set(state.catalog.levels.map(level => level.id))),
             nodeIdCounter: state.board.nodeIdCounter,
             savedNodes: state.board.savedNodes.map(node => ({
                 id: node.id,
@@ -236,6 +239,28 @@ export function getCurrentLevel(state) {
     }
 
     return themeLevels.find(level => !state.progress.completedLevelIds.has(level.id)) ?? null;
+}
+
+function normalizeBalanceLabSnapshot(snapshot, validLevelIds) {
+    if (!snapshot || typeof snapshot !== "object" || !validLevelIds.has(snapshot.levelId)) {
+        return null;
+    }
+
+    const answers = {};
+    Object.entries(snapshot.answers ?? {}).forEach(([key, value]) => {
+        const index = Number(key);
+        const answer = Number(value);
+        if (Number.isInteger(index) && index >= 0 && Number.isFinite(answer)) {
+            answers[index] = answer;
+        }
+    });
+
+    return {
+        answers,
+        levelId: snapshot.levelId,
+        selectedCoeff: Number.isFinite(snapshot.selectedCoeff) ? Number(snapshot.selectedCoeff) : null,
+        wrongAttempts: Number.isFinite(snapshot.wrongAttempts) ? Math.max(0, Number(snapshot.wrongAttempts)) : 0
+    };
 }
 
 export function getActiveMechanicId(state) {

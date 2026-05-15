@@ -5,12 +5,12 @@ import {
     getCurrentTheme,
     getLevelsForTheme,
     getMechanicById
-} from "./state.js?v=20260509-replay-completed-level";
+} from "./state.js?v=20260515-balance-flow";
 import { SCENE_ACTION_IDS } from "./contracts/action-ids.js";
 import { createMenuSceneController } from "./menu-scene/controller.js?v=20260512-menu-delegated-click";
 import { createHomeChromeController } from "./menu-scene/chrome.js?v=20260509-menu-hover-continue-state";
 import { createNavigationRuntimeContentBuilder } from "./navigation-runtime/content-builders.js";
-import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260507-journal-tile-polish";
+import { createScreenRuntimeContentBuilder } from "./screen-runtime/content-builders.js?v=20260515-compound-carousel";
 import { createRuntimeContentBuilder } from "./runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "./runtime-content/contracts.js";
 import {
@@ -78,6 +78,7 @@ export function createNavigationController({
         refreshMenuChromeRefs();
         bindIfPresent(refs.themeMenuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.themeJournalButton, "click", onOpenJournalScreen);
+        bindIfPresent(refs.journalGameButton, "click", onResumeCurrentTheme);
         bindIfPresent(refs.journalMenuButton, "click", onOpenMainMenu);
         bindIfPresent(refs.journalThemesButton, "click", onOpenThemeSelection);
         bindIfPresent(refs.menuButton, "click", onOpenMainMenu);
@@ -186,6 +187,7 @@ export function createNavigationController({
             return {
                 atomicNumber: element.atomicNumber,
                 category: element.chemicalCategory ?? "reference element",
+                electronegativity: element.electronegativity,
                 description: element.journalDescription ?? element.description,
                 detailDescription: element.detailDescription ?? element.description,
                 fullName: element.name,
@@ -198,7 +200,8 @@ export function createNavigationController({
                     ? "Unlocked for gameplay | Tap for full reference"
                     : "Locked for gameplay | Tap to read the reference card",
                 symbol: element.symbol,
-                title: element.symbol
+                title: element.symbol,
+                valency: element.valency
             };
         });
 

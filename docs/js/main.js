@@ -1,4 +1,4 @@
-import { initGame } from "./game.js?v=20260512-menu-delegated-click";
+import { initGame } from "./game.js?v=20260515-level-stay-fix";
 
 initGame().catch(error => {
     console.error(error);

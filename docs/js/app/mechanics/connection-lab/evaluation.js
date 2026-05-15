@@ -1,4 +1,5 @@
 import { createEdgeKey } from "../../state.js";
+import { evaluateGeneratedChemistry } from "./chemistry-engine.js?v=20260515-chemistry-engine";
 
 export function createConnectionLabEvaluation({
     boardState,
@@ -12,12 +13,15 @@ export function createConnectionLabEvaluation({
         }));
         const ingredientKey = nodeEntries.map(node => node.symbol).sort().join(",");
         const candidates = compoundsByIngredients.get(ingredientKey) ?? [];
+        const boardGraph = createBoardGraph();
 
         if (candidates.length === 0) {
-            return { status: "unknown" };
+            return evaluateGeneratedChemistry({
+                boardGraph,
+                elementsBySymbol,
+                nodeEntries
+            });
         }
-
-        const boardGraph = createBoardGraph();
 
         for (const compound of candidates) {
             if (compoundMatchesBoard(compound, nodeEntries, boardGraph)) {

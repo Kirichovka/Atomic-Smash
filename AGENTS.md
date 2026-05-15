@@ -166,6 +166,38 @@ Balance-lab mechanic UX note:
   - do not merge old `game-data.json` wholesale just to pick up mechanic fixes
   - after changing balance-lab controls, manually verify click fill, drag/drop fill, reset, check, wrong-answer feedback, and returning to connection-lab levels
 
+Balance-lab progression/navigation note:
+
+What broke:
+
+- equation rounds reused the normal compound-discovery and level-complete flow, so players saw `Discovered Compounds` and a `Stay Here` choice that do not fit equation balancing
+- leaving for the Journal could lose filled coefficient blanks because balance-lab did not capture persisted state
+- reset could run every mechanic reset path and leave the balance board visually empty
+
+Real cause:
+
+- `balance-lab` rendered inside the shared game shell but did not hide connection-lab-only chrome
+- `captureState()` returned `null`, so page navigation saved no equation answers
+- the generic clear action called `mechanicsRegistry.resetAll()` instead of resetting only the active mechanic
+
+Fix:
+
+- balance-lab hides `#compound-zone` while active and restores it on deactivate
+- balance-lab stores `answers`, `selectedCoeff`, and `wrongAttempts` in `state.board.balanceLab`
+- Journal has a `Game` action that resumes the current theme without losing level state
+- balance-lab completion skips compound discovery and the level-complete stay/next modal; it opens the next level intro directly
+- generic reset clears only the active mechanic
+- next-level intro opened from balance-lab does not advance `currentLevelId` until the player starts the next level, so closing the intro keeps the completed balance level visible
+- balance-lab `captureState()` does not overwrite saved answers while the mechanic is unmounted on Journal/Menu pages
+
+Safe rule:
+
+- equation balancing is progression content, not compound discovery content
+- do not use global mechanic resets for an in-level reset button
+- any mechanic with local UI state must mutate persisted state during `captureState()`
+- if a mechanic skips the level-complete modal and opens the next intro directly, do not advance `currentLevelId` before the next-level start action
+- unmounted mechanics must return their existing saved snapshot from `captureState()`; page navigation should never replace gameplay progress with empty in-memory defaults
+
 Balance-lab help visual note:
 
 - what broke:
@@ -382,6 +414,27 @@ Safe rule:
 
 - level transitions should go `discovery info -> level complete prompt -> next level intro -> start level`
 - do not call `startTheme(...)` directly from the level-complete next button unless intentionally skipping briefings
+
+Level-complete stay state note:
+
+What broke:
+
+- after completing a connection-lab level, closing the level-complete modal left the visible board on the completed compound but `currentLevelId` already pointed at the next level
+- pressing `Mix` again evaluated the old board against the next level target
+
+Real cause:
+
+- `handleLevelComplete(...)` advanced `currentLevelId` before opening the level-complete modal
+- the modal close/Stay path only closed UI and did not restore the active level id
+
+Fix applied:
+
+- the level-complete `onStay` handler restores `state.progress.currentLevelId` to the completed level id, refreshes meta/current/discovery views, and persists without recapturing the board
+
+Safe rule:
+
+- if progression advances state before a confirmation modal, every cancel/stay/close path must restore the previous active level
+- do not let visible board state and `getCurrentLevel(...)` drift apart
 
 Completed-level replay note:
 
@@ -652,6 +705,31 @@ Safe rule:
 - keep the Atomic Smash palette central: ink `#073b4c`, warm accent `#ffd166`, active teal `#118ab2`, paper `#fffdf4`
 
 ## Board / Connection Notes
+
+### Generated chemistry validation
+
+What changed:
+
+- connection-lab now has a generated chemistry fallback after known compound matching
+- if a board does not match a catalog compound, `docs/js/app/mechanics/connection-lab/chemistry-engine.js` checks graph connectivity and simplified valency saturation, then can produce a generated formula/classification
+
+Real cause:
+
+- catalog-only matching made every uncatalogued but chemically plausible structure read as `Unknown compound`
+- this blocked the sandbox from feeling like a chemistry model once players moved beyond the fixed level list
+
+Fix applied:
+
+- `docs/js/app/mechanics/connection-lab/evaluation.js` still checks catalog compounds first
+- only no-candidate boards fall through to `evaluateGeneratedChemistry(...)`
+- generated compounds show toast feedback but are not added to the journal and do not complete levels
+- invalid generated structures return a concrete reason such as disconnected atoms or unsatisfied valency
+
+Safe rule:
+
+- known catalog compounds must remain the progression/discovery source of truth
+- generated chemistry is sandbox feedback, not level completion or journal discovery, unless a later feature explicitly adds generated journal entries
+- keep valency/generic chemistry rules in `chemistry-engine.js`; do not spread heuristic chemistry across runtime controllers
 
 ### Mobile connection-lab note
 
@@ -936,6 +1014,55 @@ Safe rule:
 
 - do not make locked/reference journal tiles globally gray if the table is meant to communicate element type; dim them while preserving the category hue
 - keep lock state separate from chemical category color
+
+Journal equation-reference note:
+
+What changed:
+
+- journal periodic-table preview cards now show equation-use data instead of only encyclopedia copy
+- preview cards include period/group, common ions, valency, electronegativity, and a short balancing hint
+- element detail modals now lead with equation-reference fields before general physical properties
+
+Real cause:
+
+- balance-lab players need the kind of information they would get from a real periodic table while solving equations
+- the old preview emphasized everyday uses and locked/unlocked status, which did not help choose coefficients or predict formulas
+
+Fix applied:
+
+- `docs/js/app/screen-runtime/content-builders.js` derives compact equation-reference facts from element metadata and table position
+- `docs/js/app/modal-runtime/content-builders.js` shows common ions, valency, electronegativity, and equation use in the element modal
+- `docs/js/data.js` carries electronegativity from `element-reference.json`
+- `docs/styles/pages/journal.css` adds dense fact chips and a balancing note to the preview card
+
+Safe rule:
+
+- journal element previews should prioritize gameplay-useful chemistry over flavor text
+- keep periodic-table-derived hints in screen/modal builders unless the catalog gains explicit per-element equation-reference fields
+- after changing journal data presentation, bust the data -> runtime -> screen/modal import chain and the page CSS
+
+Journal compound carousel note:
+
+What changed:
+
+- compound history now renders as a compact horizontal carousel instead of an endlessly growing grid
+- the visible desktop area is capped at a 3x2 set of cards, with additional discoveries scrolling horizontally
+- compound cards are smaller only inside `#journal-compound-list`, leaving periodic-table element cards unaffected
+
+Real cause:
+
+- the discovered-compound grid grew vertically and pushed the periodic table/reference content too far down
+- the large discovery cards were useful as modal entry points but too heavy for a journal overview
+
+Fix applied:
+
+- `docs/styles/pages/journal.css` scopes carousel layout and compact card sizing to `#journal-compound-list`
+- scroll snapping keeps the list usable without adding new runtime controls
+
+Safe rule:
+
+- keep compound-history density scoped to the compound list; do not shrink all `.journal-card` instances globally
+- journal overview should prioritize the periodic table/reference panel, with discoveries available as a compact history strip
 
 Favicon merge hygiene note:
 

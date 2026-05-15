@@ -4,7 +4,7 @@ import { validateSceneSchemaConfig } from "./app/scene-ui/validator.js";
 export async function loadGameData() {
     const [rawData, elementReference] = await Promise.all([
         loadJson("./data/game-data.json?v=20260512-tutorial-positioning", "game data"),
-        loadJson("./data/element-reference.json", "element reference data")
+        loadJson("./data/element-reference.json?v=20260515-equation-reference-v2", "element reference data")
     ]);
 
     return normalizeGameData(rawData, elementReference);
@@ -595,6 +595,7 @@ function enrichElementMetadata(element, reference = null) {
         description,
         detailDescription,
         electricalConductivity: element.electricalConductivity ?? inferElectricalConductivity(element.symbol, chemicalCategory),
+        electronegativity: Number.isFinite(reference?.electronegativity) ? Number(reference.electronegativity) : null,
         electronConfiguration: reference?.electronConfiguration ?? null,
         freezingPoint: formatTemperature(reference?.meltKelvin),
         funFact: element.funFact ?? createInterestingFact(element, reference),

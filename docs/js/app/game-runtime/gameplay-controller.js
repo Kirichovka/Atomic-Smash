@@ -1,5 +1,5 @@
-import { createBoardActionsController } from "./board-actions-controller.js?v=20260509-replay-completed-level";
-import { createProgressionController } from "./progression-controller.js?v=20260509-replay-completed-level";
+import { createBoardActionsController } from "./board-actions-controller.js?v=20260515-balance-flow";
+import { createProgressionController } from "./progression-controller.js?v=20260515-level-stay-fix";
 
 export function createGameplayController({
     refs,
@@ -44,7 +44,7 @@ export function createGameplayController({
         onApplyInteractionContext: context => applyInteractionContext(context),
         onClearBoardRuntime: () => {
             onBeforeBoardReset?.();
-            mechanicsRegistry.resetAll();
+            getActiveMechanic().reset?.();
         },
         onLevelTargetComplete: (compound, options) => progressionController.handleLevelComplete(compound, options),
         onPersistState,

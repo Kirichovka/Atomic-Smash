@@ -4,6 +4,65 @@
     gap: 20px;
 }
 
+#journal-compound-list.journal-grid {
+    --compound-card-gap: 14px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (var(--compound-card-gap) * 2)) / 3);
+    grid-template-rows: repeat(2, minmax(148px, auto));
+    gap: var(--compound-card-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 4px 16px 2px;
+    scroll-padding-inline: 2px;
+    scroll-snap-type: x mandatory;
+}
+
+#journal-compound-list .journal-card {
+    min-width: 0;
+    min-height: 148px;
+    padding: 12px 14px;
+    border-width: 3px;
+    border-radius: 16px;
+    box-shadow: 4px 5px 0 #073b4c;
+    scroll-snap-align: start;
+}
+
+#journal-compound-list .journal-card-kicker {
+    padding: 4px 7px;
+    border-width: 2px;
+    border-radius: 9px;
+    font-size: 9px;
+    letter-spacing: 0.055em;
+}
+
+#journal-compound-list .journal-card-title {
+    margin-top: 6px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+#journal-compound-list .journal-card-subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 1.15;
+}
+
+#journal-compound-list .journal-card-description {
+    display: -webkit-box;
+    margin-top: 7px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+#journal-compound-list .journal-card-index {
+    margin-top: 8px;
+    font-size: 10px;
+}
+
 #journal-element-list.journal-grid {
     display: block;
 }
@@ -57,29 +116,6 @@
     font-size: 14px;
     line-height: 1.6;
     color: #486176;
-}
-
-.periodic-preview-card {
-    width: 100%;
-    padding: 18px;
-    border: 4px solid #073b4c;
-    border-radius: 24px;
-    background: #ffffff;
-    box-shadow: 8px 10px 0 rgba(7, 59, 76, 0.2);
-    text-align: left;
-    color: #073b4c;
-    transition: transform 180ms ease, box-shadow 180ms ease;
-}
-
-.periodic-preview-card:hover,
-.periodic-preview-card:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 10px 14px 0 rgba(7, 59, 76, 0.22);
-}
-
-.periodic-preview-card.locked {
-    background:
-        linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
 }
 
 .periodic-preview-card.unlocked.tone-alkali,
@@ -152,6 +188,82 @@
     background:
         radial-gradient(circle at top right, color-mix(in srgb, var(--element-accent, #2563eb) 20%, white), transparent 38%),
         linear-gradient(180deg, #ffffff 0%, var(--element-soft, #eff6ff) 100%);
+}
+
+.periodic-reference-table {
+    width: 100%;
+    margin: 16px 0;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    table-layout: fixed;
+}
+
+.periodic-reference-row {
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 3px 4px 0 rgba(7, 59, 76, 0.12);
+}
+
+.periodic-reference-label,
+.periodic-reference-value {
+    border-top: 2px solid rgba(7, 59, 76, 0.32);
+    border-bottom: 2px solid rgba(7, 59, 76, 0.32);
+    vertical-align: middle;
+}
+
+.periodic-reference-label {
+    width: 46%;
+    padding: 11px 12px;
+    border-left: 2px solid rgba(7, 59, 76, 0.32);
+    border-radius: 14px 0 0 14px;
+    background: rgba(7, 59, 76, 0.06);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-align: left;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.periodic-reference-value {
+    padding: 11px 12px;
+    border-right: 2px solid rgba(7, 59, 76, 0.32);
+    border-radius: 0 14px 14px 0;
+    font-size: 19px;
+    font-weight: 900;
+    line-height: 1.05;
+    color: #073b4c;
+    overflow-wrap: anywhere;
+}
+
+.periodic-reference-row:first-child .periodic-reference-value {
+    color: var(--element-accent, #118ab2);
+}
+
+.periodic-reference-row:nth-child(even) .periodic-reference-label {
+    background: rgba(255, 209, 102, 0.16);
+}
+
+.periodic-preview-card {
+    width: 100%;
+    padding: 18px;
+    border: 4px solid #073b4c;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 8px 10px 0 rgba(7, 59, 76, 0.2);
+    text-align: left;
+    color: #073b4c;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.periodic-preview-card:hover,
+.periodic-preview-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 10px 14px 0 rgba(7, 59, 76, 0.22);
+}
+
+.periodic-preview-card.locked {
+    background:
+        linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
 }
 
 .periodic-preview-head {
@@ -354,4 +466,26 @@
 
 #journal-screen .journal-section + .journal-section {
     margin-top: 34px;
+}
+
+@media (max-width: 560px) {
+    #journal-compound-list.journal-grid {
+        grid-auto-columns: minmax(190px, calc((100% - var(--compound-card-gap)) / 2));
+    }
+
+    .periodic-reference-label,
+    .periodic-reference-value {
+        display: block;
+        width: 100%;
+        border: 2px solid rgba(7, 59, 76, 0.32);
+    }
+
+    .periodic-reference-label {
+        border-bottom: 0;
+        border-radius: 14px 14px 0 0;
+    }
+
+    .periodic-reference-value {
+        border-radius: 0 0 14px 14px;
+    }
 }

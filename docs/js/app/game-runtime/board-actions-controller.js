@@ -1,4 +1,4 @@
-import { getCompoundById, getCurrentLevel, isCurrentLevelTarget } from "../state.js?v=20260509-replay-completed-level";
+import { getCompoundById, getCurrentLevel, isCurrentLevelTarget } from "../state.js?v=20260515-balance-flow";
 
 export function createBoardActionsController({
     refs,
@@ -68,6 +68,28 @@ export function createBoardActionsController({
             return;
         }
 
+        if (evaluation.status === "invalid-generated") {
+            registerFailedAttempt();
+            showResultToast(evaluation.reason ?? "This structure is not stable in the valency model.");
+            onPersistState?.();
+            onTutorialSync?.();
+            return;
+        }
+
+        if (evaluation.status === "generated") {
+            const generated = evaluation.generatedCompound;
+            const currentLevel = getCurrentLevel(state);
+            registerFailedAttempt();
+            showResultToast(
+                currentLevel
+                    ? `${generated.formula} is valency-stable (${generated.classification}), but not this level's target.`
+                    : `${generated.formula} is valency-stable (${generated.classification}). Not in the journal yet.`
+            );
+            onPersistState?.();
+            onTutorialSync?.();
+            return;
+        }
+
         if (evaluation.status === "structure-mismatch") {
             registerFailedAttempt();
             showResultToast(
@@ -81,9 +103,13 @@ export function createBoardActionsController({
 
         const compound = evaluation.compound;
         if (isCurrentLevelTarget(state, compound)) {
-            const isNewDiscovery = onAddDiscoveredCompound?.(compound, {
-                openModal: false
-            }) === true;
+            const currentLevel = getCurrentLevel(state);
+            const isBalanceLab = currentLevel?.mechanicId === "balance-lab";
+            const isNewDiscovery = isBalanceLab
+                ? false
+                : onAddDiscoveredCompound?.(compound, {
+                    openModal: false
+                }) === true;
             onLevelTargetComplete?.(compound, {
                 isNewDiscovery
             });

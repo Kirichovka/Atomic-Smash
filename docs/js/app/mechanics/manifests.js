@@ -1,5 +1,5 @@
-import { createConnectionLabMechanic } from "./connection-lab/index.js?v=20260509-board-selection-modifier";
-import { createBalanceLabMechanic } from "./balance-lab/index.js?v=20260509-help-visual-optional";
+import { createConnectionLabMechanic } from "./connection-lab/index.js?v=20260515-balance-flow";
+import { createBalanceLabMechanic } from "./balance-lab/index.js?v=20260515-balance-journal-persist";
 import { createMechanicManifest } from "./manifest-factory.js";
 import { MECHANIC_CAPABILITY } from "./manifest-contracts.js";
 

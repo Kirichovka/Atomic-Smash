@@ -6,7 +6,7 @@ import {
     getCurrentTheme,
     getLevelsForTheme,
     getMechanicById
-} from "../state.js?v=20260509-replay-completed-level";
+} from "../state.js?v=20260515-balance-flow";
 import { createProgressionRuntimeContentBuilder } from "../progression-runtime/content-builders.js";
 import { createRuntimeContentBuilder } from "../runtime-content/factory.js";
 import { RUNTIME_CONTENT_BUILDER_KIND } from "../runtime-content/contracts.js";
@@ -154,6 +154,17 @@ export function createProgressionController({
     }
 
     function renderDiscoveredCompounds() {
+        const currentLevel = getCurrentLevel(state);
+        if (currentLevel?.mechanicId === "balance-lab") {
+            progressionContentBuilder.renderDiscoveredCompoundCards({
+                compounds: [],
+                container: refs.compoundList,
+                onOpenCompoundModal: compound => modalController.openCompoundModal(compound),
+                schemaConfig
+            });
+            return;
+        }
+
         const compounds = state.progress.discoveryHistory
             .map(compoundId => getCompoundById(state, compoundId))
             .filter(Boolean);
@@ -224,6 +235,15 @@ export function createProgressionController({
             onTutorialLevelCompleted?.("after-mix");
         }
 
+        if (isBalanceLabLevel(currentLevel)) {
+            handleBalanceLevelComplete({
+                completedLevel: currentLevel,
+                currentTheme,
+                nextLevel
+            });
+            return;
+        }
+
         if (nextLevel) {
             refreshMetaViews();
             const openNextLevelPrompt = () => {
@@ -247,6 +267,11 @@ export function createProgressionController({
                         openNextLevelIntro();
                     },
                     onStay: () => {
+                        state.progress.currentLevelId = currentLevel.id;
+                        refreshMetaViews();
+                        renderCurrentLevel();
+                        renderDiscoveredCompounds();
+                        onPersistState?.({ skipCapture: true });
                         onTutorialSync?.();
                     },
                     theme: currentTheme
@@ -325,6 +350,53 @@ export function createProgressionController({
         onTutorialSync?.();
     }
 
+    function handleBalanceLevelComplete({
+        completedLevel,
+        currentTheme,
+        nextLevel
+    }) {
+        if (refs.result) {
+            refs.result.textContent = "";
+        }
+
+        if (nextLevel) {
+            state.progress.currentLevelId = completedLevel.id;
+        }
+
+        refreshMetaViews();
+        paletteController.render();
+        renderCurrentLevel();
+        renderDiscoveredCompounds();
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "balance-level-complete",
+            themeId: currentTheme.id
+        });
+        getActiveMechanic().sync();
+
+        if (nextLevel) {
+            modalController.openLevelIntroModal(currentTheme, nextLevel, {
+                isCurrent: false,
+                isUnlocked: true
+            });
+            onPersistState?.({ skipCapture: true });
+            onTutorialSync?.();
+            return;
+        }
+
+        state.progress.currentThemeId = null;
+        mechanicsRegistry.resetAll();
+        mechanicsRegistry.syncActiveMechanic(getActiveMechanicId(state), {
+            reason: "balance-theme-complete",
+            themeId: currentTheme.id
+        });
+        refreshMetaViews();
+        paletteController.render();
+        renderCurrentLevel();
+        modalController.openThemeCompleteModal(currentTheme);
+        onPersistState?.({ skipCapture: true });
+        onTutorialSync?.();
+    }
+
     return {
         addDiscoveredCompound,
         handleLevelComplete,
@@ -341,4 +413,8 @@ export function createProgressionController({
 
 function shouldRunPostLevelTutorialBeforeAdvance(theme, completedLevel) {
     return theme?.id === BASIC_TUTORIAL_THEME_ID && completedLevel?.id === BASIC_TUTORIAL_FIRST_LEVEL_ID;
+}
+
+function isBalanceLabLevel(level) {
+    return level?.mechanicId === "balance-lab";
 }
